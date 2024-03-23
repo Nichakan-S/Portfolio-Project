@@ -35,12 +35,12 @@ model Major {
 }
 
 model Rank {
-  id      Int     @id @default(autoincrement())
-  rankname    String @db.VarChar(50)
+  id          Int     @id @default(autoincrement())
+  rankname    String  @db.VarChar(50)
   employee    Boolean @default(false)
   evaluation  Boolean @default(false)
   overview    Boolean @default(false)
-  user    User[]
+  user        User[]
 }
 
 model User {
@@ -52,7 +52,7 @@ model User {
   majorId    Int      @db.Int
   major      Major    @relation(fields: [majorId], references: [id])
   prefix     String   @db.VarChar(15)
-  user_image String   @db.Text
+  user_image String?  @db.Text
   username   String   @db.VarChar(100)
   lastname   String   @db.VarChar(100)
   email      String   @db.VarChar(100) @unique
@@ -63,7 +63,7 @@ model User {
 }
 
 model Teaching {
-  id        Int       @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   subjectsId Int       
   subjects   Subjects  @relation(fields: [subjectsId], references: [id])
   userId     Int       @db.Int
@@ -73,10 +73,10 @@ model Teaching {
 model Subjects {
   id         Int       @id @default(autoincrement())
   name       String    @db.VarChar(20)
-  Day        DayOfWeek 
-  Group      String    @db.VarChar(6)
-  Starttime  String    @db.VarChar(10)
-  Endtime    String    @db.VarChar(10)
+  day        Day
+  group      String    @db.VarChar(6)
+  starttime  String    @db.VarChar(10)
+  endtime    String    @db.VarChar(10)
   term       String    @db.VarChar(3)
   year       String    @db.VarChar(6)
   teaching   Teaching[]
@@ -132,12 +132,12 @@ enum Status {
   pass
   fail
 }
-enum DayOfWeek {
-  Mon
-  Tue
-  Wed
-  Thu
-  Fri
-  Sat
-  Sun
+enum Day {
+  mon
+  tue
+  wed
+  thu
+  fri
+  sat
+  sun
 }

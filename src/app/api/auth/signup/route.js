@@ -5,28 +5,20 @@ const prisma = new PrismaClient()
 
 export async function POST(request) {
   try {
-    const { email, password, prefix, user_image, username, lastname, rankId, facultyId, majorId, teaching, manageactivity, manageResearch} = await request.json();
+    const { email, password} = await request.json();
     const hashedPassword = bcrypt.hashSync(password, 10);
-
-    const user = await prisma.user.create({
+    if (!email || !password) {
+      throw new Error('Email and password are required');
+    }
+    const NewAdmin = await prisma.admin.create({
       data: {
         email,
         password: hashedPassword,
-        prefix,
-        user_image,
-        username,
-        lastname,
-        rankId,
-        facultyId,
-        majorId,
-        teaching,
-        manageactivity,
-        manageResearch,
       },
     });
-    return new Response(JSON.stringify({ message: 'User created', user }), { status: 201 });
+    return new Response(JSON.stringify({ message: 'User created', NewAdmin }), { status: 201 });
   } catch (error) {
-    console.error(error); // แสดง error ใน console สำหรับการตรวจสอบ
+    console.error(error);
     return new Response(JSON.stringify({ error: 'User could not be created' }), { status: 500 });
   }
 }

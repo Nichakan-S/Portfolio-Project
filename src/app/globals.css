@@ -1,33 +1,38 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+.flex.h-screen.items-center.justify-center {
+  display: flex;
+  height: 100vh; /* ให้ความสูงเต็มหน้าจอ */
+  align-items: center; /* จัดกลางแนวตั้ง */
+  justify-content: center; /* จัดกลางแนวนอน */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+/* ใช้กับ form */
+.bg-white.p-6.rounded-md.shadow-md {
+  background-color: white;
+  padding: 1.5rem; /* p-6 หมายถึง padding ทั้ง 4 ด้าน 6 หน่วย */
+  border-radius: 0.375rem; /* rounded-md หมายถึงมุมโค้งปานกลาง */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+/* ใช้กับ div ที่มี input และ label */
+.mb-4 {
+  margin-bottom: 1rem; /* mb-4 หมายถึง margin-bottom 4 หน่วย */
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* ใช้กับ input */
+.w-full.border.border-gray-300.px-3.py-2.rounded {
+  width: 100%; /* w-full หมายถึงความกว้างเต็มพื้นที่ของ parent */
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  padding: 0.5rem 0.75rem; /* px-3 py-2 หมายถึง padding ด้านข้าง 3 หน่วย, ด้านบนและล่าง 2 หน่วย */
+  border-radius: 0.375rem; /* rounded */
+}
+
+/* ใช้กับ button */
+.w-full.bg-blue-500.text-white.py-2.rounded.mb-4 {
+  width: 100%; /* w-full */
+  background-color: #3b82f6; /* bg-blue-500 */
+  color: white; /* text-white */
+  padding: 0.5rem 0; /* py-2 */
+  border-radius: 0.375rem; /* rounded */
+  margin-bottom: 1rem; /* mb-4 */
 }
