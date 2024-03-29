@@ -28,14 +28,14 @@ model Faculty {
 
 model Major {
   id         Int      @id @default(autoincrement()) @db.UnsignedInt
-  facultyId  Int      @db.Int
+  facultyId  Int      @db.UnsignedInt
   faculty    Faculty  @relation(fields: [facultyId], references: [id])
   majorName  String   @db.VarChar(255)
   user       User[]
 }
 
 model Rank {
-  id          Int     @id @default(autoincrement())
+  id          Int     @id @default(autoincrement()) @db.UnsignedInt
   rankname    String  @db.VarChar(50)
   employee    Boolean @default(false)
   evaluation  Boolean @default(false)
@@ -45,11 +45,11 @@ model Rank {
 
 model User {
   id         Int      @id @default(autoincrement()) @db.UnsignedInt
-  rankId     Int      @db.Int
+  rankId     Int      @db.UnsignedInt
   rank       Rank     @relation(fields: [rankId], references: [id])
-  facultyId  Int      @db.Int
+  facultyId  Int      @db.UnsignedInt
   faculty    Faculty  @relation(fields: [facultyId], references: [id])
-  majorId    Int      @db.Int
+  majorId    Int      @db.UnsignedInt
   major      Major    @relation(fields: [majorId], references: [id])
   prefix     String   @db.VarChar(15)
   user_image String?  @db.Text
@@ -63,15 +63,15 @@ model User {
 }
 
 model Teaching {
-  id         Int       @id @default(autoincrement())
-  subjectsId Int       
+  id         Int       @id @default(autoincrement()) @db.UnsignedInt
+  subjectsId Int       @db.UnsignedInt
   subjects   Subjects  @relation(fields: [subjectsId], references: [id])
-  userId     Int       @db.Int
+  userId     Int       @db.UnsignedInt
   user       User      @relation(fields: [userId], references: [id])
 }
 
-model Subjects {
-  id         Int       @id @default(autoincrement())
+model Subjects { 
+  id         Int       @id @default(autoincrement()) @db.UnsignedInt
   name       String    @db.VarChar(20)
   day        Day
   group      String    @db.VarChar(6)
@@ -83,7 +83,7 @@ model Subjects {
 }
 
 model Activity {
-  id        Int       @id @default(autoincrement())
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
   type      Type      
   name      String    @db.VarChar(70) 
   start     DateTime  
@@ -94,9 +94,9 @@ model Activity {
 
 model ManageActivity {
   id           Int      @id @default(autoincrement()) @db.UnsignedInt
-  activityId   Int      @db.Int
+  activityId   Int      @db.UnsignedInt
   activity     Activity @relation(fields: [activityId], references: [id])
-  userId       Int      @db.Int
+  userId       Int      @db.UnsignedInt
   user         User     @relation(fields: [userId], references: [id])
   file         String   @db.Text
   status       Status
@@ -106,7 +106,7 @@ model ManageActivity {
 
 model ManageResearch {
   id           Int          @id @default(autoincrement()) @db.UnsignedInt
-  userId       Int          @db.Int
+  userId       Int          @db.UnsignedInt
   user         User         @relation(fields: [userId], references: [id])
   nameTH       String       @db.VarChar(50)
   nameEN       String       @db.VarChar(50)

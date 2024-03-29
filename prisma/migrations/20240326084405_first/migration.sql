@@ -19,7 +19,7 @@ CREATE TABLE `Faculty` (
 -- CreateTable
 CREATE TABLE `Major` (
     `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    `facultyId` INTEGER NOT NULL,
+    `facultyId` INTEGER UNSIGNED NOT NULL,
     `majorName` VARCHAR(255) NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -27,7 +27,7 @@ CREATE TABLE `Major` (
 
 -- CreateTable
 CREATE TABLE `Rank` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     `rankname` VARCHAR(50) NOT NULL,
     `employee` BOOLEAN NOT NULL DEFAULT false,
     `evaluation` BOOLEAN NOT NULL DEFAULT false,
@@ -39,9 +39,9 @@ CREATE TABLE `Rank` (
 -- CreateTable
 CREATE TABLE `User` (
     `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    `rankId` INTEGER NOT NULL,
-    `facultyId` INTEGER NOT NULL,
-    `majorId` INTEGER NOT NULL,
+    `rankId` INTEGER UNSIGNED NOT NULL,
+    `facultyId` INTEGER UNSIGNED NOT NULL,
+    `majorId` INTEGER UNSIGNED NOT NULL,
     `prefix` VARCHAR(15) NOT NULL,
     `user_image` TEXT NULL,
     `username` VARCHAR(100) NOT NULL,
@@ -55,16 +55,16 @@ CREATE TABLE `User` (
 
 -- CreateTable
 CREATE TABLE `Teaching` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `subjectsId` INTEGER NOT NULL,
-    `userId` INTEGER NOT NULL,
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `subjectsId` INTEGER UNSIGNED NOT NULL,
+    `userId` INTEGER UNSIGNED NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Subjects` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(20) NOT NULL,
     `day` ENUM('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun') NOT NULL,
     `group` VARCHAR(6) NOT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE `Subjects` (
 
 -- CreateTable
 CREATE TABLE `Activity` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     `type` ENUM('culture', 'service') NOT NULL,
     `name` VARCHAR(70) NOT NULL,
     `start` DATETIME(3) NOT NULL,
@@ -91,8 +91,8 @@ CREATE TABLE `Activity` (
 -- CreateTable
 CREATE TABLE `ManageActivity` (
     `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    `activityId` INTEGER NOT NULL,
-    `userId` INTEGER NOT NULL,
+    `activityId` INTEGER UNSIGNED NOT NULL,
+    `userId` INTEGER UNSIGNED NOT NULL,
     `file` TEXT NOT NULL,
     `status` ENUM('wait', 'pass', 'fail') NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -104,7 +104,7 @@ CREATE TABLE `ManageActivity` (
 -- CreateTable
 CREATE TABLE `ManageResearch` (
     `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    `userId` INTEGER NOT NULL,
+    `userId` INTEGER UNSIGNED NOT NULL,
     `nameTH` VARCHAR(50) NOT NULL,
     `nameEN` VARCHAR(50) NOT NULL,
     `Researchfund` VARCHAR(20) NOT NULL,
