@@ -14,6 +14,8 @@ export default function Profile() {
       router.push('/')
     }
   }, [status, router])
+
+  // When after loading success and have session, show profile
   return (
     status === 'authenticated' &&
     session.user && (

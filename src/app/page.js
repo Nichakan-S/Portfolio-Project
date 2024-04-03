@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { signIn, getSession } from 'next-auth/react';
 
 export default function SignIn() {
   const [email, setEmail] = useState('')
@@ -12,6 +12,7 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
+      
       console.log('email', email)
       console.log('password', password)
       const result = await signIn('credentials', {
@@ -23,18 +24,24 @@ export default function SignIn() {
       if (result.error) {
         console.error(result.error);
       } else {
-        // ใช้ router.push เพื่อนำทางไปยังหน้าที่เหมาะสมตาม role
-        if (result.role === 'admin') {
-          console.log("admin")
-          router.push('/admin/dashboard');
+        const session = await getSession();
+        console.log(session);
+        console.log(session?.user?.role);
+
+
+        if (session?.user?.role === 'admin') {
+          console.log('Admin logged in');
+          router.push('/admin');
+        } else if (session?.user?.role === 'user') {
+          console.log('User logged in');
+          router.push('/users');
         } else {
-          console.log("user")
-          router.push('/users/dashboard');
+          console.log('Unknown role');
         }
       }
 
     } catch (error) {
-      console.log('error', error)
+      console.log('Login error', error);
     }
   }
 

@@ -13,12 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
-  id       Int    @id @default(autoincrement()) @db.UnsignedInt
-  email    String @db.VarChar(100) @unique
-  password String @db.VarChar(255)
-}
-
 model Faculty {
   id           Int      @id @default(autoincrement()) @db.UnsignedInt
   facultyName  String   @db.VarChar(100)
@@ -57,6 +51,7 @@ model User {
   lastname   String   @db.VarChar(100)
   email      String   @db.VarChar(100) @unique
   password   String   @db.VarChar(255)
+  role       Role
   teaching   Teaching[]
   manageactivity ManageActivity[]
   manageResearch ManageResearch[]
@@ -131,6 +126,10 @@ enum Status {
   wait
   pass
   fail
+}
+enum Role {
+  admin
+  user
 }
 enum Day {
   mon

@@ -5,8 +5,8 @@ const prisma = new PrismaClient();
 
 export async function POST(request) {
   try {
-    const { email, password, prefix, username, lastname, facultyId, majorId, rankId, user_image } = await request.json();
-    if (!email || !password || !prefix || !username || !lastname || !facultyId || !majorId || !rankId) {
+    const { email, password, prefix, username, lastname, facultyId, majorId, rankId, user_image, role} = await request.json();
+    if (!email || !password || !prefix || !username || !lastname || !facultyId || !majorId || !rankId || !role) {
       throw new Error('All required fields must be provided');
     }
     const hashedPassword = bcrypt.hashSync(password, 10);
@@ -22,6 +22,7 @@ export async function POST(request) {
         majorId,
         rankId,
         user_image,
+        role
       },
     });
     return new Response(JSON.stringify({ message: 'User created', newUser }), { status: 201, headers: { 'Content-Type': 'application/json' } });
