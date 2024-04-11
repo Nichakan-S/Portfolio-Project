@@ -1,25 +1,20 @@
-import React from 'react';
-import Link from 'next/link';
+
+
+import dynamic from 'next/dynamic';
+import Navbar from '../components/Navbar';
+
+const SidebarDynamic = dynamic(() => import('../components/Sidebar'), {
+  ssr: false,
+});
 
 const UserLayout = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="bg-blue-500 text-white p-4">
-        {/* Navbar สำหรับ Users */}
-        <Link href="/users/dashboard">Dashboard</Link>
-        {/* เพิ่มลิงก์อื่นๆ ที่นี่ */}
-      </nav>
+      <Navbar isUser={true} />
       <div className="flex flex-1">
-        <aside className="w-64 bg-gray-800 text-white p-4">
-          {/* Sidebar สำหรับ Users */}
-          <ul>
-            <li >
-              <Link href="/users/somepage">Some Page</Link>
-            </li>
-            {/* เพิ่มลิงก์อื่นๆ ที่นี่ */}
-          </ul>
-        </aside>
-        <main className="flex-1 p-4">
+        {/* เรียกใช้ Sidebar ที่ถูกนำเข้าแบบ dynamic */}
+        <SidebarDynamic isUser={true} />
+        <main className="flex-1">
           {children}
         </main>
       </div>

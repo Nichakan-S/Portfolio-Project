@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.sidebar {
+    transition: width 0.3s;
+    width: 50px; /* ความกว้างเริ่มต้น */
+  }
+  
+.sidebar:hover {
+    width: 200px; /* ความกว้างเมื่อ hover */
+  }

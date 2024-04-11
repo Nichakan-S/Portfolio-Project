@@ -1,16 +1,19 @@
-'use client'
-
 import React from 'react';
-import AdminNevbar from '../components/admin_nevbar.js';
+import Navbar from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
 
 const AdminLayout = ({ children }) => {
   return (
-    <div>
-      <AdminNevbar /> {/* เพิ่มเมนูที่นี่ */}
-        <main>
+    <div className="min-h-screen flex flex-col">
+      <Navbar isAdmin={true} />
+      <div className="flex flex-1">
+        {/* เรียกใช้ Sidebar ที่ถูกนำเข้าแบบ dynamic */}
+        <Sidebar isAdmin={true} />
+        <main className="flex-1">
           {children}
         </main>
       </div>
+    </div>
   );
 };
 

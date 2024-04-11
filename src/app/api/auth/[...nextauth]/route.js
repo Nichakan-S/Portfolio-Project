@@ -18,6 +18,9 @@ export const authOptions = {
         if (!credentials) return null
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
+          include: {
+            rank: true,
+          },
         })
 
         if (
@@ -26,9 +29,16 @@ export const authOptions = {
         ) {
           return {
             id: user.id,
-            name: user.username,
             email: user.email,
-            role: user.role
+            role: user.role,
+            username: user.username,
+            user_image: user.user_image,
+            lastname: user.lastname,
+            prefix: user.prefix,
+            rankname: user.rank?.rankname,
+            employee: user.rank?.employee,
+            evaluation: user.rank?.evaluation,
+            overview: user.rank?.overview
           }
         } else {
           throw new Error('Invalid email or password')
@@ -43,15 +53,31 @@ export const authOptions = {
   callbacks: {
     jwt: async ({ token, user }) => {
       if (user) {
-        token.id = user.id
-        token.role = user.role
+        token.id = user.id;
+        token.role = user.role;
+        token.username = user.username;
+        token.user_image = user.user_image;
+        token.lastname = user.lastname;
+        token.prefix = user.prefix;
+        token.rankname = user.rankname;
+        token.employee = user.employee;
+        token.evaluation = user.evaluation;
+        token.overview = user.overview;
       }
       return token
     },
     session: async ({ session, token }) => {
       if (session.user) {
-        session.user.id = token.id
-        session.user.role = token.role // เพิ่ม role ที่นี่
+        session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.username = token.username;
+        session.user.user_image = token.user_image;
+        session.user.lastname = token.lastname;
+        session.user.prefix = token.prefix;
+        session.user.rankname = token.rankname;
+        session.user.employee = token.employee;
+        session.user.evaluation = token.evaluation;
+        session.user.overview = token.overview;
       }
       return session
     }
