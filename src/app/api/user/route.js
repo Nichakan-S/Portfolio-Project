@@ -3,9 +3,12 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
+export async function GET() {
+  return Response.json(await prisma.user.findMany())
+}
 export async function POST(request) {
   try {
-    const { email, password, prefix, username, lastname, facultyId, majorId, rankId, user_image, role} = await request.json();
+    const { email, password, prefix, username, lastname, facultyId, majorId, rankId, user_image, role } = await request.json();
     if (!email || !password || !prefix || !username || !lastname || !facultyId || !majorId || !rankId || !role) {
       throw new Error('All required fields must be provided');
     }

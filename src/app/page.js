@@ -12,7 +12,6 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      
       console.log('email', email)
       console.log('password', password)
       const result = await signIn('credentials', {
@@ -27,8 +26,7 @@ export default function SignIn() {
         const session = await getSession();
         console.log(session);
         console.log(session?.user?.role);
-
-
+        console.log(session?.user?.id);
         if (session?.user?.role === 'admin') {
           console.log('Admin logged in');
           router.push('/admin');

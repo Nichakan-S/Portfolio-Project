@@ -1,5 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
+
+export async function GET() {
+  return Response.json(await prisma.subjects.findMany())
+}
+
 export async function POST(request) {
   try {
     const { name, day, group, starttime, endtime, term, year } = await request.json();

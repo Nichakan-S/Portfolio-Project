@@ -18,6 +18,9 @@ export const authOptions = {
         if (!credentials) return null
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
+          include: {
+            rank: true,
+          },
         })
 
         if (
@@ -26,9 +29,11 @@ export const authOptions = {
         ) {
           return {
             id: user.id,
-            name: user.username,
             email: user.email,
-            role: user.role
+            role: user.role,
+            employee: user.rank?.employee,
+            evaluation: user.rank?.evaluation,
+            overview: user.rank?.overview
           }
         } else {
           throw new Error('Invalid email or password')
@@ -43,15 +48,21 @@ export const authOptions = {
   callbacks: {
     jwt: async ({ token, user }) => {
       if (user) {
-        token.id = user.id
-        token.role = user.role
+        token.id = user.id;
+        token.role = user.role;
+        token.employee = user.employee;
+        token.evaluation = user.evaluation;
+        token.overview = user.overview;
       }
       return token
     },
     session: async ({ session, token }) => {
       if (session.user) {
-        session.user.id = token.id
-        session.user.role = token.role // เพิ่ม role ที่นี่
+        session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.employee = token.employee;
+        session.user.evaluation = token.evaluation;
+        session.user.overview = token.overview;
       }
       return session
     }
