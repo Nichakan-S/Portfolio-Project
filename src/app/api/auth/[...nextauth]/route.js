@@ -31,11 +31,6 @@ export const authOptions = {
             id: user.id,
             email: user.email,
             role: user.role,
-            username: user.username,
-            user_image: user.user_image,
-            lastname: user.lastname,
-            prefix: user.prefix,
-            rankname: user.rank?.rankname,
             employee: user.rank?.employee,
             evaluation: user.rank?.evaluation,
             overview: user.rank?.overview
@@ -55,11 +50,6 @@ export const authOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
-        token.username = user.username;
-        token.user_image = user.user_image;
-        token.lastname = user.lastname;
-        token.prefix = user.prefix;
-        token.rankname = user.rankname;
         token.employee = user.employee;
         token.evaluation = user.evaluation;
         token.overview = user.overview;
@@ -70,11 +60,6 @@ export const authOptions = {
       if (session.user) {
         session.user.id = token.id;
         session.user.role = token.role;
-        session.user.username = token.username;
-        session.user.user_image = token.user_image;
-        session.user.lastname = token.lastname;
-        session.user.prefix = token.prefix;
-        session.user.rankname = token.rankname;
         session.user.employee = token.employee;
         session.user.evaluation = token.evaluation;
         session.user.overview = token.overview;
