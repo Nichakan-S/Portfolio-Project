@@ -19,7 +19,8 @@
     "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18",
-    "styled-components": "^6.1.8"
+    "styled-components": "^6.1.8",
+    "sweetalert2": "^11.10.8"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

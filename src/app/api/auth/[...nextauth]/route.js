@@ -31,9 +31,7 @@ export const authOptions = {
             id: user.id,
             email: user.email,
             role: user.role,
-            employee: user.rank?.employee,
-            evaluation: user.rank?.evaluation,
-            overview: user.rank?.overview
+
           }
         } else {
           throw new Error('Invalid email or password')
@@ -50,9 +48,7 @@ export const authOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
-        token.employee = user.employee;
-        token.evaluation = user.evaluation;
-        token.overview = user.overview;
+
       }
       return token
     },
@@ -60,9 +56,7 @@ export const authOptions = {
       if (session.user) {
         session.user.id = token.id;
         session.user.role = token.role;
-        session.user.employee = token.employee;
-        session.user.evaluation = token.evaluation;
-        session.user.overview = token.overview;
+
       }
       return session
     }

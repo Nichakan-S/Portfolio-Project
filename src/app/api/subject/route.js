@@ -2,9 +2,24 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function GET() {
-  return Response.json(await prisma.subjects.findMany())
+  try {
+    const subjects = await prisma.subjects.findMany();
+    return new Response(JSON.stringify(subjects), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching subjects:', error);
+    return new Response(JSON.stringify({ error: 'Error fetching subjects' }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  }
 }
-
 export async function POST(request) {
   try {
     const { name, day, group, starttime, endtime, term, year } = await request.json();
