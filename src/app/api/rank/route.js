@@ -2,6 +2,26 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
+export async function GET() {
+  try {
+    const ranks = await prisma.rank.findMany();
+    return new Response(JSON.stringify(ranks), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching ranks:', error);
+    return new Response(JSON.stringify({ error: 'Error fetching ranks' }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+}
+
 export async function POST(request) {
   try {
     const { rankname, employee, evaluation, overview  } = await request.json();

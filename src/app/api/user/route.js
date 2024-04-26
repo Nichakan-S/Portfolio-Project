@@ -57,3 +57,4 @@ export async function POST(request) {
     return new Response(JSON.stringify({ error: 'User could not be created' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
+

@@ -29,12 +29,13 @@ export async function GET() {
 export async function POST(request) {
   try {
     const { facultyId, majorName } = await request.json();
+    const numericFacultyId = Number(facultyId);
     if (!facultyId || !majorName) {
       throw new Error('facultyId are required');
     }
     const NewMajor = await prisma.major.create({
       data: {
-        facultyId,
+        facultyId: numericFacultyId,
         majorName
       },
     });
@@ -47,6 +48,6 @@ export async function POST(request) {
     
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ error: 'User could not be created' }), { status: 500 });
+    return new Response(JSON.stringify({ error: 'Major could not be created' }), { status: 500 });
   }
 }

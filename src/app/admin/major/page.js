@@ -6,24 +6,32 @@ import Link from 'next/link'
 const MajorList = () => {
     const [major, setMajor] = useState([])
     const [searchTerm, setSearchTerm] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetchmajor()
+        fetchMajor()
     }, [])
 
-    const fetchmajor = async () => {
+    const fetchMajor = async () => {
         try {
             const res = await fetch('/api/major')
             const data = await res.json()
             setMajor(data)
         } catch (error) {
             console.error('Failed to fetch major', error)
+        } finally {
+            setIsLoading(false);
         }
     }
+    if (isLoading) {
+        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    }
 
-    const filteredmajor = major.filter((major) =>
-        major.majorName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredmajor = major.filter((major) => {
+        return major.majorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            major.faculty?.facultyName.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
@@ -49,24 +57,10 @@ const MajorList = () => {
                 <table className="min-w-full">
                     <thead className="bg-gray-50 ">
                         <tr>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >
-                                ชื่อสาขา
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >
-                                ชื่อคณะ
-                            </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >
-                                แก้ไข
-                            </th>
+                            <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อสาขา</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อคณะ</th>
+                            <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
                     </thead>
                 </table>
@@ -74,19 +68,22 @@ const MajorList = () => {
                     <table className="min-w-full">
                         <tbody className="divide-y divide-gray-200">
                             {filteredmajor.length > 0 ? (
-                                filteredmajor.map((major) => (
+                                filteredmajor.map((major, index) => (
                                     <tr key={major.id}>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="w-1 px-6 py-4 whitespace-nowrap">
+                                            {index + 1}
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
                                                 {major.majorName}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                            {major.faculty?.facultyName}
+                                                {major.faculty?.facultyName}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-right whitespace-nowrap text-sm font-medium">
+                                        <td className="px-6 py-4 text-right whitespace-nowrap">
                                             <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
                                                 href={`/admin/major/${major.id}`}
@@ -107,7 +104,7 @@ const MajorList = () => {
                     </table>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

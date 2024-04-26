@@ -2,32 +2,34 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { SuccessAlert,WarningAlert,ConfirmAlert } from '../../../components/sweetalert';
+import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
 
 
 const EditFaculty = ({ params }) => {
   const [facultyName, setFacultyName] = useState('');
   const router = useRouter();
   const { id } = params;
+  const [isLoading, setIsLoading] = useState(true);
 
-  const fetchPost = async (id) => {
+  const fetchFaculty = async (id) => {
     try {
       const response = await fetch(`/api/faculty/${id}`);
       const data = await response.json();
-      if (!response.ok) throw new Error('Failed to fetch post');
+      if (!response.ok) throw new Error('Failed to fetch Faculty');
       setFacultyName(data.facultyName);
-      setContent(data.content);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     if (id) {
-      fetchPost(parseInt(id));
+      fetchFaculty(parseInt(id));
     }
     if (facultyName) {
-      fetchPost(parseInt(facultyName));
+      fetchFaculty(parseInt(facultyName));
     }
   }, [id], [facultyName]);
 
@@ -41,10 +43,9 @@ const EditFaculty = ({ params }) => {
         },
         body: JSON.stringify({ facultyName }),
       });
-  
-      if (!response.ok) throw new Error('Failed to update post');
-  
-      // เรียกใช้ SuccessAlert ถ้าการแก้ไขสำเร็จ
+
+      if (!response.ok) throw new Error('Failed to update Faculty');
+
       SuccessAlert('สำเร็จ!', 'ข้อมูลถูกอัปเดตเรียบร้อยแล้ว');
       router.push('/admin/faculty');
     } catch (error) {
@@ -60,7 +61,6 @@ const EditFaculty = ({ params }) => {
           method: 'DELETE',
         });
         if (!response.ok) throw new Error('Failed to delete the faculty.');
-        // Redirect after successful deletion
         SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
         router.push('/admin/faculty');
       } catch (error) {
@@ -69,6 +69,13 @@ const EditFaculty = ({ params }) => {
       }
     });
   };
+  const handleBack = () => {
+    router.push('/admin/faculty');
+  };
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -101,9 +108,16 @@ const EditFaculty = ({ params }) => {
           <button
             type="button"
             onClick={handleDelete}
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            className="mr-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             ลบ
+          </button>
+          <button
+            type="button"
+            onClick={handleBack}
+            className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+          >
+            ยกเลิก
           </button>
         </div>
       </form>

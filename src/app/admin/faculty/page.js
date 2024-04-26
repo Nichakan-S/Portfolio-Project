@@ -6,7 +6,7 @@ import Link from 'next/link'
 const FacultyList = () => {
   const [faculty, setFaculty] = useState([])
   const [searchTerm, setSearchTerm] = useState('');
-
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchFaculty()
@@ -14,12 +14,18 @@ const FacultyList = () => {
 
   const fetchFaculty = async () => {
     try {
-      const res = await fetch('/api/faculty')
-      const data = await res.json()
-      setFaculty(data)
+      const res = await fetch('/api/faculty');
+      const data = await res.json();
+      setFaculty(data);
     } catch (error) {
-      console.error('Failed to fetch faculty', error)
+      console.error('Failed to fetch faculty', error);
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   const filteredFaculty = faculty.filter((faculty) =>
@@ -50,18 +56,9 @@ const FacultyList = () => {
         <table className="min-w-full">
           <thead className="bg-gray-50 ">
             <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                ชื่อคณะ
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                แก้ไข
-              </th>
+              <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+              <th scope="col" className="px-9 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อคณะ</th>
+              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
             </tr>
           </thead>
         </table>
@@ -69,14 +66,17 @@ const FacultyList = () => {
           <table className="min-w-full">
             <tbody className="divide-y divide-gray-200">
               {filteredFaculty.length > 0 ? (
-                filteredFaculty.map((faculty) => (
+                filteredFaculty.map((faculty, index) => (
                   <tr key={faculty.id}>
+                    <td className="w-1 px-6 py-4 whitespace-nowrap">
+                      {index + 1}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
                         {faculty.facultyName}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right whitespace-nowrap text-sm font-medium">
+                    <td className="px-6 py-4 text-right whitespace-nowrap">
                       <Link
                         className="text-indigo-600 hover:text-indigo-900"
                         href={`/admin/faculty/${faculty.id}`}
@@ -96,7 +96,6 @@ const FacultyList = () => {
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
   )
