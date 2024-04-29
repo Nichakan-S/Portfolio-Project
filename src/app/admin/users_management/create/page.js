@@ -74,14 +74,11 @@ const CreateUser = () => {
                 e.target.value = '';
                 return;
             }
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setUserImage(reader.result);
-            };
-            reader.readAsDataURL(file);
+            setUserImage(URL.createObjectURL(file));
         }
     };
-    
+
+
     const validateForm = () => {
         if (password !== confirmPassword) {
             WarningAlert('ผิดพลาด!', 'รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน');
@@ -95,26 +92,28 @@ const CreateUser = () => {
         if (!validateForm()) {
             return;
         }
+
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('password', password);
+        formData.append('prefix', prefix);
+        formData.append('username', username);
+        formData.append('lastname', lastname);
+        formData.append('facultyId', parseInt(facultyId, 10));
+        formData.append('majorId', parseInt(majorId, 10));
+        formData.append('rankId', parseInt(rankId, 10));
+        formData.append('role', role);
+        formData.append('user_image', userImage);
+
+        console.log(formData)
         try {
-            const requestBody = {
-                email, password, prefix, username, lastname,
-                facultyId: parseInt(facultyId, 10),
-                majorId: parseInt(majorId, 10),
-                rankId: parseInt(rankId, 10),
-                user_image: userImage || null,
-                role
-            };
-    
             const response = await fetch('/api/user', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestBody),
+                body: formData,
             });
-    
+
             if (!response.ok) throw new Error('เกิดข้อผิดพลาด');
-    
+
             SuccessAlert('สำเร็จ!', 'ผู้ใช้ได้ถูกเพิ่มแล้ว');
             router.push('/admin/users_management');
         } catch (error) {
@@ -122,7 +121,8 @@ const CreateUser = () => {
             WarningAlert('ผิดพลาด!', 'ไม่สามารถเพิ่มผู้ใช้ได้');
         }
     };
-    
+
+
     const handleBack = () => {
         router.push('/admin/users_management');
     };
@@ -130,7 +130,7 @@ const CreateUser = () => {
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-2xl font-semibold mb-6">เพิ่มผู้ใช้ใหม่</h1>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
                 <div>
                     <label htmlFor="userImage" className="block text-sm font-medium text-gray-700 mt-4">
                         รูปภาพผู้ใช้
@@ -149,23 +149,6 @@ const CreateUser = () => {
                             <img src={userImage} alt="Preview" className="max-w-xs" />
                         </div>
                     )}
-                </div>
-                <div>
-                    <label htmlFor="prefix" className="block text-sm font-medium text-gray-700">
-                        คำนำหน้าชื่อ
-                    </label>
-                    <select
-                        id="prefix"
-                        required
-                        value={prefix}
-                        onChange={(e) => setPrefix(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="">กรุณาเลือกคำนำหน้าชื่อ</option>
-                        <option value="นาย">นาย</option>
-                        <option value="นาง">นาง</option>
-                        <option value="นางสาว">นางสาว</option>
-                    </select>
                 </div>
                 <div>
                     <label htmlFor="faculty" className="block text-sm font-medium text-gray-700">
@@ -227,6 +210,23 @@ const CreateUser = () => {
                                 {rank.rankname}
                             </option>
                         ))}
+                    </select>
+                </div>
+                <div>
+                    <label htmlFor="prefix" className="block text-sm font-medium text-gray-700">
+                        คำนำหน้าชื่อ
+                    </label>
+                    <select
+                        id="prefix"
+                        required
+                        value={prefix}
+                        onChange={(e) => setPrefix(e.target.value)}
+                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    >
+                        <option value="">กรุณาเลือกคำนำหน้าชื่อ</option>
+                        <option value="นาย">นาย</option>
+                        <option value="นาง">นาง</option>
+                        <option value="นางสาว">นางสาว</option>
                     </select>
                 </div>
                 <div>

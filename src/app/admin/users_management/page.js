@@ -14,7 +14,7 @@ const UserList = () => {
 
     const fetchuser = async () => {
         try {
-            const res = await fetch('/api/user')
+            const res = await fetch('/api/getuser')
             const data = await res.json()
             setUser(data)
         } catch (error) {
