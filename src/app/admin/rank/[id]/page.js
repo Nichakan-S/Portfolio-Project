@@ -80,7 +80,6 @@ const EditRank = ({ params }) => {
                     method: 'DELETE',
                 });
                 if (!response.ok) throw new Error('Failed to delete the Rank.');
-                // Redirect after successful deletion
                 SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
                 router.push('/admin/rank');
             } catch (error) {

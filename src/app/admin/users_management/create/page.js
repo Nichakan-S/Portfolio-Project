@@ -26,37 +26,30 @@ const CreateUser = () => {
 
 
     useEffect(() => {
-        const fetchFaculties = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch('/api/faculty');
-                const data = await response.json();
-                setFaculty(data);
-            } catch (error) {
-                console.error('Failed to fetch faculties', error);
-            }
-        };
-        const fetchMajors = async () => {
-            try {
-                const response = await fetch('/api/major');
-                const data = await response.json();
-                setMajors(data);
-            } catch (error) {
-                console.error('Failed to fetch majors', error);
-            }
-        };
-        const fetchRanks = async () => {
-            try {
-                const response = await fetch('/api/rank');
-                const data = await response.json();
-                setRank(data);
-            } catch (error) {
-                console.error('Failed to fetch ranks', error);
-            }
-        };
-        fetchFaculties();
-        fetchMajors();
-        fetchRanks();
+                const [facultiesResponse, majorsResponse, ranksResponse] = await Promise.all([
+                    fetch('/api/faculty'),
+                    fetch('/api/major'),
+                    fetch('/api/rank'),
+                ]);
 
+                const faculties = await facultiesResponse.json();
+                const majors = await majorsResponse.json();
+                const ranks = await ranksResponse.json();
+
+                setFaculty(faculties);
+                setMajors(majors);
+                setRank(ranks);
+            } catch (error) {
+                console.error('Failed to fetch data', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
         const newFilteredMajors = majors.filter(major => major.facultyId.toString() === selectedFacultyId);
         setFilteredMajors(newFilteredMajors);
     }, [selectedFacultyId, majors]);
@@ -64,8 +57,8 @@ const CreateUser = () => {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            if (file.size > 10485760) {
-                WarningAlert('ผิดพลาด!', 'ขนาดห้ามเกิน 10MB');
+            if (file.size > 2097152) { // 2MB limit
+                WarningAlert('ผิดพลาด!', 'ขนาดห้ามเกิน 2MB');
                 e.target.value = '';
                 return;
             }
@@ -74,10 +67,13 @@ const CreateUser = () => {
                 e.target.value = '';
                 return;
             }
-            setUserImage(URL.createObjectURL(file));
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setUserImage(reader.result);
+            };
+            reader.readAsDataURL(file);
         }
     };
-
 
     const validateForm = () => {
         if (password !== confirmPassword) {
@@ -89,27 +85,28 @@ const CreateUser = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validateForm()) {
-            return;
-        }
+        if (!validateForm()) return;
 
-        const formData = new FormData();
-        formData.append('email', email);
-        formData.append('password', password);
-        formData.append('prefix', prefix);
-        formData.append('username', username);
-        formData.append('lastname', lastname);
-        formData.append('facultyId', parseInt(facultyId, 10));
-        formData.append('majorId', parseInt(majorId, 10));
-        formData.append('rankId', parseInt(rankId, 10));
-        formData.append('role', role);
-        formData.append('user_image', userImage);
+        const body = JSON.stringify({
+            email,
+            password,
+            prefix,
+            username,
+            lastname,
+            facultyId: parseInt(facultyId, 10),
+            majorId: parseInt(majorId, 10),
+            rankId: parseInt(rankId, 10),
+            user_image: userImage,
+            role
+        });
 
-        console.log(formData)
         try {
             const response = await fetch('/api/user', {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: body,
             });
 
             if (!response.ok) throw new Error('เกิดข้อผิดพลาด');
@@ -121,7 +118,6 @@ const CreateUser = () => {
             WarningAlert('ผิดพลาด!', 'ไม่สามารถเพิ่มผู้ใช้ได้');
         }
     };
-
 
     const handleBack = () => {
         router.push('/admin/users_management');

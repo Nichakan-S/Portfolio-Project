@@ -23,17 +23,35 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
-    const { email, password, prefix, username, lastname, facultyId, majorId, rankId, user_image, role } = await req.json()
-    const hashedPassword = bcrypt.hashSync(password, 10);
+    const { email, password, prefix, username, lastname, facultyId, majorId, rankId, user_image, role } = await req.json();
+    const finalUserImage = user_image || null;
+    const dataToUpdate = {
+      email, 
+      prefix, 
+      username, 
+      lastname, 
+      facultyId, 
+      majorId, 
+      rankId, 
+      user_image: finalUserImage,
+      role
+    };
+
+    if (password) {
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      dataToUpdate.password = hashedPassword;
+    }
+
     return Response.json(await prisma.user.update({
       where: { id: Number(params.id) },
-      data: { email, password: hashedPassword, prefix, username, lastname, facultyId, majorId, rankId, user_image, role },
-    }))
+      data: dataToUpdate,
+    }));
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ error: 'User could not be update' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ error: 'User could not be updated' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
+
 
 export async function DELETE(req, { params }) {
   try {

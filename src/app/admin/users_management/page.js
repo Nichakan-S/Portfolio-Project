@@ -14,7 +14,7 @@ const UserList = () => {
 
     const fetchuser = async () => {
         try {
-            const res = await fetch('/api/getuser')
+            const res = await fetch('/api/user')
             const data = await res.json()
             setUser(data)
         } catch (error) {
@@ -121,7 +121,7 @@ const UserList = () => {
                                         <td className="w-1/5 px-6 py-4 text-right whitespace-nowrap">
                                             <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/admin/user/${user.id}`}
+                                                href={`/admin/users_management/${user.id}`}
                                             >
                                                 แก้ไข
                                             </Link>

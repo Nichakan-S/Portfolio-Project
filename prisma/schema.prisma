@@ -46,7 +46,7 @@ model User {
   majorId    Int      @db.UnsignedInt
   major      Major    @relation(fields: [majorId], references: [id])
   prefix     String   @db.VarChar(15)
-  user_image String?  @db.Text
+  user_image String?  @db.LongText
   username   String   @db.VarChar(100)
   lastname   String   @db.VarChar(100)
   email      String   @db.VarChar(100) @unique
