@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Button, Input, Flex  } from 'antd';
+import { EditFilled } from '@ant-design/icons';
 
 const RankList = () => {
     const [rank, setRank] = useState([])
@@ -49,31 +51,30 @@ const RankList = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold mb-6">ตำแหน่ง</h1>
                 <div className="flex items-center">
-                    <input
+                    <Input 
+                        className="flex-grow mr-2"
+                        placeholder="ค้นหาตำแหน่ง..." 
                         type="text"
-                        placeholder="ค้นหาตำแหน่ง..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="mt-4 inline-flex items-center px-4 py-2 border rounded-lg shadow-sm text-sm font-medium mr-4"
                     />
-                    <Link
-                        className="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        href="rank/create"
-                    >
-                        เพิ่มตำแหน่ง
-                    </Link>
+                    <Flex align="flex-start" gap="small" vertical  >
+                        <Link href="rank/create">
+                            <Button type="primary" style={{ backgroundColor: '#2D427C', borderColor: '#2D427C', color: 'white' }}>เพิ่มตำแหน่ง</Button>
+                        </Link>
+                    </Flex>
                 </div>
             </div>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                 <table className="min-w-full">
-                    <thead className="bg-gray-50 ">
+                    <thead className="bg-gray-100 ">
                         <tr>
-                            <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อตำแหน่ง</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เข้าถึงหน้าพนักงาน</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เข้าถึงหน้าประเมิน</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เข้าถึงหน้าภาพรวม</th>
-                            <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
+                            <th scope="col" className="w-1 px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">#</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">ชื่อตำแหน่ง</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">เข้าถึงหน้าพนักงาน</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">เข้าถึงหน้าประเมิน</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">เข้าถึงหน้าภาพรวม</th>
+                            <th scope="col" className="w-1/3 px-6 py-3 text-right text-base font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
                     </thead>
                 </table>
@@ -107,12 +108,19 @@ const RankList = () => {
                                             </div>
                                         </td>
                                         <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
-                                            <Link
+                                            <Link href={`/admin/rank/${rank.id}`}>
+                                                <Button 
+                                                type="link" 
+                                                icon={<EditFilled style={{ fontSize: '20px' }}/>}
+                                                style={{ color: '#FFD758' }}
+                                                />
+                                            </Link>
+                                            {/* <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
                                                 href={`/admin/rank/${rank.id}`}
                                             >
                                                 แก้ไข
-                                            </Link>
+                                            </Link> */}
                                         </td>
                                     </tr>
                                 ))

@@ -12,6 +12,14 @@ const Navbar = ({ isAdmin }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const hide = () => {
+    setOpen(false);
+  };
+  const handleOpenChange = (newOpen) => {
+    setOpen(newOpen);
+  };
+
 
   useEffect(() => {
     // เมื่อ status เป็น 'authenticated' และมี session.user.id ที่ถูกต้อง
@@ -57,7 +65,8 @@ const Navbar = ({ isAdmin }) => {
           width={40}
           height={40}
           style={{ borderRadius: '50%', width: 'auto', height: 'auto' }} />
-        <Link href={isAdmin ? '/admin' : '/users'} className="text-xl font-bold ml-3">Dashboard</Link>
+        <Link href={isAdmin ? '/admin' : '/users'} className="text-xl font-bold ml-3">Chandrakasem Rajabhat University</Link>
+        <Link href={isAdmin ? '/admin' : '/users'} className="text-xl font ml-3">มหาวิทยาลัยราชภัฏจันทรเกษม</Link>
       </div>
       <div className="flex items-center">
         <div>

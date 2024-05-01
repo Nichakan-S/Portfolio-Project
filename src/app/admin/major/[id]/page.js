@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
+import { Select , Input , Button , Alert , Space} from 'antd';
 
 
 const EditMajor = ({ params }) => {
@@ -103,69 +104,83 @@ const EditMajor = ({ params }) => {
         router.push('/admin/major');
     };
 
+    const handleChange = (value) => {
+        setSelectedFaculty(value); // ตรวจสอบว่าใช้ setSelectedFaculty หรือตัวแปรที่ถูกต้อง
+        console.log(`selected ${value}`);
+      };      
+    
+    const facultyOptions = faculty.map(fac => ({
+    label: fac.facultyName,
+    value: fac.id,
+    disabled: fac.disabled // ถ้ามีฟิลด์ disabled ในข้อมูล
+    }));
+
     if (isLoading) {
         return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-2xl font-semibold mb-6">แก้ไขชื่อสาขา{majorName}</h1>
+            <h1 className="text-2xl font-semibold mb-6">แก้ไขชื่อสาขา {majorName}</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label htmlFor="faculty" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="faculty" className="block text-base font-medium text-gray-700 mb-3">
                         เลือกคณะ
                     </label>
-                    <select
-                        id="faculty"
-                        required
-                        value={selectedFaculty}
-                        onChange={(e) => setSelectedFaculty(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="">กรุณาเลือกคณะ</option>
-                        {faculty.map((fac) => (
-                            <option key={fac.id} value={fac.id}>
-                                {fac.facultyName}
-                            </option>
-                        ))}
-                    </select>
+                    <Select
+                        defaultValue="กรุณาเลือกคณะ"
+                        style={{ width: '100%' }}
+                        size="large"
+                        onChange={handleChange}
+                        options={[{ value: '', label: 'กรุณาเลือกคณะ', disabled: true }, ...facultyOptions]}
+                    />
                     <label
                         htmlFor="majorName"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-base font-medium text-gray-700 mt-4 mb-4 "
                     >
                         ชื่อสาขา
                     </label>
-                    <input
+                    <Input 
+                        placeholder="majorName" 
+                        size="large"
                         type="text"
                         name="majorName"
                         id="majorName"
                         required
                         value={majorName}
                         onChange={(e) => setMajorName(e.target.value)}
-                        className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-300 shadow-lg focus:border-indigo-500 focus:ring-indigo-500 text-lg"
                     />
+                    <Space
+                        direction="vertical"
+                        style={{
+                        width: '100%',
+                        }}
+                        className="mt-4"
+                    >
+                        <Alert message="กรุณาทราบว่าไม่สามารถลบข้อมูลได้หากมีผู้ใช้งานในสาขาและคณะนี้ โปรดตรวจสอบและยืนยันก่อนกดบันทึกข้อมูล" banner />
+                    </Space>
                 </div>
                 <div className="flex items-center">
-                    <button
-                        type="submit"
-                        className="mr-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    <Button className="inline-flex justify-center mr-4"
+                    type="primary"
+                    size="middle"
+                    onClick={handleSubmit}
+                    style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
                     >
-                        บันทึก
-                    </button>
-                    <button
-                        type="button"
+                    บันทึก
+                    </Button>
+                    <Button className="inline-flex justify-center mr-4"
+                        type="primary" danger
+                        size="middle"
                         onClick={handleDelete}
-                        className="mr-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                    >
+                        >
                         ลบ
-                    </button>
-                    <button
-                        type="button"
+                    </Button>
+                    <Button className="inline-flex justify-center mr-4"
                         onClick={handleBack}
-                        className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                    >
+                        >
                         ยกเลิก
-                    </button>
+                    </Button>
                 </div>
             </form>
         </div>

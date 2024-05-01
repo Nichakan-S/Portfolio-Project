@@ -3,6 +3,14 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { Menu } from 'antd';
+
+function getItem(label, key, url) {
+    return {
+      key,
+      label: <Link href={url}><a>{label}</a></Link>, // ใช้ Link จาก next/link สำหรับการนำทาง
+    };
+  }
 
 const Sidebar = () => {
     const { data: session, status } = useSession();
@@ -37,87 +45,69 @@ const Sidebar = () => {
     const isEmployee = user?.rank?.employee;
     const isEvaluation = user?.rank?.evaluation;
     const isOverview = user?.rank?.overview;
+    const userMenuItems = [
+        isUser && { key: 'Home', label: (<Link href="/users">หน้าแรก</Link>) },
+        isUser && { key: 'Schedule', label: (<Link href="/users/academic">ตารางสอน</Link>) },
+        isUser && { key: 'Activity', label: (<Link href="/users/activity">ผลงานกิจกรรม</Link>) },
+        isUser && { key: 'Research', label: (<Link href="/users/research">ผลงานวิจัย</Link>) },
+        // ... รายการเมนูอื่นๆ สำหรับผู้ใช้
+    ];
+
+    const adminMenuItems = [
+        isAdmin && { key: 'admin', label: (<Link href="/admin" style={{ color: 'white' }} >หน้าแรก</Link>) },
+        isAdmin && { key: 'faculty', label: (<Link href="/admin/faculty">คณะ</Link>) },
+        isAdmin && { key: 'major', label: (<Link href="/admin/major">สาขา</Link>) },
+        isAdmin && { key: 'rank', label: (<Link href="/admin/rank">ตำแหน่ง</Link>) },
+        isAdmin && { key: 'users_management', label: (<Link href="/admin/users_management">จัดการผู้ใช้</Link>) },
+        isAdmin && { key: 'subject', label: (<Link href="/admin/subject">วิชาทั้งหมด</Link>) },
+        isAdmin && { key: 'manage_supject', label: (<Link href="/admin/manage_supject">ตารางสอน</Link>) },
+        isAdmin && { key: 'activity', label: (<Link href="/admin/activity">กิจกรรมทั้งหมด</Link>) },
+        isAdmin && { key: 'manage_activity', label: (<Link href="/admin/manage_activity">ผลงานกิจกรรม</Link>) },
+        isAdmin && { key: 'manage_research', label: (<Link href="/admin/manage_research">ผลงานวิจัย</Link>) },
+        // ... รายการเมนูอื่นๆ สำหรับผู้ดูแล
+    ];
+
+    const employeeMenuItems = [
+        isEmployee && { key: 'employee', label: (<Link href="/users/employee">Employee Section</Link>) },
+    ];
+
+    const evaluationMenuItem = [
+        isEvaluation && { key: 'evaluation', label: (<Link href="/users/evaluation">Evaluation Section</Link>) },
+    ];
+
+    const overviewMenuItem = [
+        isOverview && { key: 'overview', label: (<Link href="/users/overview">Overview Section</Link>) },
+    ];
+
+    const items = [...userMenuItems, ...adminMenuItems, ...employeeMenuItems, ...evaluationMenuItem, ...overviewMenuItem].filter(Boolean);
+
+    const onClick = (e) => {
+        console.log('click ', e);
+      };
 
     if (isLoading || !user) {
         return <div>Loading...</div>;
     }
 
-    return (
-        <aside className="w-64 bg-gray-800 text-white p-4">
-            {/* Sidebar สำหรับ Users */}
-            <ul>
-                {isUser && (
-                    <>
-                        <li className="mb-3">
-                            <Link href="/users">หน้าแรก</Link>
-                        </li>
-                        <li className="mb-3">
-                            <Link href="/users/">ตารางสอน</Link>
-                        </li>
-                        <li className="mb-3">
-                            <Link href="/users/">ผลงานกิจกรรม</Link>
-                        </li>
-                        <li className="mb-3">
-                            <Link href="/users/">ผลงานวิจัย</Link>
-                        </li>
-                    </>
-                )}
-
-                {isAdmin && (
-                    <>
-                        <li className="mb-3">
-                            <Link href="/admin">หน้าแรก</Link>
-                        </li>
-                        <li className="mb-3">
-                            <Link href="/admin/faculty">คณะ</Link>
-                        </li>
-                        <li className="mb-3">
-                            <Link href="/admin/major">สาขา</Link>
-                        </li>
-                        <li className="mb-3">
-                            <Link href="/admin/rank">ตำแหน่ง</Link>
-                        </li>
-                        <li className="mb-3">
-                            <Link href="/admin/users_management">จัดการผู้ใช้</Link>
-                        </li>
-                        <li className="mb-3">
-                            <Link href="/admin/subject">วิชาทั้งหมด</Link>
-                        </li>
-                        <li className="mb-3">
-                            <Link href="/admin/manage_supject">ตารางสอน</Link>
-                        </li>
-                        <li className="mb-3">
-                            <Link href="/admin/activity">กิจกรรมทั้งหมด</Link>
-                        </li>
-                        <li className="mb-3">
-                            <Link href="/admin/manage_activity">ผลงานกิจกรรม</Link>
-                        </li>
-                        <li className="mb-3">
-                            <Link href="/admin/manage_research">ผลงานวิจัย</Link>
-                        </li>
-                    </>
-                )}
-
-                {isEmployee && (
-                    <li className="mb-3">
-                        <Link href="/users/employee">Employee Section</Link>
-                    </li>
-
-                )}
-
-                {isEvaluation && (
-                    <li className="mb-3">
-                        <Link href="/users/evaluation">Evaluation Section</Link>
-                    </li>
-                )}
-
-                {isOverview && (
-                    <li className="mb-3">
-                        <Link href="/users/overview">Overview Section</Link>
-                    </li>
-                )}
-                {/* เพิ่มลิงก์อื่นๆ ที่นี่ */}
-            </ul>
+    return (      
+        <aside >
+            {/* ใช้ Menu จาก antd */}
+            <Menu
+                onClick={onClick}
+                style={{
+                    width: '15rem',
+                    height: '100vh',
+                    backgroundColor: '#212936',
+                    color: 'white',
+                    padding: '1rem',
+                }}
+                defaultSelectedKeys={['1']}
+                defaultOpenKeys={['sub1']}
+                mode="inline"
+                items={items}
+                theme="dark"
+            />
+            {/* เพิ่มลิงก์อื่นๆ ที่นี่ หากต้องการ */}
         </aside>
     );
 };

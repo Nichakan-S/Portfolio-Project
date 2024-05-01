@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
+import { Input , Select } from 'antd';
 
 const CreateRank = () => {
     const [rankname, setRankName] = useState('');
@@ -42,65 +43,79 @@ const CreateRank = () => {
         router.push('/admin/rank');
     };
 
+    const EmployeehandleChange = (value) => {
+        setEmployeeAccess(value);
+    };
+
+    const OverviewhandleChange = (value) => {
+        setOverviewAccess(value);
+    };
+
+    const EvaluationhandleChange = (value) => {
+        setEvaluationAccess(value);
+    };
+
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-2xl font-semibold mb-6">เพิ่มตำแหน่งใหม่</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label htmlFor="rankname" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="rankname" className="block text-base font-medium text-gray-700 mb-4 ">
                         ชื่อตำแหน่ง
                     </label>
-                    <input
+                    <Input 
+                        placeholder="rankname" 
+                        size="large"
                         type="text"
                         name="rankname"
                         id="rankname"
                         required
                         value={rankname}
                         onChange={(e) => setRankName(e.target.value)}
-                        className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-300 shadow-lg focus:border-indigo-500 focus:ring-indigo-500 text-lg"
                     />
                 </div>
                 <div>
-                    <label htmlFor="employeeAccess" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="employeeAccess" className="block text-sm font-medium text-gray-700 mb-4">
                         เข้าถึงหน้าพนักงาน
                     </label>
-                    <select
-                        id="employeeAccess"
-                        value={employeeAccess}
-                        onChange={(e) => setEmployeeAccess(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="disable">ปิดใช้งาน</option>
-                        <option value="enable">เปิดใช้งาน</option>
-                    </select>
+                    <Select
+                        defaultValue="enable" // ตั้งค่าเริ่มต้นที่ต้องการ
+                        style={{ width: '100%' }} // ใช้ '100%' เพื่อให้แมทช์กับตัวเลือกเดิมที่ใช้ width: 'full'
+                        onChange={EmployeehandleChange}
+                        options={[
+                            { value: 'disable', label: 'ปิดใช้งาน' },
+                            { value: 'enable', label: 'เปิดใช้งาน' }
+                        ]}
+                    />
+
                 </div>
                 <div>
-                    <label htmlFor="evaluationAccess" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="evaluationAccess" className="block text-sm font-medium text-gray-700 mb-4">
                         เข้าถึงหน้าประเมิน
                     </label>
-                    <select
-                        id="evaluationAccess"
-                        value={evaluationAccess}
-                        onChange={(e) => setEvaluationAccess(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="disable">ปิดใช้งาน</option>
-                        <option value="enable">เปิดใช้งาน</option>
-                    </select>
+                    <Select
+                        defaultValue="enable" // ตั้งค่าเริ่มต้นให้ตรงกับ state ปัจจุบัน
+                        style={{ width: '100%' }} // ใช้ '100%' เพื่อให้แมทช์กับตัวเลือกเดิมที่ใช้ width: 'full'
+                        onChange={EvaluationhandleChange}
+                        options={[
+                            { value: 'disable', label: 'ปิดใช้งาน' ,color: '#ff0000'},
+                            { value: 'enable', label: 'เปิดใช้งาน' }
+                        ]}
+                    />
                 </div>
                 <div>
-                    <label htmlFor="overviewAccess" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="overviewAccess" className="block text-sm font-medium text-gray-700 mb-4">
                         เข้าถึงหน้าภาพรวม
                     </label>
-                    <select
-                        id="overviewAccess"
-                        value={overviewAccess}
-                        onChange={(e) => setOverviewAccess(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="disable">ปิดใช้งาน</option>
-                        <option value="enable">เปิดใช้งาน</option>
-                    </select>
+                    <Select
+                        defaultValue="enable" // ตั้งค่าเริ่มต้นให้ตรงกับ state ปัจจุบัน
+                        style={{ width: '100%' }} // ใช้ '100%' เพื่อให้แมทช์กับตัวเลือกเดิมที่ใช้ width: 'full'
+                        onChange={OverviewhandleChange}
+                        options={[
+                            { value: 'disable', label: 'ปิดใช้งาน' },
+                            { value: 'enable', label: 'เปิดใช้งาน' }
+                        ]}
+                    />
                 </div>
                 <div>
                     <button

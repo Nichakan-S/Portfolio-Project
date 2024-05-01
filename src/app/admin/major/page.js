@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Button, Input, Flex  } from 'antd';
+import { EditFilled } from '@ant-design/icons';
 
 const MajorList = () => {
     const [major, setMajor] = useState([])
@@ -38,29 +40,28 @@ const MajorList = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold mb-6">สาขา</h1>
                 <div className="flex items-center">
-                    <input
+                    <Input 
+                        className="flex-grow mr-2"
+                        placeholder="ค้นหาสาขา..." 
                         type="text"
-                        placeholder="ค้นหาสาขา..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="mt-4 inline-flex items-center px-4 py-2 border rounded-lg shadow-sm text-sm font-medium mr-4"
                     />
-                    <Link
-                        className="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        href="major/create"
-                    >
-                        เพิ่มสาขา
-                    </Link>
+                    <Flex align="flex-start" gap="small" vertical  >
+                        <Link href="major/create">
+                        <Button type="primary" style={{ backgroundColor: '#2D427C', borderColor: '#2D427C', color: 'white' }}>เพิ่มสาขา</Button>
+                        </Link>
+                    </Flex>
                 </div>
             </div>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                 <table className="min-w-full">
-                    <thead className="bg-gray-50 ">
+                    <thead className="bg-gray-100 ">
                         <tr>
-                            <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อสาขา</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อคณะ</th>
-                            <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
+                            <th scope="col" className="w-1 px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">#</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">ชื่อสาขา</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">ชื่อคณะ</th>
+                            <th scope="col" className="px-6 py-3 text-right text-base font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
                     </thead>
                 </table>
@@ -83,12 +84,13 @@ const MajorList = () => {
                                                 {major.faculty?.facultyName}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-right whitespace-nowrap">
-                                            <Link
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/admin/major/${major.id}`}
-                                            >
-                                                แก้ไข
+                                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                                            <Link href={`/admin/major/${major.id}`}>
+                                                <Button 
+                                                    type="link" 
+                                                    icon={<EditFilled style={{ fontSize: '20px' }}/>}
+                                                    style={{ color: '#FFD758' }}
+                                                />
                                             </Link>
                                         </td>
                                     </tr>
