@@ -50,7 +50,6 @@ const Sidebar = () => {
         isUser && { key: 'Schedule', label: (<Link href="/users/academic">ตารางสอน</Link>) },
         isUser && { key: 'Activity', label: (<Link href="/users/activity">ผลงานกิจกรรม</Link>) },
         isUser && { key: 'Research', label: (<Link href="/users/research">ผลงานวิจัย</Link>) },
-        // ... รายการเมนูอื่นๆ สำหรับผู้ใช้
     ];
 
     const adminMenuItems = [
@@ -60,11 +59,10 @@ const Sidebar = () => {
         isAdmin && { key: 'rank', label: (<Link href="/admin/rank">ตำแหน่ง</Link>) },
         isAdmin && { key: 'users_management', label: (<Link href="/admin/users_management">จัดการผู้ใช้</Link>) },
         isAdmin && { key: 'subject', label: (<Link href="/admin/subject">วิชาทั้งหมด</Link>) },
-        isAdmin && { key: 'manage_supject', label: (<Link href="/admin/manage_supject">ตารางสอน</Link>) },
+        isAdmin && { key: 'manage_supject', label: (<Link href="/admin/manage_teaching">ตารางสอน</Link>) },
         isAdmin && { key: 'activity', label: (<Link href="/admin/activity">กิจกรรมทั้งหมด</Link>) },
         isAdmin && { key: 'manage_activity', label: (<Link href="/admin/manage_activity">ผลงานกิจกรรม</Link>) },
         isAdmin && { key: 'manage_research', label: (<Link href="/admin/manage_research">ผลงานวิจัย</Link>) },
-        // ... รายการเมนูอื่นๆ สำหรับผู้ดูแล
     ];
 
     const employeeMenuItems = [
@@ -91,7 +89,6 @@ const Sidebar = () => {
 
     return (      
         <aside >
-            {/* ใช้ Menu จาก antd */}
             <Menu
                 onClick={onClick}
                 style={{
@@ -109,7 +106,6 @@ const Sidebar = () => {
                 items={items}
                 theme="dark"
             />
-            {/* เพิ่มลิงก์อื่นๆ ที่นี่ หากต้องการ */}
         </aside>
     );
 };

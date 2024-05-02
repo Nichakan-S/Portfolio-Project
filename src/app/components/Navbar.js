@@ -22,15 +22,13 @@ const Navbar = ({ isAdmin }) => {
 
 
   useEffect(() => {
-    // เมื่อ status เป็น 'authenticated' และมี session.user.id ที่ถูกต้อง
     if (status === 'authenticated' && session?.user?.id) {
       const fetchUserData = async () => {
-        const res = await fetch(`/api/user/${session.user.id}`); // path ที่ถูกต้องตาม backend
+        const res = await fetch(`/api/user/${session.user.id}`);
         if (res.ok) {
           const userData = await res.json();
           setUser(userData);
         } else {
-          // ถ้า fetch ไม่สำเร็จ, ให้ logout
           signOut({ callbackUrl: '/' });
         }
         setIsLoading(false);
@@ -38,7 +36,6 @@ const Navbar = ({ isAdmin }) => {
 
       fetchUserData();
     } else if (status === 'unauthenticated') {
-      // ถ้าไม่ได้เข้าสู่ระบบ, ให้ไปที่หน้า login
       signIn('credentials', { callbackUrl: '/' });
     }
   }, [status, session]);
@@ -58,7 +55,6 @@ const Navbar = ({ isAdmin }) => {
   return (
     <div className="flex items-center justify-between bg-white shadow-md p-4">
       <div className="flex items-center">
-        {/* สามารถใส่โลโก้ของคุณที่นี่ */}
         <Image
           src="/image/Newchandralogo1.png"
           alt="Logo"
@@ -82,6 +78,8 @@ const Navbar = ({ isAdmin }) => {
                 width={40}
                 height={40}
                 className="rounded-full"
+                onLoad={() => {}}
+                onError={(e) => { e.target.onerror = null; e.target.src='/image/none_image.png'; }}
               />
             ) : (
               <Image
