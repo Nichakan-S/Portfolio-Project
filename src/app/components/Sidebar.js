@@ -100,6 +100,8 @@ const Sidebar = () => {
                     backgroundColor: '#212936',
                     color: 'white',
                     padding: '1rem',
+                    fontSize: '1rem',
+                    fontWeight: 300,
                 }}
                 defaultSelectedKeys={['1']}
                 defaultOpenKeys={['sub1']}
