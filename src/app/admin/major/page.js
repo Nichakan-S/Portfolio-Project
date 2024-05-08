@@ -31,7 +31,7 @@ const MajorList = () => {
 
     const filteredmajor = major.filter((major) => {
         return major.majorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            major.faculty?.facultyName.toLowerCase().includes(searchTerm.toLowerCase());
+               major.faculty?.facultyName.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
 

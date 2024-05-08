@@ -20,11 +20,12 @@ export async function GET() {
     });
   }
 }
+
 export async function POST(request) {
   try {
-    const { name, day, group, starttime, endtime, term, year } = await request.json();
+    const { name, code, day, group, starttime, endtime, term, year } = await request.json();
 
-    if (!name || !day || !group || !starttime || !endtime || !term || !year) {
+    if (!name || !code || !day || !group || !starttime || !endtime || !term || !year) {
       throw new Error('All subject fields are required');
     }
     const newSubject = await prisma.subjects.create({
@@ -35,7 +36,8 @@ export async function POST(request) {
         starttime, 
         endtime, 
         term, 
-        year
+        year,
+        code
       },
     });
     return new Response(JSON.stringify({ message: 'Subject created', newSubject }), { status: 201, headers: { 'Content-Type': 'application/json' } });

@@ -88,6 +88,7 @@ const EditRank = ({ params }) => {
             }
         });
     };
+    
     const handleBack = () => {
         router.push('/admin/rank');
     };

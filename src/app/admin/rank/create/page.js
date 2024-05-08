@@ -79,8 +79,8 @@ const CreateRank = () => {
                         เข้าถึงหน้าพนักงาน
                     </label>
                     <Select
-                        defaultValue="enable" // ตั้งค่าเริ่มต้นที่ต้องการ
-                        style={{ width: '100%' }} // ใช้ '100%' เพื่อให้แมทช์กับตัวเลือกเดิมที่ใช้ width: 'full'
+                        defaultValue="enable"
+                        style={{ width: '100%' }}
                         onChange={EmployeehandleChange}
                         options={[
                             { value: 'disable', label: 'ปิดใช้งาน' },
@@ -94,8 +94,8 @@ const CreateRank = () => {
                         เข้าถึงหน้าประเมิน
                     </label>
                     <Select
-                        defaultValue="enable" // ตั้งค่าเริ่มต้นให้ตรงกับ state ปัจจุบัน
-                        style={{ width: '100%' }} // ใช้ '100%' เพื่อให้แมทช์กับตัวเลือกเดิมที่ใช้ width: 'full'
+                        defaultValue="enable" 
+                        style={{ width: '100%' }}
                         onChange={EvaluationhandleChange}
                         options={[
                             { value: 'disable', label: 'ปิดใช้งาน' ,color: '#ff0000'},
@@ -108,8 +108,8 @@ const CreateRank = () => {
                         เข้าถึงหน้าภาพรวม
                     </label>
                     <Select
-                        defaultValue="enable" // ตั้งค่าเริ่มต้นให้ตรงกับ state ปัจจุบัน
-                        style={{ width: '100%' }} // ใช้ '100%' เพื่อให้แมทช์กับตัวเลือกเดิมที่ใช้ width: 'full'
+                        defaultValue="enable"
+                        style={{ width: '100%' }}
                         onChange={OverviewhandleChange}
                         options={[
                             { value: 'disable', label: 'ปิดใช้งาน' },
