@@ -5,6 +5,16 @@ import Link from 'next/link'
 import { Button, Input, Flex } from 'antd';
 import { EditFilled } from '@ant-design/icons';
 
+const DayEnum = {
+    mon: 'จันทร์',
+    tue: 'อังคาร',
+    wed: 'พุธ',
+    thu: 'พฤหัสบดี',
+    fri: 'ศุกร์',
+    sat: 'เสาร์',
+    sun: 'อาทิตย์',
+};
+
 const SubjectList = () => {
     const [subject, setSubject] = useState([])
     const [searchTerm, setSearchTerm] = useState('');
@@ -29,11 +39,12 @@ const SubjectList = () => {
     if (isLoading) {
         return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
-
+    
     const filteredsubject = subject.filter((subject) => {
         return subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.day.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               DayEnum[subject.day].includes(searchTerm.toLowerCase()) ||
                subject.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               subject.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
                subject.starttime.toLowerCase().includes(searchTerm.toLowerCase()) ||
                subject.endtime.toLowerCase().includes(searchTerm.toLowerCase()) ||
                subject.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -65,6 +76,7 @@ const SubjectList = () => {
                         <tr>
                             <th scope="col" className="w-1 px-6 py-5 text-left text-base font-medium text-gray-500 uppercase tracking-wider">#</th>
                             <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">ชื่อวิชา</th>
+                            <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">รหัสวิชา</th>
                             <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">วันสอน</th>
                             <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">กลุ่มเรียน</th>
                             <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">เวลาเริ่ม</th>
@@ -91,7 +103,12 @@ const SubjectList = () => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {subject.day}
+                                                {subject.code}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {DayEnum[subject.day]}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">

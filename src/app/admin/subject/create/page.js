@@ -3,43 +3,52 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
-import { Input , Button, Select, TimePicker } from 'antd';
+import { Input, Button, Select, TimePicker } from 'antd';
 
 import moment from 'moment';
+
 
 const { Option } = Select;
 
 const CreateSubject = () => {
-    const [subjectName, setSubjectName] = useState('');
+    const [name, setName] = useState('');
+    const [code, setCode] = useState('');
     const [day, setDay] = useState('');
     const [group, setGroup] = useState('');
-    const [startTime, setStartTime] = useState('');
-    const [endTime, setEndTime] = useState('');
+    const [starttime, setStartTime] = useState('');
+    const [endtime, setEndTime] = useState('');
     const [term, setTerm] = useState('');
     const [year, setYear] = useState('');
     const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+    
+        const formattedStartTime = starttime ? moment(starttime, 'HH:mm').format('HH:mm') : '';
+        const formattedEndTime = endtime ? moment(endtime, 'HH:mm').format('HH:mm') : '';
+
+        const thaiYear = parseInt(year, 10) + 543;
+
         try {
             const response = await fetch('/api/subject', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ subjectName, day, group, startTime, endTime, term, year })
+                body: JSON.stringify({ name, code, day, group, starttime: formattedStartTime, endtime: formattedEndTime, term: parseInt(term, 10), year: thaiYear })
             });
-
+    
             if (!response.ok) throw new Error('Something went wrong');
-
+    
             SuccessAlert('Success!', 'Data has been saved successfully');
             router.push('/admin/subject');
-
+    
         } catch (error) {
             console.error(error);
             WarningAlert('Error!', 'Failed to save data');
         }
     };
+
 
     const handleBack = () => {
         router.push('/admin/subject');
@@ -51,25 +60,40 @@ const CreateSubject = () => {
         const thaiYear = moment(i.toString()).add(543, 'years').format('YYYY');
         yearOptions.push(<Option key={i} value={i}>{thaiYear}</Option>);
     }
-    
-    
+
+
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-2xl font-semibold mb-6">Add New Subject</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label htmlFor="subjectName" className="block text-base font-medium text-gray-700 mb-4">
+                    <label htmlFor="name" className="block text-base font-medium text-gray-700 mb-4">
                         Subject Name
                     </label>
                     <Input
                         placeholder="Subject Name"
                         size="large"
                         type="text"
-                        name="subjectName"
-                        id="subjectName"
+                        name="name"
+                        id="name"
                         required
-                        value={subjectName}
-                        onChange={(e) => setSubjectName(e.target.value)}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="code" className="block text-base font-medium text-gray-700 mb-4">
+                        รหัสวิชา
+                    </label>
+                    <Input
+                        placeholder="รหัสวิชา "
+                        size="large"
+                        type="text"
+                        name="code"
+                        id="code"
+                        required
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
                     />
                 </div>
                 <div>
@@ -80,6 +104,7 @@ const CreateSubject = () => {
                         placeholder="Select Day"
                         style={{ width: 200 }}
                         value={day}
+                        required
                         onChange={(value) => setDay(value)}
                     >
                         <Option value="mon">Monday</Option>
@@ -113,8 +138,9 @@ const CreateSubject = () => {
                     <TimePicker
                         placeholder="Start Time"
                         format="HH:mm"
-                        value={startTime}
-                        onChange={(time) => setStartTime(time)}
+                        required
+                        value={starttime ? moment(starttime, 'HH:mm') : null}
+                        onChange={(time) => setStartTime(time ? time.format('HH:mm') : '')}
                     />
                 </div>
                 <div>
@@ -124,10 +150,12 @@ const CreateSubject = () => {
                     <TimePicker
                         placeholder="End Time"
                         format="HH:mm"
-                        value={endTime}
-                        onChange={(time) => setEndTime(time)}
+                        required
+                        value={endtime ? moment(endtime, 'HH:mm') : null}
+                        onChange={(time) => setEndTime(time ? time.format('HH:mm') : '')}
                     />
                 </div>
+
                 <div>
                     <label htmlFor="term" className="block text-base font-medium text-gray-700 mb-4">
                         Term
@@ -135,6 +163,7 @@ const CreateSubject = () => {
                     <Select
                         placeholder="Select term"
                         style={{ width: 200 }}
+                        required
                         value={term}
                         onChange={(value) => setTerm(value)}
                     >
@@ -150,6 +179,7 @@ const CreateSubject = () => {
                     <Select
                         placeholder="Select year"
                         style={{ width: 200 }}
+                        required
                         value={year}
                         onChange={(value) => setYear(value)}
                     >

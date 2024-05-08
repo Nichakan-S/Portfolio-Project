@@ -67,20 +67,22 @@ model Teaching {
 
 model Subjects { 
   id         Int       @id @default(autoincrement()) @db.UnsignedInt
-  name       String    @db.VarChar(20)
+  name       String    @db.VarChar(100)
+  code       String    @db.VarChar(20)
   day        Day
   group      String    @db.VarChar(6)
   starttime  String    @db.VarChar(10)
   endtime    String    @db.VarChar(10)
-  term       String    @db.VarChar(3)
-  year       String    @db.VarChar(6)
+  term       Int       @db.UnsignedInt
+  year       Int       @db.UnsignedInt
   teaching   Teaching[]
 }
 
 model Activity {
   id        Int       @id @default(autoincrement()) @db.UnsignedInt
   type      Type      
-  name      String    @db.VarChar(70) 
+  name      String    @db.VarChar(70)
+  file      String?   @db.LongText
   start     DateTime  
   end       DateTime  
   year      String    @db.VarChar(10)
@@ -93,7 +95,7 @@ model ManageActivity {
   activity     Activity @relation(fields: [activityId], references: [id])
   userId       Int      @db.UnsignedInt
   user         User     @relation(fields: [userId], references: [id])
-  file         String   @db.Text
+  file         String?  @db.LongText
   status       Status
   createdAt    DateTime @default(now()) 
   updatedAt    DateTime @updatedAt
@@ -108,7 +110,7 @@ model ManageResearch {
   Researchfund String       @db.VarChar(20)
   type         ResearchType
   year         String       @db.VarChar(20)
-  file         String       @db.Text
+  file         String?      @db.LongText
   status       Status
   createdAt    DateTime     @default(now()) 
   updatedAt    DateTime     @updatedAt

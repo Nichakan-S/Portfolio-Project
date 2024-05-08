@@ -52,14 +52,14 @@ const CreateMajor = () => {
     };
 
     const handleChange = (value) => {
-        setSelectedFaculty(value); // ตรวจสอบว่าใช้ setSelectedFaculty หรือตัวแปรที่ถูกต้อง
+        setSelectedFaculty(value);
         console.log(`selected ${value}`);
       };      
     
     const facultyOptions = faculty.map(fac => ({
     label: fac.facultyName,
     value: fac.id,
-    disabled: fac.disabled // ถ้ามีฟิลด์ disabled ในข้อมูล
+    disabled: fac.disabled
     }));
       
 

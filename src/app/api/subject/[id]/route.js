@@ -17,10 +17,10 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
-    const  { name, day, group, starttime, endtime, term, year } = await req.json()
+    const  { name, code, day, group, starttime, endtime, term, year } = await req.json()
     return Response.json(await prisma.subjects.update({
       where: { id: Number(params.id) },
-      data:  { name, day, group, starttime, endtime, term, year },
+      data:  { name, code, day, group, starttime, endtime, term, year },
     }))
   } catch (error) {
     console.error(error);
