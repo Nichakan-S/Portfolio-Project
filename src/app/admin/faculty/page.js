@@ -47,15 +47,18 @@ const FacultyList = () => {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ color: '#929DB8 !important' }}
           />
           <Flex align="flex-start" gap="small" vertical  >
             <Link href="faculty/create">
               <Button 
-                className="text-base mr-2 w-full p-2 border rounded-lg h-10"
+                className="text-base mr-4 w-full p-2 border rounded-lg "
                 style={{
-                  backgroundColor: '#2D427C', 
+                  backgroundColor: 'transparent', 
                   borderColor: '#2D427C', 
-                  color: 'white',
+                  color: '#2D427C',
+                  height: '40px',
+                  borderWidth: '2px'
                 }}
                 >
                   เพิ่มคณะ
@@ -66,11 +69,23 @@ const FacultyList = () => {
       </div>
       <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg ">
         <table className="min-w-full">
-          <thead className="bg-[#274381]" >
+          <thead className="text-base rounded-lg border-b "
+                  style={{
+                    color: '#000000',
+                  }}  >
             <tr>
-              <th scope="col" className="w-1 px-6 py-5 h-5 text-left text-base font-medium text-white uppercase tracking-wider" style={{ height: '30px' }}>#</th>
-              <th scope="col" className="px-9 py-3 h-5 text-left text-base font-medium text-white uppercase tracking-wider" style={{ height: '30px' }}>ชื่อคณะ</th>
-              <th scope="col" className="px-6 py-3 h-5 text-right text-base font-medium text-white uppercase tracking-wider" style={{ height: '30px' }}>แก้ไข</th>
+              <th scope="col" 
+                  className="w-1 px-6 text-left text-base font-medium uppercase tracking-wider" 
+                  style={{ paddingTop: '12px', paddingBottom: '12px' }}
+                  >#</th>
+              <th scope="col" 
+                  className="px-9 text-left text-base font-medium uppercase tracking-wider" 
+                  style={{ paddingTop: '12px', paddingBottom: '12px' }}
+                  >ชื่อคณะ</th>
+              <th scope="col" 
+                  className="px-6 text-right text-base font-medium uppercase tracking-wider" 
+                  style={{ paddingTop: '12px', paddingBottom: '12px' }}
+                  >แก้ไข</th>
             </tr>
           </thead>
         </table>
@@ -80,15 +95,15 @@ const FacultyList = () => {
               {filteredFaculty.length > 0 ? (
                 filteredFaculty.map((faculty, index) => (
                   <tr key={faculty.id}>
-                    <td className="w-1 px-6 py-4 whitespace-nowrap">
+                    <td className="w-1 px-6  whitespace-nowrap" style={{ paddingTop: '9px', paddingBottom: '9px' }}>
                       {index + 1}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                    <td className="px-6  whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '9px', paddingBottom: '9px' }}>
                         {faculty.facultyName}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <td className="px-6  whitespace-nowrap text-right" style={{ paddingTop: '9px', paddingBottom: '9px' }}>
                       <Link href={`/admin/faculty/${faculty.id}`}>
                         <Button 
                           type="link" 
