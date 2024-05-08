@@ -17,17 +17,7 @@ const ActivityList = () => {
     }, []);
 
     useEffect(() => {
-        if (modalContent) {
-            console.log('Base64 PDF data:', modalContent);
-            setIsModalVisible(true);
-        }
-    }, [modalContent]);
-
-    useEffect(() => {
-        if (modalContent) {
-            console.log('Modal content updated:', modalContent);
-            showModal();
-        }
+        console.log(modalContent);
     }, [modalContent]);
 
     const fetchActivity = async () => {
@@ -42,8 +32,9 @@ const ActivityList = () => {
         }
     };
 
-    const showModal = (fileBase64) => {
-        setModalContent(fileBase64);
+    const showModal = (file) => {
+        setModalContent(file);
+        setIsModalVisible(true);
     };
 
     const closeModal = () => {
@@ -163,16 +154,16 @@ const ActivityList = () => {
                 open={isModalVisible}
                 onCancel={closeModal}
                 footer={[]}
-                width="80%"
-                style={{ top: 20, maxHeight: "90vh" }}
+                width="70%"
+                style={{ top: 20 }}
             >
                 {modalContent ? (
-                    <iframe src={`data:application/pdf;base64,${modalContent}`} style={{ width: '100%', height: '100%' }}></iframe>
-
+                    <embed src={`data:application/pdf;base64,${modalContent}`} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
                 ) : (
-                    <p>Error displaying the document. Please check the console for more information.</p>
+                    <p>Error displaying the document. Please try again.</p>
                 )}
             </Modal>
+
         </div>
     );
 }
