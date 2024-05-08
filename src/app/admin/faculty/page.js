@@ -57,7 +57,8 @@ const FacultyList = () => {
                   backgroundColor: 'transparent', 
                   borderColor: '#2D427C', 
                   color: '#2D427C',
-                  height: '40px'
+                  height: '40px',
+                  borderWidth: '2px'
                 }}
                 >
                   เพิ่มคณะ
@@ -68,14 +69,23 @@ const FacultyList = () => {
       </div>
       <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg ">
         <table className="min-w-full">
-          <thead className="text-base rounded-lg"
+          <thead className="text-base rounded-lg border-b "
                   style={{
-
+                    color: '#000000',
                   }}  >
             <tr>
-              <th scope="col" className="w-1 px-6 text-left text-base font-medium uppercase tracking-wider" style={{ paddingTop: '12px', paddingBottom: '12px' , color: '#000000' }}>#</th>
-              <th scope="col" className="px-9 text-left text-base font-medium uppercase tracking-wider" style={{ paddingTop: '12px', paddingBottom: '12px' , color: '#000000' }}>ชื่อคณะ</th>
-              <th scope="col" className="px-6 text-right text-base font-medium uppercase tracking-wider" style={{ paddingTop: '12px', paddingBottom: '12px' , color: '#000000' }}>แก้ไข</th>
+              <th scope="col" 
+                  className="w-1 px-6 text-left text-base font-medium uppercase tracking-wider" 
+                  style={{ paddingTop: '12px', paddingBottom: '12px' }}
+                  >#</th>
+              <th scope="col" 
+                  className="px-9 text-left text-base font-medium uppercase tracking-wider" 
+                  style={{ paddingTop: '12px', paddingBottom: '12px' }}
+                  >ชื่อคณะ</th>
+              <th scope="col" 
+                  className="px-6 text-right text-base font-medium uppercase tracking-wider" 
+                  style={{ paddingTop: '12px', paddingBottom: '12px' }}
+                  >แก้ไข</th>
             </tr>
           </thead>
         </table>
@@ -85,15 +95,15 @@ const FacultyList = () => {
               {filteredFaculty.length > 0 ? (
                 filteredFaculty.map((faculty, index) => (
                   <tr key={faculty.id}>
-                    <td className="w-1 px-6  whitespace-nowrap" style={{ paddingTop: '8px', paddingBottom: '8px' }}>
+                    <td className="w-1 px-6  whitespace-nowrap" style={{ paddingTop: '9px', paddingBottom: '9px' }}>
                       {index + 1}
                     </td>
                     <td className="px-6  whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '8px', paddingBottom: '8px' }}>
+                      <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '9px', paddingBottom: '9px' }}>
                         {faculty.facultyName}
                       </div>
                     </td>
-                    <td className="px-6  whitespace-nowrap text-right" style={{ paddingTop: '8px', paddingBottom: '8px' }}>
+                    <td className="px-6  whitespace-nowrap text-right" style={{ paddingTop: '9px', paddingBottom: '9px' }}>
                       <Link href={`/admin/faculty/${faculty.id}`}>
                         <Button 
                           type="link" 
