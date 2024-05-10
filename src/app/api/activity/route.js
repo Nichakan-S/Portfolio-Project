@@ -4,8 +4,8 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const faculties = await prisma.activity.findMany();
-    return new Response(JSON.stringify(faculties), {
+    const activitys = await prisma.activity.findMany();
+    return new Response(JSON.stringify(activitys), {
       status: 200,
       headers: {
         'Content-Type': 'application/json'

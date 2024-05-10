@@ -17,9 +17,9 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
     try {
-        const { nameTH, nameEN, Researchfund, type, year, file, status } = await req.json();
+        const { nameTH, nameEN, researchfund, type, year, file, status } = await req.json();
 
-        if (!nameTH || !nameEN || !Researchfund || !type || !year || !status) {
+        if (!nameTH || !nameEN || !researchfund || !type || !year || !status) {
             return new Response(JSON.stringify({
                 error: 'All required fields must be provided except userId'
             }), { status: 400, headers: { 'Content-Type': 'application/json' } });
@@ -30,7 +30,7 @@ export async function PUT(req, { params }) {
             data: {
                 nameTH,
                 nameEN,
-                Researchfund,
+                researchfund,
                 type,
                 year,
                 file,

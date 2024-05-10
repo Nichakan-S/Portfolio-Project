@@ -1,15 +1,15 @@
 'use client'
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'
-import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
 import { Input, Button, DatePicker, Upload, Modal, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
 const { Option } = Select;
 
-const CreateActivity = () => {
+const EditActivity = ({ params }) => {
     const [name, setName] = useState('');
     const [type, setType] = useState('');
     const [file, setFile] = useState('');
@@ -19,17 +19,46 @@ const CreateActivity = () => {
     const [previewFile, setPreviewFile] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const router = useRouter();
+    const { id } = params;
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        if (id) {
+            fetchActivity(id);
+        }
+    }, [id]);
+
+    const fetchActivity = async (id) => {
+        try {
+            const response = await fetch(`/api/activity/${id}`);
+            if (!response.ok) throw new Error('Something went wrong');
+
+            const data = await response.json();
+            setName(data.name);
+            setType(data.type);
+            setStart(moment(data.start));
+            setEnd(moment(data.end));
+            setYear(data.year);
+            setFile(data.file);
+            setPreviewFile(data.file);
+
+        } catch (error) {
+            console.error(error);
+            WarningAlert('ผิดพลาด!', 'ไม่สามารถดึงข้อมูลกิจกรรมได้');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const thaiYear = parseInt(year, 10) + 543;
         try {
-            const response = await fetch('/api/activity', {
-                method: 'POST',
+            const response = await fetch(`/api/activity/${id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, type, file, start, end, year: thaiYear  })
+                body: JSON.stringify({ name, type, file, start, end, year: parseInt(year, 10) })
             });
 
             if (!response.ok) throw new Error('Something went wrong');
@@ -73,6 +102,26 @@ const CreateActivity = () => {
     for (let i = currentYear - 5; i <= currentYear + 5; i++) {
         const thaiYear = moment(i.toString()).add(543, 'years').format('YYYY');
         yearOptions.push(<Option key={i} value={i}>{thaiYear}</Option>);
+    }
+
+    const handleDelete = async () => {
+        ConfirmAlert('คุณแน่ใจที่จะลบข้อมูลนี้?', 'การดำเนินการนี้ไม่สามารถย้อนกลับได้', async () => {
+          try {
+            const response = await fetch(`/api/activity/${id}`, {
+              method: 'DELETE',
+            });
+            if (!response.ok) throw new Error('Failed to delete the activity.');
+            SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
+            router.push('/admin/activity');
+          } catch (error) {
+            console.error('Failed to delete the activity', error);
+            WarningAlert('ผิดพลาด!', 'ไม่สามารถลบข้อมูลได้');
+          }
+        });
+      };
+
+    if (isLoading) {
+        return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
 
     return (
@@ -185,6 +234,13 @@ const CreateActivity = () => {
                         บันทึก
                     </Button>
                     <Button className="inline-flex justify-center mr-4"
+                        type="primary" danger
+                        size="middle"
+                        onClick={handleDelete}
+                    >
+                        ลบ
+                    </Button>
+                    <Button className="inline-flex justify-center mr-4"
                         onClick={handleBack}
                     >
                         ยกเลิก
@@ -195,4 +251,4 @@ const CreateActivity = () => {
     );
 };
 
-export default CreateActivity;
+export default EditActivity;

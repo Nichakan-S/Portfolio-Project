@@ -7,7 +7,6 @@ import { Input, Button, Select, TimePicker } from 'antd';
 
 import moment from 'moment';
 
-
 const { Option } = Select;
 
 const CreateSubject = () => {

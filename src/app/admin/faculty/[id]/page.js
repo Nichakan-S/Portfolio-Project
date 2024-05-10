@@ -13,6 +13,15 @@ const EditFaculty = ({ params }) => {
   const { id } = params;
   const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    if (id) {
+      fetchFaculty(parseInt(id));
+    }
+    if (facultyName) {
+      fetchFaculty(parseInt(facultyName));
+    }
+  }, [id], [facultyName]);
+
   const fetchFaculty = async (id) => {
     try {
       const response = await fetch(`/api/faculty/${id}`);
@@ -25,15 +34,6 @@ const EditFaculty = ({ params }) => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (id) {
-      fetchFaculty(parseInt(id));
-    }
-    if (facultyName) {
-      fetchFaculty(parseInt(facultyName));
-    }
-  }, [id], [facultyName]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

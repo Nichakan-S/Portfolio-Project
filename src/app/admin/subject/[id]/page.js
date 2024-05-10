@@ -22,6 +22,12 @@ const EditSubject = ({ params }) => {
     const { id } = params;
     const [isLoading, setIsLoading] = useState(true);
 
+    useEffect(() => {
+        if (id) {
+            fetchSubject(parseInt(id));
+        }
+    }, [id]);
+
     const fetchSubject = async (id) => {
         try {
             const response = await fetch(`/api/subject/${id}`);
@@ -42,19 +48,11 @@ const EditSubject = ({ params }) => {
         }
     };
 
-    useEffect(() => {
-        if (id) {
-            fetchSubject(parseInt(id));
-        }
-    }, [id]);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const formattedStartTime = starttime ? moment(starttime, 'HH:mm').format('HH:mm') : '';
         const formattedEndTime = endtime ? moment(endtime, 'HH:mm').format('HH:mm') : '';
-
-        const thaiYear = parseInt(year, 10) + 543;
 
         try {
             const response = await fetch(`/api/subject/${id}`, {
@@ -62,7 +60,7 @@ const EditSubject = ({ params }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, code, day, group, starttime: formattedStartTime, endtime: formattedEndTime, term: parseInt(term, 10), year: thaiYear })
+                body: JSON.stringify({ name, code, day, group, starttime: formattedStartTime, endtime: formattedEndTime, term: parseInt(term, 10), year: parseInt(year, 10) })
             });
 
             if (!response.ok) throw new Error('Something went wrong');

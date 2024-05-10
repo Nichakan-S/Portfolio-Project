@@ -32,9 +32,9 @@ export async function GET() {
 
 export async function POST(request) {
     try {
-        const { userId, nameTH, nameEN, Researchfund, type, year, file, status } = await request.json();
+        const { userId, nameTH, nameEN, researchfund, type, year, file, status } = await request.json();
 
-        if (!userId || !nameTH || !nameEN || !Researchfund || !type || !year || !status) {
+        if (!userId || !nameTH || !nameEN || !researchfund || !type || !year || !status) {
             return new Response(JSON.stringify({
                 error: 'All required fields must be provided'
             }), { status: 400 });
@@ -44,7 +44,7 @@ export async function POST(request) {
                 userId,
                 nameTH,
                 nameEN,
-                Researchfund,
+                researchfund,
                 type,
                 year,
                 file,
