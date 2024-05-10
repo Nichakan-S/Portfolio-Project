@@ -1,25 +1,29 @@
-
-
-import dynamic from 'next/dynamic';
+import React from 'react';
 import Navbar from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
 
-const SidebarDynamic = dynamic(() => import('../components/Sidebar'), {
-  ssr: false,
-});
+import { ConfigProvider } from "antd";
 
-const PageLayout = ({children}) => {
+const UserLayout = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar isUser={true} />
-      <div className="flex flex-1">
-        {/* เรียกใช้ Sidebar ที่ถูกนำเข้าแบบ dynamic */}
-        <SidebarDynamic isUser={true} />
-        <main className="flex-1">
-          {children}
-        </main>
+    <ConfigProvider
+      theme={{
+        token: {
+          fontFamily: ""
+        }
+      }}
+    >
+      <div className="min-h-screen flex flex-col">
+        <Navbar isAdmin={true} />
+        <div className="flex flex-1">
+          <Sidebar isAdmin={true} />
+          <main className="flex-1">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </ConfigProvider>
   );
 };
 
-export default PageLayout;
+export default UserLayout;

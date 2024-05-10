@@ -8,7 +8,7 @@ import { Menu } from 'antd';
 function getItem(label, key, url) {
     return {
       key,
-      label: <Link href={url}><a>{label}</a></Link>, // ใช้ Link จาก next/link สำหรับการนำทาง
+      label: <Link href={url}><a>{label}</a></Link>,
     };
   }
 
@@ -18,15 +18,13 @@ const Sidebar = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // เมื่อ status เป็น 'authenticated' และมี session.user.id ที่ถูกต้อง
         if (status === 'authenticated' && session?.user?.id) {
             const fetchUserData = async () => {
-                const res = await fetch(`/api/user/${session.user.id}`); // path ที่ถูกต้องตาม backend
+                const res = await fetch(`/api/user/${session.user.id}`);
                 if (res.ok) {
                     const userData = await res.json();
                     setUser(userData);
                 } else {
-                    // ถ้า fetch ไม่สำเร็จ, ให้ logout
                     signOut({ callbackUrl: '/' });
                 }
                 setIsLoading(false);
@@ -34,12 +32,10 @@ const Sidebar = () => {
 
             fetchUserData();
         } else if (status === 'unauthenticated') {
-            // ถ้าไม่ได้เข้าสู่ระบบ, ให้ไปที่หน้า login
             signIn('credentials', { callbackUrl: '/' });
         }
     }, [status, session]);
 
-    // ตรวจสอบสถานะและ permissions ของ user
     const isAdmin = user?.role === 'admin';
     const isUser = user?.role === 'user';
     const isEmployee = user?.rank?.employee;
@@ -48,8 +44,8 @@ const Sidebar = () => {
     const userMenuItems = [
         isUser && { key: 'Home', label: (<Link href="/users">หน้าแรก</Link>) },
         isUser && { key: 'Schedule', label: (<Link href="/users/academic">ตารางสอน</Link>) },
-        isUser && { key: 'Activity', label: (<Link href="/users/activity">ผลงานกิจกรรม</Link>) },
-        isUser && { key: 'Research', label: (<Link href="/users/research">ผลงานวิจัย</Link>) },
+        isUser && { key: 'Activity', label: (<Link href={`/users/manage_activity/${session.user.id}`}>ผลงานกิจกรรม</Link>) },
+        isUser && { key: 'Research', label: (<Link href={`/users/manage_research/${session.user.id}`}>ผลงานวิจัย</Link>) },
     ];
 
     const adminMenuItems = [

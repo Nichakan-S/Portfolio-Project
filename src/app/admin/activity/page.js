@@ -1,9 +1,10 @@
-'use client'
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button, Input, Flex, Modal } from 'antd';
 import { EditFilled } from '@ant-design/icons';
+import moment from 'moment';
 
 const ActivityList = () => {
     const [activity, setActivity] = useState([]);
@@ -16,25 +17,16 @@ const ActivityList = () => {
         fetchActivity();
     }, []);
 
-    useEffect(() => {
-        if (modalContent) {
-            console.log('Base64 PDF data:', modalContent);
-            setIsModalVisible(true);
-        }
-    }, [modalContent]);
-
-    useEffect(() => {
-        if (modalContent) {
-            console.log('Modal content updated:', modalContent);
-            showModal();
-        }
-    }, [modalContent]);
+    // useEffect(() => {
+    //     console.log(modalContent);
+    // }, [modalContent]);
 
     const fetchActivity = async () => {
         try {
             const res = await fetch('/api/activity');
             const data = await res.json();
             setActivity(data);
+
         } catch (error) {
             console.error('Failed to fetch Activity', error);
         } finally {
@@ -42,8 +34,9 @@ const ActivityList = () => {
         }
     };
 
-    const showModal = (fileBase64) => {
-        setModalContent(fileBase64);
+    const showModal = (file) => {
+        setModalContent(file);
+        setIsModalVisible(true);
     };
 
     const closeModal = () => {
@@ -58,8 +51,7 @@ const ActivityList = () => {
         return activity.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             activity.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
             activity.start.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            activity.year.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            activity.file.toLowerCase().includes(searchTerm.toLowerCase());
+            activity.year.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
     return (
@@ -117,17 +109,17 @@ const ActivityList = () => {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm font-medium text-gray-900">
-                                        {activity.type}
+                                        {activity.type === 'culture' ? 'ศิลปะวัฒนธรรม' : 'บริการวิชาการ'}
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm font-medium text-gray-900">
-                                        {activity.start}
+                                        {moment(activity.start).format('DD-MM-YYYY HH:mm')}
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm font-medium text-gray-900">
-                                        {activity.end}
+                                        {moment(activity.end).format('DD-MM-YYYY HH:mm')}
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -162,15 +154,21 @@ const ActivityList = () => {
                 title="Preview File"
                 open={isModalVisible}
                 onCancel={closeModal}
-                footer={[]}
-                width="80%"
-                style={{ top: 20, maxHeight: "90vh" }}
+                footer={[
+                    <Button key="download" type="primary" href={modalContent} target="_blank" download>
+                        ดาวน์โหลด PDF
+                    </Button>,
+                    <Button key="cancel" onClick={closeModal}>
+                        ยกเลิก
+                    </Button>
+                ]}
+                width="70%"
+                style={{ top: 20 }}
             >
                 {modalContent ? (
-                    <iframe src={`data:application/pdf;base64,${modalContent}`} style={{ width: '100%', height: '100%' }}></iframe>
-
+                    <iframe src={`${modalContent}`} loading="lazy" style={{ width: '100%', height: '75vh' }}></iframe>
                 ) : (
-                    <p>Error displaying the document. Please check the console for more information.</p>
+                    <p>Error displaying the document. Please try again.</p>
                 )}
             </Modal>
         </div>
@@ -178,4 +176,3 @@ const ActivityList = () => {
 }
 
 export default ActivityList;
-

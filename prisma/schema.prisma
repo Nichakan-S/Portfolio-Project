@@ -85,7 +85,7 @@ model Activity {
   file      String?   @db.LongText
   start     DateTime  
   end       DateTime  
-  year      String    @db.VarChar(10)
+  year      Int       @db.UnsignedInt
   manageactivity  ManageActivity[]
 }
 
@@ -107,9 +107,9 @@ model ManageResearch {
   user         User         @relation(fields: [userId], references: [id])
   nameTH       String       @db.VarChar(50)
   nameEN       String       @db.VarChar(50)
-  Researchfund String       @db.VarChar(20)
+  researchfund String       @db.VarChar(20)
   type         ResearchType
-  year         String       @db.VarChar(20)
+  year         Int          @db.UnsignedInt
   file         String?      @db.LongText
   status       Status
   createdAt    DateTime     @default(now()) 

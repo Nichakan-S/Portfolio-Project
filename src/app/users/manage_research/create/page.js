@@ -1,79 +1,86 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
-import { Input, Button, DatePicker, Upload, Modal, Select } from 'antd';
+import React, { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
+import { Input, Button, Upload, Modal, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
 const { Option } = Select;
 
-const EditActivity = ({ params }) => {
-    const [name, setName] = useState('');
+const CreateResearch = () => {
+    const { data: session } = useSession();
+    const [nameTH, setNameTH] = useState('');
+    const [nameEN, setNameEN] = useState('');
+    const [researchfund, setResearchfund] = useState('');
     const [type, setType] = useState('');
     const [file, setFile] = useState('');
-    const [start, setStart] = useState(null);
-    const [end, setEnd] = useState(null);
     const [year, setYear] = useState('');
+    const [status] = useState('wait');
     const [previewFile, setPreviewFile] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
-    const router = useRouter();
-    const { id } = params;
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        if (id) {
-            fetchActivity(id);
-        }
-    }, [id]);
-
-    const fetchActivity = async (id) => {
-        try {
-            const response = await fetch(`/api/activity/${id}`);
-            if (!response.ok) throw new Error('Something went wrong');
-
-            const data = await response.json();
-            setName(data.name);
-            setType(data.type);
-            setStart(moment(data.start));
-            setEnd(moment(data.end));
-            setYear(data.year);
-            setFile(data.file);
-            setPreviewFile(data.file);
-
-        } catch (error) {
-            console.error(error);
-            WarningAlert('ผิดพลาด!', 'ไม่สามารถดึงข้อมูลกิจกรรมได้');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const [customFund, setCustomFund] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const thaiYear = parseInt(year, 10) + 543;
+        console.log(JSON.stringify({
+            userId: session.user.id,
+            nameTH,
+            nameEN,
+            researchfund: researchfund === 'other' ? customFund : researchfund,
+            type,
+            year: thaiYear,
+            status
+        }))
         try {
-            const response = await fetch(`/api/activity/${id}`, {
-                method: 'PUT',
+            const response = await fetch('/api/research', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, type, file, start, end, year: parseInt(year, 10) })
+                body: JSON.stringify({
+                    userId: session.user.id,
+                    nameTH,
+                    nameEN,
+                    researchfund: researchfund === 'other' ? customFund : researchfund,
+                    type,
+                    file,
+                    year: thaiYear,
+                    status
+                })
             });
 
             if (!response.ok) throw new Error('Something went wrong');
 
             SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
-            router.push('/admin/activity');
-
+            window.history.back();
         } catch (error) {
             console.error(error);
             WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
         }
     };
 
+    const handleResearchFundChange = (e) => {
+        const value = e.target.value;
+        if (value === 'other') {
+            setCustomFund('');
+            setResearchfund(value);
+        } else {
+            setResearchfund(value);
+            setCustomFund('');
+        }
+    };
+    
+    const handleCustomFundChange = (e) => {
+        const value = e.target.value;
+        setCustomFund(value);
+    };
+    
+
     const handleBack = () => {
-        router.push('/admin/activity');
+        window.history.back();
     };
 
     const beforeUpload = (file) => {
@@ -104,44 +111,61 @@ const EditActivity = ({ params }) => {
         yearOptions.push(<Option key={i} value={i}>{thaiYear}</Option>);
     }
 
-    const handleDelete = async () => {
-        ConfirmAlert('คุณแน่ใจที่จะลบข้อมูลนี้?', 'การดำเนินการนี้ไม่สามารถย้อนกลับได้', async () => {
-          try {
-            const response = await fetch(`/api/activity/${id}`, {
-              method: 'DELETE',
-            });
-            if (!response.ok) throw new Error('Failed to delete the activity.');
-            SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
-            router.push('/admin/activity');
-          } catch (error) {
-            console.error('Failed to delete the activity', error);
-            WarningAlert('ผิดพลาด!', 'ไม่สามารถลบข้อมูลได้');
-          }
-        });
-      };
-
-    if (isLoading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>;
-    }
-
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-2xl font-semibold mb-6">เพิ่มกิจกรรมใหม่</h1>
+            <h1 className="text-2xl font-semibold mb-6">เพิ่มงานวิจัยใหม่</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label htmlFor="name" className="block text-base font-medium text-gray-700 mb-4">
-                        ชื่อกิจกรรม
+                    <label htmlFor="nameTH" className="block text-base font-medium text-gray-700 mb-4">
+                        ชื่องานวิจัย (ไทย)
                     </label>
                     <Input
-                        placeholder="ชื่อกิจกรรม"
+                        placeholder="ชื่องานวิจัย (ไทย)"
                         size="large"
                         type="text"
-                        name="name"
-                        id="name"
+                        name="nameTH"
+                        id="nameTH"
                         required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        value={nameTH}
+                        onChange={(e) => setNameTH(e.target.value)}
                     />
+                </div>
+                <div>
+                    <label htmlFor="nameEN" className="block text-base font-medium text-gray-700 mb-4">
+                        ชื่องานวิจัย (อังกฤษ)
+                    </label>
+                    <Input
+                        placeholder="ชื่องานวิจัย (อังกฤษ)"
+                        size="large"
+                        type="text"
+                        name="nameEN"
+                        id="nameEN"
+                        required
+                        value={nameEN}
+                        onChange={(e) => setNameEN(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="researchfund">ทุน</label>
+                    <select
+                        value={researchfund !== 'other' ? researchfund : ''}
+                        onChange={handleResearchFundChange}
+                        required
+                    >
+                        <option value="">เลือกประเภท</option>
+                        <option value="ทุนภายใน">ทุนภายใน</option>
+                        <option value="ทุนภายนอก">ทุนภายนอก</option>
+                        <option value="other">อื่นๆ (โปรดระบุ)</option>
+                    </select>
+                    {researchfund === 'other' && (
+                        <input
+                            type="text"
+                            value={customFund}
+                            onChange={handleCustomFundChange}
+                            placeholder="ระบุทุน"
+                            required
+                        />
+                    )}
                 </div>
                 <div>
                     <label htmlFor="type" className="block text-base font-medium text-gray-700 mb-4">
@@ -154,8 +178,9 @@ const EditActivity = ({ params }) => {
                         required
                     >
                         <option value="">เลือกประเภท</option>
-                        <option value="culture">ศิลปะวัฒนธรรม</option>
-                        <option value="service">บริการวิชาการ</option>
+                        <option value="journalism">สื่อสารมวลชน</option>
+                        <option value="researchreports">รายงานการวิจัย</option>
+                        <option value="posterpresent">โปสเตอร์ปัจจุบัน</option>
                     </select>
                 </div>
                 <div>
@@ -182,40 +207,13 @@ const EditActivity = ({ params }) => {
                             <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
                         )}
                     </Modal>
-
-                </div>
-                <div>
-                    <label htmlFor="start" className="block text-base font-medium text-gray-700 mb-4">
-                        เริ่ม
-                    </label>
-                    <DatePicker
-                        style={{ width: '100%' }}
-                        showTime
-                        format="YYYY-MM-DD HH:mm"
-                        value={start ? moment(start) : null}
-                        onChange={(date, dateString) => setStart(dateString)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="end" className="block text-base font-medium text-gray-700 mb-4">
-                        สิ้นสุด
-                    </label>
-                    <DatePicker
-                        style={{ width: '100%' }}
-                        showTime
-                        format="YYYY-MM-DD HH:mm"
-                        value={end ? moment(end) : null}
-                        onChange={(date, dateString) => setEnd(dateString)}
-                        required
-                    />
                 </div>
                 <div>
                     <label htmlFor="year" className="block text-base font-medium text-gray-700 mb-4">
-                        Year
+                        ปี
                     </label>
                     <Select
-                        placeholder="Select year"
+                        placeholder="เลือกปี"
                         style={{ width: 200 }}
                         required
                         value={year}
@@ -234,13 +232,6 @@ const EditActivity = ({ params }) => {
                         บันทึก
                     </Button>
                     <Button className="inline-flex justify-center mr-4"
-                        type="primary" danger
-                        size="middle"
-                        onClick={handleDelete}
-                    >
-                        ลบ
-                    </Button>
-                    <Button className="inline-flex justify-center mr-4"
                         onClick={handleBack}
                     >
                         ยกเลิก
@@ -251,4 +242,4 @@ const EditActivity = ({ params }) => {
     );
 };
 
-export default EditActivity;
+export default CreateResearch;

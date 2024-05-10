@@ -7,7 +7,6 @@ import { Input, Button, Select, TimePicker } from 'antd';
 
 import moment from 'moment';
 
-
 const { Option } = Select;
 
 const CreateSubject = () => {
@@ -40,12 +39,12 @@ const CreateSubject = () => {
     
             if (!response.ok) throw new Error('Something went wrong');
     
-            SuccessAlert('Success!', 'Data has been saved successfully');
+            SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
             router.push('/admin/subject');
     
         } catch (error) {
             console.error(error);
-            WarningAlert('Error!', 'Failed to save data');
+            WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
         }
     };
 

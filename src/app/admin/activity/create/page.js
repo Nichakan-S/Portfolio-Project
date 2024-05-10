@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
-import { Input, Button, DatePicker, Upload, Modal } from 'antd';
+import { Input, Button, DatePicker, Upload, Modal, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
+
+const { Option } = Select;
 
 const CreateActivity = () => {
     const [name, setName] = useState('');
@@ -20,14 +22,18 @@ const CreateActivity = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+<<<<<<< HEAD
         console.log(JSON.stringify({ name, type, start, end, year }))
+=======
+        const thaiYear = parseInt(year, 10) + 543;
+>>>>>>> 8042e3981324de80abb4a9f2dbcd58a4f7608057
         try {
             const response = await fetch('/api/activity', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, type, file, start, end, year })
+                body: JSON.stringify({ name, type, file, start, end, year: thaiYear  })
             });
 
             if (!response.ok) throw new Error('Something went wrong');
@@ -76,6 +82,13 @@ const CreateActivity = () => {
         console.log('onOk: ', result);
       };
 
+    const yearOptions = [];
+    const currentYear = moment().year();
+    for (let i = currentYear - 5; i <= currentYear + 5; i++) {
+        const thaiYear = moment(i.toString()).add(543, 'years').format('YYYY');
+        yearOptions.push(<Option key={i} value={i}>{thaiYear}</Option>);
+    }
+
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-2xl font-semibold mb-6">เพิ่มกิจกรรมใหม่</h1>
@@ -106,7 +119,7 @@ const CreateActivity = () => {
                         required
                     >
                         <option value="">เลือกประเภท</option>
-                        <option value="culture">วัฒนธรรม</option>
+                        <option value="culture">ศิลปะวัฒนธรรม</option>
                         <option value="service">บริการวิชาการ</option>
                     </select>
                 </div>
@@ -170,18 +183,17 @@ const CreateActivity = () => {
                 </div>
                 <div>
                     <label htmlFor="year" className="block text-base font-medium text-gray-700 mb-4">
-                        ปี
+                        Year
                     </label>
-                    <Input
-                        placeholder="ปี"
-                        size="large"
-                        type="text"
-                        name="year"
-                        id="year"
+                    <Select
+                        placeholder="Select year"
+                        style={{ width: 200 }}
                         required
                         value={year}
-                        onChange={(e) => setYear(e.target.value)}
-                    />
+                        onChange={(value) => setYear(value)}
+                    >
+                        {yearOptions}
+                    </Select>
                 </div>
                 <div>
                     <Button className="inline-flex justify-center mr-4 "

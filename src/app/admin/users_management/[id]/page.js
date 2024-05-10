@@ -23,7 +23,7 @@ const EditUser = ({ params }) => {
     const [selectedFacultyId, setSelectedFacultyId] = useState('');
     const [filteredMajors, setFilteredMajors] = useState([]);
     const [showPasswordFields, setShowPasswordFields] = useState(false);
-
+    const [isLoading, setIsLoading] = useState(true);
 
     const router = useRouter();
     const { id } = params;
@@ -60,6 +60,8 @@ const EditUser = ({ params }) => {
                 setSelectedFacultyId(user.facultyId.toString());
             } catch (error) {
                 console.error('Failed to fetch data', error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -158,6 +160,10 @@ const EditUser = ({ params }) => {
     const handleBack = () => {
         router.push('/admin/users_management');
     };
+
+    if (isLoading) {
+        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    }
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">

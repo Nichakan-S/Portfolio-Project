@@ -48,7 +48,7 @@ const SubjectList = () => {
                subject.starttime.toLowerCase().includes(searchTerm.toLowerCase()) ||
                subject.endtime.toLowerCase().includes(searchTerm.toLowerCase()) ||
                subject.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.year.toLowerCase().includes(searchTerm.toLowerCase());
+               subject.year.toString().toLowerCase().includes(searchTerm.toLowerCase());
     });
 
     return (

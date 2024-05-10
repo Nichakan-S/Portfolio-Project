@@ -2,9 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ConfirmAlert,SuccessAlert, WarningAlert } from '../../../components/sweetalert';
-import { Input, Button, Select, TimePicker , Option } from 'antd';
+import { ConfirmAlert, SuccessAlert, WarningAlert } from '../../../components/sweetalert';
+import { Input, Button, TimePicker, Select } from 'antd';
+
 import moment from 'moment';
+
+const { Option } = Select;
 
 const EditSubject = ({ params }) => {
     const [name, setName] = useState('');
@@ -19,12 +22,19 @@ const EditSubject = ({ params }) => {
     const { id } = params;
     const [isLoading, setIsLoading] = useState(true);
 
+    useEffect(() => {
+        if (id) {
+            fetchSubject(parseInt(id));
+        }
+    }, [id]);
+
     const fetchSubject = async (id) => {
         try {
             const response = await fetch(`/api/subject/${id}`);
             const data = await response.json();
             if (!response.ok) throw new Error('Failed to fetch Subject');
             setName(data.name);
+            setCode(data.code);
             setDay(data.day);
             setGroup(data.group);
             setStartTime(data.starttime);
@@ -38,19 +48,11 @@ const EditSubject = ({ params }) => {
         }
     };
 
-    useEffect(() => {
-        if (id) {
-            fetchSubject(parseInt(id));
-        }
-    }, [id]);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const formattedStartTime = starttime ? moment(starttime, 'HH:mm').format('HH:mm') : '';
         const formattedEndTime = endtime ? moment(endtime, 'HH:mm').format('HH:mm') : '';
-
-        const thaiYear = parseInt(year, 10) + 543;
 
         try {
             const response = await fetch(`/api/subject/${id}`, {
@@ -58,17 +60,17 @@ const EditSubject = ({ params }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, code, day, group, starttime: formattedStartTime, endtime: formattedEndTime, term: parseInt(term, 10), year: thaiYear })
+                body: JSON.stringify({ name, code, day, group, starttime: formattedStartTime, endtime: formattedEndTime, term: parseInt(term, 10), year: parseInt(year, 10) })
             });
 
             if (!response.ok) throw new Error('Something went wrong');
 
-            SuccessAlert('Success!', 'Data has been saved successfully');
+            SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
             router.push('/admin/subject');
 
         } catch (error) {
             console.error(error);
-            WarningAlert('Error!', 'Failed to save data');
+            WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
         }
     };
 
@@ -148,14 +150,15 @@ const EditSubject = ({ params }) => {
                         required
                         onChange={(value) => setDay(value)}
                     >
-                        <Option value="mon">Monday</Option>
-                        <Option value="tue">Tuesday</Option>
-                        <Option value="wed">Wednesday</Option>
-                        <Option value="thu">Thursday</Option>
-                        <Option value="fri">Friday</Option>
-                        <Option value="sat">Saturday</Option>
-                        <Option value="sun">Sunday</Option>
+                        <Select.Option value="mon">Monday</Select.Option>
+                        <Select.Option value="tue">Tuesday</Select.Option>
+                        <Select.Option value="wed">Wednesday</Select.Option>
+                        <Select.Option value="thu">Thursday</Select.Option>
+                        <Select.Option value="fri">Friday</Select.Option>
+                        <Select.Option value="sat">Saturday</Select.Option>
+                        <Select.Option value="sun">Sunday</Select.Option>
                     </Select>
+
                 </div>
                 <div>
                     <label htmlFor="group" className="block text-base font-medium text-gray-700 mb-4">
