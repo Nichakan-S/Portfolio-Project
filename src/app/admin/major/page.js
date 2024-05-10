@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Button, Input, Flex  } from 'antd';
-import { EditFilled } from '@ant-design/icons';
+import { Button, Input, Flex , Empty } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 const MajorList = () => {
     const [major, setMajor] = useState([])
@@ -38,58 +39,97 @@ const MajorList = () => {
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">สาขา</h1>
+                <h1 className="text-2xl font-semibold mb-6" style={{color:"#6C7AA3"}} >สาขา</h1>
                 <div className="flex items-center">
+                    <style>
+                        {`
+                        .custom-input::placeholder {
+                            color: #6C7AA3; /* กำหนดสีของ placeholder */
+                        }
+                        `}
+                    </style>
                     <Input 
-                        className="flex-grow mr-2"
+                        className="flex-grow mr-2 p-1 text-base border rounded-xl custom-input"
                         placeholder="ค้นหาสาขา..." 
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{ borderColor: '#2D427C' }}
                     />
                     <Flex align="flex-start" gap="small" vertical  >
                         <Link href="major/create">
-                        <Button type="primary" style={{ backgroundColor: '#2D427C', borderColor: '#2D427C', color: 'white' }}>เพิ่มสาขา</Button>
-                        </Link>
+                        <Button 
+                            className="text-base mr-4 w-full p-1 border rounded-xl "
+                            style={{
+                            backgroundColor: '#2D427C', 
+                            borderColor: '#2D427C', 
+                            color: 'white',
+                            height: '35px',
+                            borderWidth: '2px',
+                            fontSize: '18px'
+                            }}
+                            >
+                                เพิ่มสาขา
+                        </Button>
+                    </Link>
                     </Flex>
                 </div>
             </div>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
                 <table className="min-w-full">
-                    <thead className="bg-gray-100 ">
+                    <thead className="text-base rounded-lg border-b"
+                            style={{
+                                color: '#000000',
+                                borderColor: '#2D427C',
+                              }}  >
                         <tr>
-                            <th scope="col" className="w-1 px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">ชื่อสาขา</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">ชื่อคณะ</th>
-                            <th scope="col" className="px-6 py-3 text-right text-base font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
+                            <th 
+                                scope="col" 
+                                className="w-1 px-6 py-3 text-left  uppercase tracking-wider"
+                                style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
+                                >#</th>
+                            <th 
+                                scope="col" 
+                                className="w-1/5 px-6 py-3 text-left  uppercase tracking-wider"
+                                style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
+                                >ชื่อสาขา</th>
+                            <th 
+                                scope="col" 
+                                className="w-1/5 px-6 py-3 text-left  uppercase tracking-wider"
+                                style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
+                                >ชื่อคณะ</th>
+                            <th 
+                                scope="col" 
+                                className="px-6 py-3 text-right uppercase tracking-wider"
+                                style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
+                                >แก้ไข</th>
                         </tr>
                     </thead>
                 </table>
                 <div className="max-h-96 overflow-y-auto">
                     <table className="min-w-full">
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="divide-y divide-gray-200" style={{ borderColor: '#2D427C' }}>
                             {filteredmajor.length > 0 ? (
                                 filteredmajor.map((major, index) => (
                                     <tr key={major.id}>
-                                        <td className="w-1 px-6 py-4 whitespace-nowrap">
+                                        <td className="w-1 px-6 whitespace-nowrap" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
                                             {index + 1}
                                         </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
+                                        <td className="w-1/5 px-6 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
                                                 {major.majorName}
                                             </div>
                                         </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
+                                        <td className="w-1/5 px-6 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
                                                 {major.faculty?.facultyName}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                                        <td className="px-6 whitespace-nowrap text-right" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
                                             <Link href={`/admin/major/${major.id}`}>
-                                                <Button 
-                                                    type="link" 
-                                                    icon={<EditFilled style={{ fontSize: '20px' }}/>}
-                                                    style={{ color: '#FFD758' }}
+                                            <Button 
+                                                type="link"
+                                                icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}
                                                 />
                                             </Link>
                                         </td>
@@ -98,7 +138,7 @@ const MajorList = () => {
                             ) : (
                                 <tr>
                                     <td colSpan="2" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        ไม่มีข้อมูล
+                                        <Empty />
                                     </td>
                                 </tr>
                             )}

@@ -1,13 +1,13 @@
-import { Kodchasan } from 'next/font/google'
+import { Bai_Jamjuree} from 'next/font/google'
 import { getServerSession } from 'next-auth'
 
 import SessionProvider from './components/SessionProvider'
 import './globals.css'
 
-const kodchasan = Kodchasan({
+const baiJamjuree = Bai_Jamjuree({
   weight: '400',
-  subsets: ['latin'],
-})
+  subsets: ['latin'],  // Include other subsets if necessary
+});
 
 export const metadata = {
   title: 'Create Next App',
@@ -18,7 +18,7 @@ export default async function RootLayout({ children }) {
   const session = await getServerSession()
   return (
     <html lang="en">
-      <body className={kodchasan.className}>
+      <body className={baiJamjuree.className}>
           <SessionProvider session={session}>{children}</SessionProvider>
       </body>
     </html>

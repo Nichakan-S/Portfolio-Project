@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Button, Input, Flex } from 'antd';
-import { EditFilled } from '@ant-design/icons';
+import { Button, Input, Flex , Empty } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 const FacultyList = () => {
   const [faculty, setFaculty] = useState([])
@@ -34,31 +35,37 @@ const FacultyList = () => {
     faculty.facultyName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-
-
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold mb-6">คณะ</h1>
+        <h1 className="text-2xl font-semibold mb-6" style={{color:"#6C7AA3"}} >คณะ</h1>
         <div className="flex items-center justify-between">
+          <style>
+            {`
+              .custom-input::placeholder {
+                color: #6C7AA3; /* กำหนดสีของ placeholder */
+              }
+            `}
+          </style>
           <Input 
-            className="flex-grow mr-2 p-2 text-base border rounded-lg"
+            className="flex-grow mr-2 p-1 text-base border rounded-xl custom-input"
             placeholder="ค้นหาคณะ..." 
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ color: '#929DB8 !important' }}
+            style={{ borderColor: '#2D427C' , fontSize: '14px' }}
           />
           <Flex align="flex-start" gap="small" vertical  >
             <Link href="faculty/create">
               <Button 
-                className="text-base mr-4 w-full p-2 border rounded-lg "
+                className="text-base mr-4 w-full p-1 border rounded-xl "
                 style={{
-                  backgroundColor: 'transparent', 
+                  backgroundColor: '#2D427C', 
                   borderColor: '#2D427C', 
-                  color: '#2D427C',
-                  height: '40px',
-                  borderWidth: '2px'
+                  color: 'white',
+                  height: '35px',
+                  borderWidth: '2px',
+                  fontSize: '18px'
                 }}
                 >
                   เพิ่มคณะ
@@ -67,48 +74,48 @@ const FacultyList = () => {
           </Flex>
         </div>
       </div>
-      <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg ">
+      <div className="shadow-xl overflow-hidden border-b border-gray-200 sm:rounded-lg ">
         <table className="min-w-full">
           <thead className="text-base rounded-lg border-b "
                   style={{
                     color: '#000000',
+                    borderColor: '#2D427C',
                   }}  >
             <tr>
               <th scope="col" 
-                  className="w-1 px-6 text-left text-base font-medium uppercase tracking-wider" 
-                  style={{ paddingTop: '12px', paddingBottom: '12px' }}
+                  className="w-1 px-6 text-left  uppercase tracking-wider" 
+                  style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
                   >#</th>
               <th scope="col" 
-                  className="px-9 text-left text-base font-medium uppercase tracking-wider" 
-                  style={{ paddingTop: '12px', paddingBottom: '12px' }}
+                  className="px-9 text-left  uppercase tracking-wider" 
+                  style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
                   >ชื่อคณะ</th>
               <th scope="col" 
-                  className="px-6 text-right text-base font-medium uppercase tracking-wider" 
-                  style={{ paddingTop: '12px', paddingBottom: '12px' }}
+                  className="px-6 text-right  uppercase tracking-wider" 
+                  style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
                   >แก้ไข</th>
             </tr>
           </thead>
         </table>
         <div className="max-h-96 overflow-y-auto">
           <table className="min-w-full">
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200 " style={{ borderColor: '#2D427C' }}>
               {filteredFaculty.length > 0 ? (
                 filteredFaculty.map((faculty, index) => (
-                  <tr key={faculty.id}>
-                    <td className="w-1 px-6  whitespace-nowrap" style={{ paddingTop: '9px', paddingBottom: '9px' }}>
+                  <tr key={faculty.id} >
+                    <td className="w-1 px-6  whitespace-nowrap" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
                       {index + 1}
                     </td>
                     <td className="px-6  whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '9px', paddingBottom: '9px' }}>
+                      <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
                         {faculty.facultyName}
                       </div>
                     </td>
-                    <td className="px-6  whitespace-nowrap text-right" style={{ paddingTop: '9px', paddingBottom: '9px' }}>
+                    <td className="px-6 whitespace-nowrap text-right" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
                       <Link href={`/admin/faculty/${faculty.id}`}>
                         <Button 
-                          type="link" 
-                          icon={<EditFilled style={{ fontSize: '20px' }}/>}
-                          style={{ color: '#FFD758' }}
+                          type="link"
+                          icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}
                         />
                       </Link>
                     </td>
@@ -117,7 +124,7 @@ const FacultyList = () => {
               ) : (
                 <tr>
                   <td colSpan="2" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                    ไม่มีข้อมูล
+                    <Empty />
                   </td>
                 </tr>
               )}

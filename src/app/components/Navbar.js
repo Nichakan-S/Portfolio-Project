@@ -5,6 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation';
+import { Avatar, Space , Col, Row , Popover , Button } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 
 const Navbar = ({ isAdmin }) => {
   const { data: session, status  } = useSession();
@@ -53,34 +55,46 @@ const Navbar = ({ isAdmin }) => {
   }
 
   return (
-    <div className="flex items-center justify-between bg-white shadow-md p-4">
-      <div className="flex items-center">
+    <div className="min-h-1 bg-white shadow-lg flex flex-col">
+    <nav className="p-3">
+      <Row justify="space-around" align="middle" >
+      <Col span={1} className="flex items-center justify-center">  
         <Image
           src="/image/Newchandralogo1.png"
           alt="Logo"
-          width={40}
-          height={40}
+          width={50}
+          height={50}
           style={{ borderRadius: '50%', width: 'auto', height: 'auto' }} />
-        <Link href={isAdmin ? '/admin' : '/users'} className="text-xl font-bold ml-3">Chandrakasem Rajabhat University</Link>
-        <Link href={isAdmin ? '/admin' : '/users'} className="text-xl font ml-3">มหาวิทยาลัยราชภัฏจันทรเกษม</Link>
-      </div>
-      <div className="flex items-center">
+      </Col>
+      <Col span={15} className="text-left">
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <Link href={isAdmin ? '/admin' : '/users'} className="text-xl font-bold ml-3" style={{ color:'#6C7AA3' }}>
+            Chandrakasem Rajabhat University
+          </Link>
+          <Link href={isAdmin ? '/admin' : '/users'} className="text-xl font ml-3" style={{ color:'#6C7AA3' }}>
+            มหาวิทยาลัยราชภัฏจันทรเกษม
+          </Link>
+        </div>
+      </Col>
+
+      <Col span={8} className="text-right" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', height: '100%' }}>
         <div>
-          <div>{`${user.rank.rankname} ${user.prefix} ${user.username} ${user.lastname}`}</div>
-          <div className="text-right">{user.email}</div>
+          <div style={{color:'#6C7AA3'}} >{`${user.rank.rankname} ${user.prefix} ${user.username} ${user.lastname}`}</div>
+          <div className="text-right" style={{color:'#6C7AA3'}} >{user.email}</div>
         </div>
         <div className="flex items-center relative ml-4">
           <div onClick={() => setDropdownOpen(!isDropdownOpen)} className="cursor-pointer">
             {user.user_image ? (
-              <Image
-                src={user.user_image}
-                alt="User profile image"
-                width={40}
-                height={40}
-                className="rounded-full"
-                onLoad={() => {}}
-                onError={(e) => { e.target.onerror = null; e.target.src='/image/none_image.png'; }}
-              />
+              <Space wrap size={16}>
+                <Avatar
+                  size={50}
+                  src={user.user_image || '/image/none_image.png'}
+                  icon={!user.user_image && <UserOutlined />}
+                  onError={() => {
+                    return true;
+                  }}
+                />
+              </Space>
             ) : (
               <Image
                 src="/image/none_image.png"
@@ -106,7 +120,10 @@ const Navbar = ({ isAdmin }) => {
             </div>
           )}
         </div>
-      </div>
+      </Col>
+
+      </Row>
+    </nav>
     </div>
   );
 };

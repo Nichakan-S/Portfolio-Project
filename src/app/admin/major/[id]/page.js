@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
-import { Select , Input , Button , Alert , Space} from 'antd';
+import { Select , Input , Button , Alert , Space , Card} from 'antd';
 
 
 const EditMajor = ({ params }) => {
@@ -123,65 +123,72 @@ const EditMajor = ({ params }) => {
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-2xl font-semibold mb-6">แก้ไขชื่อสาขา {majorName}</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label htmlFor="faculty" className="block text-base font-medium text-gray-700 mb-3">
-                        เลือกคณะ
-                    </label>
-                    <Select
-                        defaultValue="กรุณาเลือกคณะ"
-                        style={{ width: '100%' }}
-                        size="large"
-                        onChange={handleChange}
-                        options={[{ value: '', label: 'กรุณาเลือกคณะ', disabled: true }, ...facultyOptions]}
-                    />
-                    <label
-                        htmlFor="majorName"
-                        className="block text-base font-medium text-gray-700 mt-4 mb-4 "
-                    >
-                        ชื่อสาขา
-                    </label>
-                    <Input 
-                        placeholder="majorName" 
-                        size="large"
-                        type="text"
-                        name="majorName"
-                        id="majorName"
-                        required
-                        value={majorName}
-                        onChange={(e) => setMajorName(e.target.value)}
-                    />
-                    <Space
-                        direction="vertical"
+                <Card
+                        className="max-w-6xl mx-auto px-4 py-8 shadow-xl"
                         style={{
-                        width: '100%',
+                        
                         }}
-                        className="mt-4"
-                    >
-                        <Alert message="กรุณาทราบว่าไม่สามารถลบข้อมูลได้หากมีผู้ใช้งานในสาขาและคณะนี้ โปรดตรวจสอบและยืนยันก่อนกดบันทึกข้อมูล" banner />
-                    </Space>
-                </div>
-                <div className="flex items-center">
-                    <Button className="inline-flex justify-center mr-4"
-                    type="primary"
-                    size="middle"
-                    onClick={handleSubmit}
-                    style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
-                    >
-                    บันทึก
-                    </Button>
-                    <Button className="inline-flex justify-center mr-4"
-                        type="primary" danger
+                        >
+                    <div>
+                        <label htmlFor="faculty" className="block text-base font-medium text-gray-700 mb-3">
+                            เลือกคณะ
+                        </label>
+                        <Select
+                            defaultValue="กรุณาเลือกคณะ"
+                            style={{ width: '100%' }}
+                            size="large"
+                            onChange={handleChange}
+                            options={[{ value: '', label: 'กรุณาเลือกคณะ', disabled: true }, ...facultyOptions]}
+                        />
+                        <label
+                            htmlFor="majorName"
+                            className="block text-base font-medium text-gray-700 mt-4 mb-4 "
+                        >
+                            ชื่อสาขา
+                        </label>
+                        <Input 
+                            placeholder="majorName" 
+                            size="large"
+                            type="text"
+                            name="majorName"
+                            id="majorName"
+                            required
+                            value={majorName}
+                            onChange={(e) => setMajorName(e.target.value)}
+                        />
+                        <Space
+                            direction="vertical"
+                            style={{
+                            width: '100%',
+                            }}
+                            className="mt-4"
+                        >
+                            <Alert message="กรุณาทราบว่าไม่สามารถลบข้อมูลได้หากมีผู้ใช้งานในสาขาและคณะนี้ โปรดตรวจสอบและยืนยันก่อนกดบันทึกข้อมูล" banner />
+                        </Space>
+                    </div>
+                    <div className="flex items-center">
+                        <Button className="inline-flex justify-center mr-4"
+                        type="primary"
                         size="middle"
-                        onClick={handleDelete}
+                        onClick={handleSubmit}
+                        style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
                         >
-                        ลบ
-                    </Button>
-                    <Button className="inline-flex justify-center mr-4"
-                        onClick={handleBack}
-                        >
-                        ยกเลิก
-                    </Button>
-                </div>
+                        บันทึก
+                        </Button>
+                        <Button className="inline-flex justify-center mr-4"
+                            type="primary" danger
+                            size="middle"
+                            onClick={handleDelete}
+                            >
+                            ลบ
+                        </Button>
+                        <Button className="inline-flex justify-center mr-4"
+                            onClick={handleBack}
+                            >
+                            ยกเลิก
+                        </Button>
+                    </div>
+                </Card>
             </form>
         </div>
     );

@@ -20,6 +20,7 @@ const CreateActivity = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(JSON.stringify({ name, type, start, end, year }))
         try {
             const response = await fetch('/api/activity', {
                 method: 'POST',
@@ -64,6 +65,16 @@ const CreateActivity = () => {
             setPreviewFile(reader.result);
         };
     };
+    
+    const handleDateChange = (value, dateString) => {
+        console.log('Selected Time: ', value);
+        console.log('Formatted Selected Time: ', dateString);
+        setStart(value);  // อัปเดต state ด้วยวันที่ที่เลือกใหม่
+      };
+
+    const onOk = (result) => {
+        console.log('onOk: ', result);
+      };
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
@@ -132,11 +143,17 @@ const CreateActivity = () => {
                     <DatePicker
                         style={{ width: '100%' }}
                         showTime
-                        format="YYYY-MM-DD HH:mm"
-                        value={start ? moment(start) : null}
-                        onChange={(date, dateString) => setStart(dateString)}
+                        onChange={(result, dateString) => {
+                            console.log('Selected Time: ', result);
+                            console.log('Formatted Selected Time: ', dateString);
+                          }}
+                        onOk={onOk}
                         required
                     />
+                    {/* // showTime
+                        // format="YYYY-MM-DD HH:mm"
+                        // value={start ? moment(start) : null}
+                        // onChange={(value, dateString) => setStart(dateString)} */}
                 </div>
                 <div>
                     <label htmlFor="end" className="block text-base font-medium text-gray-700 mb-4">

@@ -53,7 +53,7 @@ const Sidebar = () => {
     ];
 
     const adminMenuItems = [
-        isAdmin && { key: 'admin', label: (<Link href="/admin" style={{ color: 'white' }} >หน้าแรก</Link>) },
+        isAdmin && { key: 'admin', label: (<Link href="/admin" >หน้าแรก</Link>) },
         isAdmin && { key: 'faculty', label: (<Link href="/admin/faculty">คณะ</Link>) },
         isAdmin && { key: 'major', label: (<Link href="/admin/major">สาขา</Link>) },
         isAdmin && { key: 'rank', label: (<Link href="/admin/rank">ตำแหน่ง</Link>) },
@@ -92,19 +92,19 @@ const Sidebar = () => {
             <Menu
                 onClick={onClick}
                 style={{
-                    width: '15rem',
+                    width: '14rem',
                     height: '100vh',
-                    backgroundColor: '#212936',
-                    color: 'white',
+                    backgroundColor: '#FFFFFF',
+                    color: '#6C7AA3',
                     padding: '1rem',
-                    fontSize: '1rem',
+                    fontSize: '16px',
                     fontWeight: 300,
                 }}
                 defaultSelectedKeys={['1']}
                 defaultOpenKeys={['sub1']}
                 mode="inline"
                 items={items}
-                theme="dark"
+                theme="light"
             />
         </aside>
     );
