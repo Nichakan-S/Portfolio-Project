@@ -89,11 +89,11 @@ const TeachingList = ({ params }) => {
         <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="container mx-auto px-4">
                 <table className="table-auto">
-                    <thead className="invisible">
+                    <thead className="border-2 border-gray-300">
                         <tr>
-                            <th className="p-2 bg-gray-200 invisible">Day/Time</th>
+                            <th className="p-2 bg-gray-200">Day/Time</th>
                             {times.map(time => (
-                                <th key={time} className="p-2 bg-gray-200 invisible">{time}</th>
+                                <th key={time} className="p-2 bg-gray-200 ">{time}</th>
                             ))}
                         </tr>
                     </thead>

@@ -55,7 +55,7 @@ const Navbar = ({ isAdmin }) => {
   }
 
   return (
-    <div className="min-h-1 bg-white shadow-lg flex flex-col w-full">
+    <div className=" bg-white shadow-lg flex flex-col w-full">
       <nav className="p-3">
         <Row justify="space-around" align="middle" >
           <Col span={1} className="flex items-center justify-center">
@@ -121,7 +121,6 @@ const Navbar = ({ isAdmin }) => {
               )}
             </div>
           </Col>
-
         </Row>
       </nav>
     </div>
