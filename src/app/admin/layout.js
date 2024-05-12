@@ -13,7 +13,7 @@ const AdminLayout = ({ children }) => {
         }
       }}
     >
-      <div className="min-h-screen flex flex-col">
+      <div className="">
         <Navbar isAdmin={true} />
         <div className="flex flex-1">
           <Sidebar isAdmin={true} />

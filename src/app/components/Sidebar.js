@@ -44,7 +44,7 @@ const Sidebar = () => {
     const isOverview = user?.rank?.overview;
     const userMenuItems = [
         isUser && { key: 'Home', label: (<Link href={`/users/${session.user.id}`}>หน้าแรก</Link>) },
-        isUser && { key: 'Schedule', label: (<Link href={`/users/manage_teaching/${session.user.id}`}>ตารางสอน</Link>) },
+        isUser && { key: 'Schedule', label: (<Link href={`/users/manage_teaching/${session.user.id}`}>บันทึกการสอน</Link>) },
         isUser && { key: 'Activity', label: (<Link href={`/users/manage_activity/${session.user.id}`}>ผลงานกิจกรรม</Link>) },
         isUser && { key: 'Research', label: (<Link href={`/users/manage_research/${session.user.id}`}>ผลงานวิจัย</Link>) },
     ];
@@ -56,22 +56,22 @@ const Sidebar = () => {
         isAdmin && { key: 'rank', label: (<Link href="/admin/rank">ตำแหน่ง</Link>) },
         isAdmin && { key: 'users_management', label: (<Link href="/admin/users_management">จัดการผู้ใช้</Link>) },
         isAdmin && { key: 'subject', label: (<Link href="/admin/subject">วิชาทั้งหมด</Link>) },
-        isAdmin && { key: 'manage_supject', label: (<Link href="/admin/manage_teaching">ตารางสอน</Link>) },
+        isAdmin && { key: 'manage_supject', label: (<Link href="/admin/manage_teaching">บันทึกการสอน</Link>) },
         isAdmin && { key: 'activity', label: (<Link href="/admin/activity">กิจกรรมทั้งหมด</Link>) },
         isAdmin && { key: 'manage_activity', label: (<Link href="/admin/manage_activity">ผลงานกิจกรรม</Link>) },
         isAdmin && { key: 'manage_research', label: (<Link href="/admin/manage_research">ผลงานวิจัย</Link>) },
     ];
 
     const employeeMenuItems = [
-        isEmployee && { key: 'employee', label: (<Link href="/users/employee">Employee Section</Link>) },
+        isEmployee && isUser && { key: 'employee', label: (<Link href="/users/employee">สำรวจบุคลากร</Link>) },
     ];
 
     const evaluationMenuItem = [
-        isEvaluation && { key: 'evaluation', label: (<Link href="/users/evaluation">Evaluation Section</Link>) },
+        isEvaluation && isUser && { key: 'evaluation', label: (<Link href="/users/evaluation">ประเมินบุคลากร</Link>) },
     ];
 
     const overviewMenuItem = [
-        isOverview && { key: 'overview', label: (<Link href="/users/overview">Overview Section</Link>) },
+        isOverview && isUser && { key: 'overview', label: (<Link href="/users/overview">ภาพรวม</Link>) },
     ];
 
     const items = [...userMenuItems, ...adminMenuItems, ...employeeMenuItems, ...evaluationMenuItem, ...overviewMenuItem].filter(Boolean);
