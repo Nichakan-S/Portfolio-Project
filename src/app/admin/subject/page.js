@@ -2,8 +2,11 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Button, Input, Flex } from 'antd';
-import { EditFilled } from '@ant-design/icons';
+import { Button, Input, Flex, Upload } from 'antd';
+import { EditFilled, InboxOutlined } from '@ant-design/icons';
+import { SuccessAlert, WarningAlert } from '../../components/sweetalert';
+
+const { Dragger } = Upload;
 
 const DayEnum = {
     mon: 'จันทร์',
@@ -36,19 +39,56 @@ const SubjectList = () => {
         }
     };
 
+    const uploadFile = async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+    
+        try {
+            const response = await fetch('/api/excelSubject', {
+                method: 'POST',
+                body: formData,
+            });
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const result = await response.json();
+            SuccessAlert('สำเร็จ!', `ไฟล์ ${file.name} ถูกอัปโหลดสำเร็จแล้ว`);
+            console.log(result);
+        } catch (error) {
+            WarningAlert('ผิดพลาด!', `การอัปโหลดไฟล์ล้มเหลว: ${error.message}`);
+            console.error('Failed to upload file:', error);
+        }
+    };
+
     if (isLoading) {
         return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
-    
+
+    const UploadExcelButton = () => (
+        <Dragger
+            name="file"
+            multiple={false}
+            action="/api/excelSubject"
+            onChange={uploadFile} 
+            className="p-2 rounded flex justify-center items-center h-12"
+        >
+            <div className="text-sm text-gray-700">
+                อัพโหลด
+            </div>
+        </Dragger>
+    );
+
     const filteredsubject = subject.filter((subject) => {
         return subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               DayEnum[subject.day].includes(searchTerm.toLowerCase()) ||
-               subject.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.starttime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.endtime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.year.toString().toLowerCase().includes(searchTerm.toLowerCase());
+            DayEnum[subject.day].includes(searchTerm.toLowerCase()) ||
+            subject.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subject.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subject.starttime.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subject.endtime.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subject.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subject.year.toString().toLowerCase().includes(searchTerm.toLowerCase());
     });
 
     return (
@@ -63,6 +103,7 @@ const SubjectList = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
+                    <UploadExcelButton />
                     <Flex align="flex-start" gap="small" vertical  >
                         <Link href="subject/create">
                             <Button type="primary" style={{ backgroundColor: '#2D427C', borderColor: '#2D427C', color: 'white' }}>เพิ่มวิชา</Button>

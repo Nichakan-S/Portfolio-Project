@@ -6,7 +6,7 @@ import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
 import { Select, Button, Modal, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
-const CreateMajor = () => {
+const CreateActivity = () => {
     const { data: session } = useSession();
     const [file, setFile] = useState('');
     const [activity, setActivity] = useState([]);
@@ -149,4 +149,4 @@ const CreateMajor = () => {
     );
 };
 
-export default CreateMajor;
+export default CreateActivity;

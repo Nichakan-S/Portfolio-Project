@@ -22,11 +22,7 @@ const CreateActivity = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-<<<<<<< HEAD
-        console.log(JSON.stringify({ name, type, start, end, year }))
-=======
         const thaiYear = parseInt(year, 10) + 543;
->>>>>>> 8042e3981324de80abb4a9f2dbcd58a4f7608057
         try {
             const response = await fetch('/api/activity', {
                 method: 'POST',

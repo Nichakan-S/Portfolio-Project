@@ -42,8 +42,8 @@ const Sidebar = () => {
     const isEvaluation = user?.rank?.evaluation;
     const isOverview = user?.rank?.overview;
     const userMenuItems = [
-        isUser && { key: 'Home', label: (<Link href="/users">หน้าแรก</Link>) },
-        isUser && { key: 'Schedule', label: (<Link href="/users/academic">ตารางสอน</Link>) },
+        isUser && { key: 'Home', label: (<Link href={`/users/${session.user.id}`}>หน้าแรก</Link>) },
+        isUser && { key: 'Schedule', label: (<Link href={`/users/manage_teaching/${session.user.id}`}>ตารางสอน</Link>) },
         isUser && { key: 'Activity', label: (<Link href={`/users/manage_activity/${session.user.id}`}>ผลงานกิจกรรม</Link>) },
         isUser && { key: 'Research', label: (<Link href={`/users/manage_research/${session.user.id}`}>ผลงานวิจัย</Link>) },
     ];
@@ -89,7 +89,7 @@ const Sidebar = () => {
                 onClick={onClick}
                 style={{
                     width: '14rem',
-                    height: '100vh',
+                    height: '100%',
                     backgroundColor: '#FFFFFF',
                     color: '#6C7AA3',
                     padding: '1rem',

@@ -32,7 +32,7 @@ export default function SignIn() {
           router.push('/admin');
         } else if (session?.user?.role === 'user') {
           console.log('User logged in');
-          router.push('/users');
+          router.push(`/users/${session?.user?.id}`);
         } else {
           console.log('Unknown role');
         }
