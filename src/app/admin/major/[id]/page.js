@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
-import { Select , Input , Button , Alert , Space , Card} from 'antd';
+import { Select, Input, Button, Alert, Space, Card } from 'antd';
 import '/src/app/globals.css'
 
 
@@ -15,52 +15,34 @@ const EditMajor = ({ params }) => {
     const { id } = params;
     const [isLoading, setIsLoading] = useState(true);
 
-    const fetchMajor = async (id) => {
-        try {
-            const response = await fetch(`/api/major/${id}`);
-            const data = await response.json();
-            if (!response.ok) throw new Error('Failed to fetch Major');
-            setMajorName(data.majorName);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     useEffect(() => {
-        const fetchFacultyAndMajor = async () => {
+        const fetchData = async () => {
+            setIsLoading(true);
             try {
-                const majorResponse = await fetch(`/api/major/${id}`);
-                const majorData = await majorResponse.json();
-                if (!majorResponse.ok) throw new Error('Failed to fetch major');
-                setMajorName(majorData.majorName);
-                setSelectedFaculty(majorData.facultyId);
-
+                
                 const facultyResponse = await fetch('/api/faculty');
+                if (!facultyResponse.ok) throw new Error('Failed to fetch faculties');
                 const facultyData = await facultyResponse.json();
                 setFaculty(facultyData);
+
+                const majorResponse = await fetch(`/api/major/${id}`);
+                if (!majorResponse.ok) throw new Error('Failed to fetch major');
+                const majorData = await majorResponse.json();
+                setMajorName(majorData.majorName);
+                setSelectedFaculty(majorData.facultyId);
             } catch (error) {
                 console.error(error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
-        fetchFacultyAndMajor();
+        if (id) fetchData();
     }, [id]);
-
-    useEffect(() => {
-        if (id) {
-            fetchMajor(parseInt(id));
-        }
-        if (majorName) {
-            fetchMajor(parseInt(majorName));
-        }
-    }, [id], [majorName]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // แปลง selectedFaculty จาก string เป็น integer
             const facultyIdAsNumber = parseInt(selectedFaculty);
             if (isNaN(facultyIdAsNumber)) {
                 throw new Error('Invalid faculty ID');
@@ -91,7 +73,6 @@ const EditMajor = ({ params }) => {
                     method: 'DELETE',
                 });
                 if (!response.ok) throw new Error('Failed to delete the major.');
-                // Redirect after successful deletion
                 SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
                 router.push('/admin/major');
             } catch (error) {
@@ -108,12 +89,12 @@ const EditMajor = ({ params }) => {
     const handleChange = (value) => {
         setSelectedFaculty(value);
         console.log(`selected ${value}`);
-      };      
-    
+    };
+
     const facultyOptions = faculty.map(fac => ({
-    label: fac.facultyName,
-    value: fac.id,
-    disabled: fac.disabled
+        label: fac.facultyName,
+        value: fac.id,
+        disabled: fac.disabled
     }));
 
     if (isLoading) {
@@ -126,35 +107,35 @@ const EditMajor = ({ params }) => {
             <form onSubmit={handleSubmit} className="space-y-6">
                 <Card
                     className="max-w-6xl mx-auto px-4 py-8 shadow-xl"
-                    >
+                >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
                         <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
                             <label htmlFor="facultyName" className="block font-medium mr-4 mb-4">
                                 <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เลือกคณะ : </span>
                             </label>
                             <Select
-                                defaultValue="กรุณาเลือกคณะ"
+                                defaultValue={selectedFaculty}
                                 className="flex-grow mr-4 mb-4 custom-select "
                                 size='large'
-                                style={{    
+                                style={{
                                     flexBasis: '0%',
-                                    flexGrow: 1 ,
-                                    width: '100', 
-                                    borderColor: '#DADEE9', 
-                                    fontSize: '16px', 
+                                    flexGrow: 1,
+                                    width: '100%',
+                                    borderColor: '#DADEE9',
+                                    fontSize: '16px',
                                     height: '40px',
-                                    minWidth: '300px'        
+                                    minWidth: '300px'
                                 }}
                                 onChange={handleChange}
                                 options={[{ value: '', label: 'กรุณาเลือกคณะ', disabled: true }, ...facultyOptions]}
                             />
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
-                            <label className="block mr-7 mb-4" style={{ fontSize:'16px'}}> 
-                                <span style={{ color: 'red' , fontSize:'16px' }}>*</span> ชื่อสาขา :
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                            <label className="block mr-7 mb-4" style={{ fontSize: '16px' }}>
+                                <span style={{ color: 'red', fontSize: '16px' }}>*</span> ชื่อสาขา :
                             </label>
-                            <Input 
-                                placeholder="ชื่อสาขา" 
+                            <Input
+                                placeholder="ชื่อสาขา"
                                 size="large"
                                 name="majorName"
                                 id="majorName"
@@ -162,31 +143,31 @@ const EditMajor = ({ params }) => {
                                 value={majorName}
                                 onChange={(e) => setMajorName(e.target.value)}
                                 className="flex-grow mr-4 "
-                                showCount 
-                                maxLength={250} 
-                                style={{ 
-                                    flexGrow: 1, 
-                                    flexShrink: 1, 
-                                    flexBasis: '50%', 
-                                    minWidth: '300px', 
+                                showCount
+                                maxLength={250}
+                                style={{
+                                    flexGrow: 1,
+                                    flexShrink: 1,
+                                    flexBasis: '50%',
+                                    minWidth: '300px',
                                     fontSize: '16px'
                                 }}
                             />
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                             <Space
                                 direction="vertical"
-                                style={{ 
-                                    flexGrow: 1, 
-                                    flexShrink: 1, 
-                                    flexBasis: '50%', 
-                                    minWidth: '300px' 
+                                style={{
+                                    flexGrow: 1,
+                                    flexShrink: 1,
+                                    flexBasis: '50%',
+                                    minWidth: '300px'
                                 }}
                                 className="mt-4"
-                                >
+                            >
                                 <div style={{ display: 'flex', alignItems: 'center', width: '70%', marginLeft: 'calc(8px + 4rem)' }} >
-                                    <Alert 
-                                        className=" mr-4 mb-4 " 
+                                    <Alert
+                                        className=" mr-4 mb-4 "
                                         style={{
                                             flexGrow: 1,
                                             flexBasis: '0%',
@@ -195,7 +176,7 @@ const EditMajor = ({ params }) => {
                                             fontSize: '16px',
                                             // width: '100%', // กำหนดให้ width เต็มพื้นที่เหมือนกับ Input
                                         }}
-                                        message="กรุณาทราบว่าไม่สามารถลบข้อมูลได้หากมีผู้ใช้งานในสาขาและคณะนี้ โปรดตรวจสอบและยืนยันก่อนกดบันทึกข้อมูล" banner 
+                                        message="กรุณาทราบว่าไม่สามารถลบข้อมูลได้หากมีผู้ใช้งานในสาขาและคณะนี้ โปรดตรวจสอบและยืนยันก่อนกดบันทึกข้อมูล" banner
                                     />
                                 </div>
                             </Space>
@@ -203,23 +184,23 @@ const EditMajor = ({ params }) => {
                     </div>
                     <div className="flex items-center">
                         <Button className="inline-flex justify-center mr-4"
-                        type="primary"
-                        size="middle"
-                        onClick={handleSubmit}
-                        style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
+                            type="primary"
+                            size="middle"
+                            onClick={handleSubmit}
+                            style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
                         >
-                        บันทึก
+                            บันทึก
                         </Button>
                         <Button className="inline-flex justify-center mr-4"
                             type="primary" danger
                             size="middle"
                             onClick={handleDelete}
-                            >
+                        >
                             ลบ
                         </Button>
                         <Button className="inline-flex justify-center mr-4"
                             onClick={handleBack}
-                            >
+                        >
                             ยกเลิก
                         </Button>
                     </div>

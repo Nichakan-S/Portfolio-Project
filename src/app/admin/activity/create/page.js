@@ -22,14 +22,13 @@ const CreateActivity = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const thaiYear = parseInt(year, 10) + 543;
         try {
             const response = await fetch('/api/activity', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, type, file, start, end, year: thaiYear  })
+                body: JSON.stringify({ name, type, file, start, end, year: parseInt(year, 10) })
             });
 
             if (!response.ok) throw new Error('Something went wrong');
@@ -67,23 +66,10 @@ const CreateActivity = () => {
             setPreviewFile(reader.result);
         };
     };
-    
-    const handleDateChange = (value, dateString) => {
-        console.log('Selected Time: ', value);
-        console.log('Formatted Selected Time: ', dateString);
-        setStart(value);  // อัปเดต state ด้วยวันที่ที่เลือกใหม่
-      };
 
     const onOk = (result) => {
         console.log('onOk: ', result);
       };
-
-    const yearOptions = [];
-    const currentYear = moment().year();
-    for (let i = currentYear - 5; i <= currentYear + 5; i++) {
-        const thaiYear = moment(i.toString()).add(543, 'years').format('YYYY');
-        yearOptions.push(<Option key={i} value={i}>{thaiYear}</Option>);
-    }
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
@@ -179,17 +165,19 @@ const CreateActivity = () => {
                 </div>
                 <div>
                     <label htmlFor="year" className="block text-base font-medium text-gray-700 mb-4">
-                        Year
+                        ปี
                     </label>
-                    <Select
-                        placeholder="Select year"
-                        style={{ width: 200 }}
+                    <Input
+                        placeholder="เลือกปี"
+                        size="large"
+                        type="number"
+                        name="year"
+                        id="year"
                         required
                         value={year}
-                        onChange={(value) => setYear(value)}
-                    >
-                        {yearOptions}
-                    </Select>
+                        onChange={(e) => setYear(e.target.value)}
+                        style={{ width: 200 }}
+                    />
                 </div>
                 <div>
                     <Button className="inline-flex justify-center mr-4 "

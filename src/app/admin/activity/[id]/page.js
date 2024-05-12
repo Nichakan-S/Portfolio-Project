@@ -97,13 +97,6 @@ const EditActivity = ({ params }) => {
         };
     };
 
-    const yearOptions = [];
-    const currentYear = moment().year();
-    for (let i = currentYear - 5; i <= currentYear + 5; i++) {
-        const thaiYear = moment(i.toString()).add(543, 'years').format('YYYY');
-        yearOptions.push(<Option key={i} value={i}>{thaiYear}</Option>);
-    }
-
     const handleDelete = async () => {
         ConfirmAlert('คุณแน่ใจที่จะลบข้อมูลนี้?', 'การดำเนินการนี้ไม่สามารถย้อนกลับได้', async () => {
           try {
@@ -212,17 +205,19 @@ const EditActivity = ({ params }) => {
                 </div>
                 <div>
                     <label htmlFor="year" className="block text-base font-medium text-gray-700 mb-4">
-                        Year
+                        ปี
                     </label>
-                    <Select
-                        placeholder="Select year"
-                        style={{ width: 200 }}
+                    <Input
+                        placeholder="เลือกปี"
+                        size="large"
+                        type="number"
+                        name="year"
+                        id="year"
                         required
                         value={year}
-                        onChange={(value) => setYear(value)}
-                    >
-                        {yearOptions}
-                    </Select>
+                        onChange={(e) => setYear(e.target.value)}
+                        style={{ width: 200 }}
+                    />
                 </div>
                 <div>
                     <Button className="inline-flex justify-center mr-4 "
