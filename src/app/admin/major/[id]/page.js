@@ -91,7 +91,6 @@ const EditMajor = ({ params }) => {
                     method: 'DELETE',
                 });
                 if (!response.ok) throw new Error('Failed to delete the major.');
-                // Redirect after successful deletion
                 SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
                 router.push('/admin/major');
             } catch (error) {
@@ -129,7 +128,7 @@ const EditMajor = ({ params }) => {
                     >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
                         <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
-                            <label htmlFor="facultyName" className="block font-medium mr-4 mb-4">
+                            <label htmlFor="facultyName" className="block mr-4 mb-4">
                                 <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เลือกคณะ : </span>
                             </label>
                             <Select
@@ -146,12 +145,12 @@ const EditMajor = ({ params }) => {
                                     minWidth: '300px'        
                                 }}
                                 onChange={handleChange}
-                                options={[{ value: '', label: 'กรุณาเลือกคณะ', disabled: true }, ...facultyOptions]}
+                                options={[{ value: '',alignItems: 'center', label: 'กรุณาเลือกคณะ', disabled: true }, ...facultyOptions]}
                             />
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
-                            <label className="block mr-7 mb-4" style={{ fontSize:'16px'}}> 
-                                <span style={{ color: 'red' , fontSize:'16px' }}>*</span> ชื่อสาขา :
+                            <label className="block mr-7 mb-4" > 
+                                <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ชื่อสาขา : </span>
                             </label>
                             <Input 
                                 placeholder="ชื่อสาขา" 
@@ -161,7 +160,7 @@ const EditMajor = ({ params }) => {
                                 required
                                 value={majorName}
                                 onChange={(e) => setMajorName(e.target.value)}
-                                className="flex-grow mr-4 "
+                                className="flex-grow mr-4 mb-4"
                                 showCount 
                                 maxLength={250} 
                                 style={{ 
@@ -169,7 +168,8 @@ const EditMajor = ({ params }) => {
                                     flexShrink: 1, 
                                     flexBasis: '50%', 
                                     minWidth: '300px', 
-                                    fontSize: '16px'
+                                    fontSize: '16px',
+                                    height: '40px'
                                 }}
                             />
                         </div>
