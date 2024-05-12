@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
-import { Select , Input , Button , Alert , Space , Card} from 'antd';
+import { Select , Input , Button , Alert , Space , Card , message } from 'antd';
 import '/src/app/globals.css'
 
 
@@ -90,15 +90,19 @@ const EditMajor = ({ params }) => {
                 const response = await fetch(`/api/major/${id}`, {
                     method: 'DELETE',
                 });
-                if (!response.ok) throw new Error('Failed to delete the major.');
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'ไม่สามารถลบข้อมูลสาขาได้');
+                }
                 SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
                 router.push('/admin/major');
             } catch (error) {
-                console.error('Failed to delete the major', error);
-                WarningAlert('ผิดพลาด!', 'ไม่สามารถลบข้อมูลได้');
+                console.error('ไม่สามารถลบข้อมูลสาขาได้', error);
+                message.error(`ไม่สามารถลบข้อมูลได้: ${error.message}`);
             }
         });
     };
+    
 
     const handleBack = () => {
         router.push('/admin/major');
@@ -184,20 +188,7 @@ const EditMajor = ({ params }) => {
                                 }}
                                 className="mt-4"
                                 >
-                                <div style={{ display: 'flex', alignItems: 'center', width: '70%', marginLeft: 'calc(8px + 4rem)' }} >
-                                    <Alert 
-                                        className=" mr-4 mb-4 " 
-                                        style={{
-                                            flexGrow: 1,
-                                            flexBasis: '0%',
-                                            minWidth: '300px',
-                                            padding: '15px',
-                                            fontSize: '16px',
-                                            // width: '100%', // กำหนดให้ width เต็มพื้นที่เหมือนกับ Input
-                                        }}
-                                        message="กรุณาทราบว่าไม่สามารถลบข้อมูลได้หากมีผู้ใช้งานในสาขาและคณะนี้ โปรดตรวจสอบและยืนยันก่อนกดบันทึกข้อมูล" banner 
-                                    />
-                                </div>
+                                
                             </Space>
                         </div>
                     </div>
