@@ -109,7 +109,7 @@ const ResearchList = () => {
                                         <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
                                             <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/admin/research/${research.id}`}
+                                                href={`/admin/manage_research/${research.id}`}
                                             >
                                                 แก้ไข
                                             </Link>

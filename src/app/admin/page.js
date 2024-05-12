@@ -9,15 +9,13 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // เมื่อ status เป็น 'authenticated' และมี session.user.id ที่ถูกต้อง
     if (status === 'authenticated' && session?.user?.id) {
       const fetchUserData = async () => {
-        const res = await fetch(`/api/user/${session.user.id}`); // path ที่ถูกต้องตาม backend
+        const res = await fetch(`/api/user/${session.user.id}`);
         if (res.ok) {
           const userData = await res.json();
           setUser(userData);
         } else {
-          // ถ้า fetch ไม่สำเร็จ, ให้ logout
           signOut({ callbackUrl: '/' });
         }
         setIsLoading(false);
@@ -25,7 +23,6 @@ export default function Dashboard() {
 
       fetchUserData();
     } else if (status === 'unauthenticated') {
-      // ถ้าไม่ได้เข้าสู่ระบบ, ให้ไปที่หน้า login
       signIn('credentials', { callbackUrl: '/' });
     }
   }, [status, session]);
