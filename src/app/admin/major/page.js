@@ -54,7 +54,7 @@ const MajorList = () => {
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ borderColor: '#2D427C' }}
+                        style={{ borderColor: '#2D427C' , fontSize: '14px'}}
                     />
                     <Flex align="flex-start" gap="small" vertical  >
                         <Link href="major/create">
@@ -75,7 +75,7 @@ const MajorList = () => {
                     </Flex>
                 </div>
             </div>
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+            <div className="shadow-xl overflow-hidden border-b border-gray-200 sm:rounded-lg">
                 <table className="min-w-full">
                     <thead className="text-base rounded-lg border-b"
                             style={{
@@ -90,12 +90,12 @@ const MajorList = () => {
                                 >#</th>
                             <th 
                                 scope="col" 
-                                className="w-1/5 px-6 py-3 text-left  uppercase tracking-wider"
+                                className="w-1/5 px-4 py-3 text-left  uppercase tracking-wider"
                                 style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
                                 >ชื่อสาขา</th>
                             <th 
                                 scope="col" 
-                                className="w-1/5 px-6 py-3 text-left  uppercase tracking-wider"
+                                className="w-1/5 px-9 py-3 text-left  uppercase tracking-wider"
                                 style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
                                 >ชื่อคณะ</th>
                             <th 
@@ -120,7 +120,7 @@ const MajorList = () => {
                                                 {major.majorName}
                                             </div>
                                         </td>
-                                        <td className="w-1/5 px-6 whitespace-nowrap">
+                                        <td className="w-1/5 px-10 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
                                                 {major.faculty?.facultyName}
                                             </div>

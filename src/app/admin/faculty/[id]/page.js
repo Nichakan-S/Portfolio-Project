@@ -84,36 +84,42 @@ const EditFaculty = ({ params }) => {
       <h1 className="text-2xl font-semibold mb-6" style={{color:"#6C7AA3"}} >แก้ไขชื่อคณะ {facultyName}</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card
-                    className="max-w-6xl mx-auto px-4 py-8 shadow-xl"
-                    style={{
-                    
-                    }}
-                >
-          <div>
+          className="max-w-6xl mx-auto px-4 py-8 shadow-xl"
+          >
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <label
               htmlFor="facultyName"
-              className="block text-base font-medium text-gray-700 mb-4"
+              className="block text-base font-medium text-gray-700 mb-4 mr-6 "
             >
-              ชื่อคณะที่ต้องการเปลี่ยนใหม่ :
+              <span style={{ color: 'red' }}>*</span> ชื่อคณะที่ต้องการเปลี่ยนใหม่ :
             </label>
             <Input 
               placeholder="facultyName" 
               size="large"
-              type="text"
               name="facultyName"
               id="facultyName"
               required
               value={facultyName}
               onChange={(e) => setFacultyName(e.target.value)}
               className=" mb-4 "
+              showCount 
+              maxLength={100}
+              style={{ 
+                flexGrow: 1, 
+                flexShrink: 1, 
+                flexBasis: '50%', 
+                padding: '8px', 
+                minWidth: '300px' 
+            }}
               />
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center" style={{ display: 'flex', justifyContent: 'flex-end'}} >
             <Button className="inline-flex justify-center mr-4 mb-4"
               type="primary"
               size="middle"
               onClick={handleSubmit}
-              style={{ backgroundColor: '#07C203', borderColor: '#07C203' }}
+              disabled={!facultyName} 
+              style={{ backgroundColor: '#02964F', borderColor: '#02964F' }}
               >
               บันทึก
             </Button>
@@ -121,11 +127,11 @@ const EditFaculty = ({ params }) => {
               type="primary" danger
               size="middle"
               onClick={handleDelete}
-              style={{ backgroundColor: '#D80000', borderColor: '#D80000' }}
+              style={{ backgroundColor: '#E50000', borderColor: '#E50000' }}
               >
               ลบ
             </Button>
-            <Button className="inline-flex justify-center mr-4 mb-4"
+            <Button className="inline-flex justify-center  mb-4"
                 onClick={handleBack}
                 >
                 ยกเลิก

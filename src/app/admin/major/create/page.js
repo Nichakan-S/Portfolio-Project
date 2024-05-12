@@ -72,67 +72,73 @@ const CreateMajor = () => {
                 <Card
                     className="max-w-6xl mx-auto px-4 py-8 shadow-xl"
                     >
-                    <div labelCol={{ span: 4 }}
-                        wrapperCol={{ span: 14 }}
-                        layout="horizontal"
-                        initialValues={{ size: componentSize }}
-                        size={componentSize}
-                        style={{ maxWidth: 600 }}>
-                        <Form.Item 
-                            label={<span style={{ fontSize: '16px' }}>เลือกคณะ</span>} 
-                            className="block text-base font-medium text-gray-700 mr-4 mb-4">
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                            <label htmlFor="facultyName" className="block text-base font-medium mr-4 mb-4">
+                                <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เลือกคณะ : </span>
+                            </label>
                             <Select
                                 defaultValue="กรุณาเลือกคณะ"
-                                size="large"
-                                style={{ width: '500px' , borderColor: '#DADEE9' , fontSize: '16px' , height: '40px'}}
+                                className="flex-grow mr-4 mb-4"
+                                style={{    
+                                    flexBasis: '0%',
+                                    flexGrow: 1 ,
+                                    width: 'auto', 
+                                    borderColor: '#DADEE9', 
+                                    fontSize: '16px', 
+                                    height: '40px',
+                                    minWidth: '300px'        
+                                }}
                                 onChange={handleChange}
                                 options={[{ value: '', label: 'กรุณาเลือกคณะ', disabled: true }, ...facultyOptions]}
-                                className=" flex-grow rounded-md  mb-4 "
-                                
                             />
-                        </Form.Item>
-                        <Form.Item 
-                            label={<span style={{ fontSize: '16px' }}>ชื่อสาขา</span>} 
-                            className="block text-base font-medium text-gray-700 mt-4 mb-4" > 
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
+                            <label className="block text-base font-medium mr-7 mb-4">
+                                <span style={{ color: 'red' }}>*</span> ชื่อสาขา : 
+                            </label>
                             <Input 
-                                placeholder="majorName" 
-                                type="text"
+                                placeholder="ชื่อสาขา"
                                 name="majorName"
                                 size="large"
                                 id="majorName"
                                 required
                                 value={majorName}
                                 onChange={(e) => setMajorName(e.target.value)}
-                                className=" flex-grow mr-2 p-1 text-base border rounded-md custom-input mb-4 "
-                                style={{ borderColor: '#DADEE9' , fontSize: '14px' , height: '40px', width: '500px'}}
+                                className="flex-grow mr-4 mb-4 "
+                                showCount 
+                                maxLength={250} 
+                                style={{ 
+                                    flexGrow: 1, 
+                                    flexShrink: 1, 
+                                    flexBasis: '50%', 
+                                    padding: '8px', 
+                                    minWidth: '300px' 
+                                }}
                             />
-                        </Form.Item>
-
-                    <Button 
-                        className="inline-flex text-base justify-center mr-4 mb-4 mr-2 p-1"
-                        type="primary"
-                        size="middle"
-                        onClick={handleSubmit}
-                        style={{ 
-                            backgroundColor: '#00B96B', 
-                            height: '35px',
-                            borderColor: '#00B96B' ,
-                            fontSize: '18px' ,
-                            width: '70px'}}
-                        >
-                        บันทึก
-                    </Button>
-                    <Button 
-                        className="inline-flex text-base justify-center mr-4 mb-4 mr-2 p-1"
-                        size="middle"
-                        onClick={handleBack}
-                        style={{ 
-                            height: '35px',
-                            fontSize: '18px' ,
-                            width: '70px' }}
-                        >
-                        ยกเลิก
-                    </Button>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', width: '103%' , padding: '15px' }}>
+                            <Button 
+                                className="inline-flex justify-center mr-4 mb-4"
+                                disabled={!majorName} 
+                                type="primary"
+                                size="middle"
+                                onClick={handleSubmit}
+                                style={{ 
+                                    color:'white' , 
+                                    backgroundColor: '#02964F', 
+                                    borderColor: '#02964F' ,}}
+                                >
+                                บันทึก
+                            </Button>
+                            <Button 
+                                className="inline-flex justify-center mr-4 mb-4"
+                                onClick={handleBack}
+                                size="middle"
+                                >
+                            ยกเลิก
+                            </Button>
+                        </div>
                     </div>
                 </Card>
             </form>

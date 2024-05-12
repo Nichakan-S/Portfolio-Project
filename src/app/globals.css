@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ant-select-dropdown .ant-select-item, .ant-select-dropdown .ant-select-item-option-content {
+    font-size: 16px; /* เพิ่มขนาดตัวอักษร */
+    height: 40px; /* เพิ่มความสูงของแต่ละตัวเลือก */
+    line-height: 40px; /* ปรับให้ตัวอักษรอยู่ตรงกลางของตัวเลือก */
+}

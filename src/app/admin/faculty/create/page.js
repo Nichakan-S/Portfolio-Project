@@ -34,42 +34,60 @@ const CreateFaculty = () => {
         router.push('/admin/faculty');
     };
 
+    const onChange = (e) => {
+        console.log('Content:', e.target.value);
+    };
+    
+
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-2xl font-semibold mb-6" style={{color:"#6C7AA3"}} >เพิ่มคณะใหม่</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <Card
                     className="max-w-6xl mx-auto px-4 py-8 shadow-xl"
-                    style={{
-                    }}
                     >
-                    <div>
-                        <label htmlFor="facultyName" className="block text-base font-medium text-gray-700 mb-4">
-                            ชื่อคณะ
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <label htmlFor="facultyName" className="block text-base font-medium mr-4 mb-4">
+                            <span style={{ color: 'red' }}>*</span> ชื่อคณะ : 
                         </label>
                         <Input 
-                            placeholder="facultyName" 
+                            placeholder="ชื่อคณะ" 
                             size="large"
-                            type="text"
                             name="facultyName"
                             id="facultyName"
                             required
                             value={facultyName}
                             onChange={(e) => setFacultyName(e.target.value)}
-                            className=" mb-4 "
+                            className="flex-grow mr-8 mb-4 "
+                            showCount 
+                            maxLength={100} 
+                            style={{ 
+                                flexGrow: 1, 
+                                flexShrink: 1, 
+                                flexBasis: '50%', 
+                                padding: '8px', 
+                                minWidth: '300px' 
+                            }}
                         />
                     </div>
-                    <div>
-                        <Button className="inline-flex justify-center mr-4 mb-4"
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '15px' }} >
+                        <Button 
+                            className="inline-flex justify-center mr-4 mb-4"
+                            disabled={!facultyName} 
                             type="primary"
                             size="middle"
                             onClick={handleSubmit}
-                            style={{ backgroundColor: '#07C203', borderColor: '#07C203' }}
+                            style={{ 
+                                color:'white' , 
+                                backgroundColor: '#02964F', 
+                                borderColor: '#02964F' ,}}
                             >
                             บันทึก
                         </Button>
-                        <Button className="inline-flex justify-center mr-4 mb-4"
+                        <Button 
+                            className="inline-flex justify-center mr-4 mb-4"
                             onClick={handleBack}
+                            size="middle"
                             >
                             ยกเลิก
                         </Button>
