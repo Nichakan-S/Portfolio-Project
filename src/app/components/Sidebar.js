@@ -16,6 +16,7 @@ const Sidebar = () => {
     const { data: session, status } = useSession();
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedKey, setSelectedKey] = useState('1');
 
     useEffect(() => {
         if (status === 'authenticated' && session?.user?.id) {
@@ -75,31 +76,38 @@ const Sidebar = () => {
 
     const items = [...userMenuItems, ...adminMenuItems, ...employeeMenuItems, ...evaluationMenuItem, ...overviewMenuItem].filter(Boolean);
 
-    const onClick = (e) => {
-        console.log('click ', e);
-      };
+    const onClick = e => {
+        setSelectedKey(e.key);  // Update the selected key on click
+    };
 
     if (isLoading || !user) {
         return <div>Loading...</div>;
     }
 
     return (      
-        <aside >
+        <aside>
             <Menu
                 onClick={onClick}
                 style={{
                     width: '14rem',
-                    height: '100vh',
+                    height: '100%',
                     backgroundColor: '#FFFFFF',
                     color: '#6C7AA3',
                     padding: '1rem',
                     fontSize: '16px',
                     fontWeight: 300,
+                    margin: '5px 0'  // Default weight
                 }}
-                defaultSelectedKeys={['1']}
+                selectedKeys={[selectedKey]}
                 defaultOpenKeys={['sub1']}
                 mode="inline"
-                items={items}
+                items={items.map(item => ({
+                    ...item,
+                    style: {
+                        fontWeight: item.key === selectedKey ? 800 : 300 ,  // Conditional fontWeight
+                        margin: '8px 0'
+                    }
+                }))}
                 theme="light"
             />
         </aside>

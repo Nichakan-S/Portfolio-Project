@@ -1,11 +1,11 @@
-import { Bai_Jamjuree} from 'next/font/google'
+import { Mitr } from 'next/font/google'
 import { getServerSession } from 'next-auth'
 
 import SessionProvider from './components/SessionProvider'
 import './globals.css'
 
-const baiJamjuree = Bai_Jamjuree({
-  weight: '400',
+const mitr = Mitr({
+  weight: '300',  // Lighter font weight
   subsets: ['latin'],  // Include other subsets if necessary
 });
 
@@ -18,7 +18,7 @@ export default async function RootLayout({ children }) {
   const session = await getServerSession()
   return (
     <html lang="en">
-      <body className={baiJamjuree.className}>
+      <body className={mitr.className}>
           <SessionProvider session={session}>{children}</SessionProvider>
       </body>
     </html>

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
 import { Select , Input , Button , Alert , Space , Card} from 'antd';
+import '/src/app/globals.css'
 
 
 const EditMajor = ({ params }) => {
@@ -124,47 +125,81 @@ const EditMajor = ({ params }) => {
             <h1 className="text-2xl font-semibold mb-6">แก้ไขชื่อสาขา {majorName}</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <Card
-                        className="max-w-6xl mx-auto px-4 py-8 shadow-xl"
-                        style={{
-                        
-                        }}
-                        >
-                    <div>
-                        <label htmlFor="faculty" className="block text-base font-medium text-gray-700 mb-3">
-                            เลือกคณะ
-                        </label>
-                        <Select
-                            defaultValue="กรุณาเลือกคณะ"
-                            style={{ width: '100%' }}
-                            size="large"
-                            onChange={handleChange}
-                            options={[{ value: '', label: 'กรุณาเลือกคณะ', disabled: true }, ...facultyOptions]}
-                        />
-                        <label
-                            htmlFor="majorName"
-                            className="block text-base font-medium text-gray-700 mt-4 mb-4 "
-                        >
-                            ชื่อสาขา
-                        </label>
-                        <Input 
-                            placeholder="majorName" 
-                            size="large"
-                            type="text"
-                            name="majorName"
-                            id="majorName"
-                            required
-                            value={majorName}
-                            onChange={(e) => setMajorName(e.target.value)}
-                        />
-                        <Space
-                            direction="vertical"
-                            style={{
-                            width: '100%',
-                            }}
-                            className="mt-4"
-                        >
-                            <Alert message="กรุณาทราบว่าไม่สามารถลบข้อมูลได้หากมีผู้ใช้งานในสาขาและคณะนี้ โปรดตรวจสอบและยืนยันก่อนกดบันทึกข้อมูล" banner />
-                        </Space>
+                    className="max-w-6xl mx-auto px-4 py-8 shadow-xl"
+                    >
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                            <label htmlFor="facultyName" className="block font-medium mr-4 mb-4">
+                                <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เลือกคณะ : </span>
+                            </label>
+                            <Select
+                                defaultValue="กรุณาเลือกคณะ"
+                                className="flex-grow mr-4 mb-4 custom-select "
+                                size='large'
+                                style={{    
+                                    flexBasis: '0%',
+                                    flexGrow: 1 ,
+                                    width: '100', 
+                                    borderColor: '#DADEE9', 
+                                    fontSize: '16px', 
+                                    height: '40px',
+                                    minWidth: '300px'        
+                                }}
+                                onChange={handleChange}
+                                options={[{ value: '', label: 'กรุณาเลือกคณะ', disabled: true }, ...facultyOptions]}
+                            />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
+                            <label className="block mr-7 mb-4" style={{ fontSize:'16px'}}> 
+                                <span style={{ color: 'red' , fontSize:'16px' }}>*</span> ชื่อสาขา :
+                            </label>
+                            <Input 
+                                placeholder="ชื่อสาขา" 
+                                size="large"
+                                name="majorName"
+                                id="majorName"
+                                required
+                                value={majorName}
+                                onChange={(e) => setMajorName(e.target.value)}
+                                className="flex-grow mr-4 "
+                                showCount 
+                                maxLength={250} 
+                                style={{ 
+                                    flexGrow: 1, 
+                                    flexShrink: 1, 
+                                    flexBasis: '50%', 
+                                    minWidth: '300px', 
+                                    fontSize: '16px'
+                                }}
+                            />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
+                            <Space
+                                direction="vertical"
+                                style={{ 
+                                    flexGrow: 1, 
+                                    flexShrink: 1, 
+                                    flexBasis: '50%', 
+                                    minWidth: '300px' 
+                                }}
+                                className="mt-4"
+                                >
+                                <div style={{ display: 'flex', alignItems: 'center', width: '70%', marginLeft: 'calc(8px + 4rem)' }} >
+                                    <Alert 
+                                        className=" mr-4 mb-4 " 
+                                        style={{
+                                            flexGrow: 1,
+                                            flexBasis: '0%',
+                                            minWidth: '300px',
+                                            padding: '15px',
+                                            fontSize: '16px',
+                                            // width: '100%', // กำหนดให้ width เต็มพื้นที่เหมือนกับ Input
+                                        }}
+                                        message="กรุณาทราบว่าไม่สามารถลบข้อมูลได้หากมีผู้ใช้งานในสาขาและคณะนี้ โปรดตรวจสอบและยืนยันก่อนกดบันทึกข้อมูล" banner 
+                                    />
+                                </div>
+                            </Space>
+                        </div>
                     </div>
                     <div className="flex items-center">
                         <Button className="inline-flex justify-center mr-4"

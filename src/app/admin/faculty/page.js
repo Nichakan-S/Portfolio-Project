@@ -87,7 +87,7 @@ const FacultyList = () => {
                   style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
                   >#</th>
               <th scope="col" 
-                  className="px-9 text-left  uppercase tracking-wider" 
+                  className="px-5 text-left  uppercase tracking-wider" 
                   style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
                   >ชื่อคณะ</th>
               <th scope="col" 
