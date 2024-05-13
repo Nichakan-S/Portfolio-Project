@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -23,25 +22,20 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
-    const { email, password, prefix, username, lastname, facultyId, majorId, rankId, user_image, role } = await req.json();
+    const { email, prefix, username, lastname, facultyId, majorId, rankId, user_image, role } = await req.json();
     const finalUserImage = user_image || null;
+
     const dataToUpdate = {
-      email, 
-      prefix, 
-      username, 
-      lastname, 
-      facultyId, 
-      majorId, 
-      rankId, 
+      email,
+      prefix,
+      username,
+      lastname,
+      facultyId,
+      majorId,
+      rankId,
       user_image: finalUserImage,
       role
     };
-
-    if (password) {
-      const hashedPassword = bcrypt.hashSync(password, 10);
-      dataToUpdate.password = hashedPassword;
-    }
-
     return Response.json(await prisma.user.update({
       where: { id: Number(params.id) },
       data: dataToUpdate,

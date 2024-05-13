@@ -7,8 +7,6 @@ import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sw
 
 const EditUser = ({ params }) => {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
     const [prefix, setPrefix] = useState('');
     const [username, setUsername] = useState('');
     const [lastname, setLastname] = useState('');
@@ -22,7 +20,6 @@ const EditUser = ({ params }) => {
     const [rank, setRank] = useState([]);
     const [selectedFacultyId, setSelectedFacultyId] = useState('');
     const [filteredMajors, setFilteredMajors] = useState([]);
-    const [showPasswordFields, setShowPasswordFields] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     const router = useRouter();
@@ -96,19 +93,8 @@ const EditUser = ({ params }) => {
         }
     };
 
-    const validateForm = () => {
-        if (password && confirmPassword) {
-            if (password !== confirmPassword) {
-                WarningAlert('ผิดพลาด!', 'รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน');
-                return false;
-            }
-        }
-        return true;
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validateForm()) return;
 
         const body = JSON.stringify({
             email,
@@ -309,49 +295,6 @@ const EditUser = ({ params }) => {
                         className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-300 shadow-lg focus:border-indigo-500 focus:ring-indigo-500 text-lg"
                     />
                 </div>
-                <div>
-                    <label htmlFor="togglePasswordFields" className="block text-sm font-medium text-gray-700">
-                        เปลี่ยนรหัสผ่าน
-                    </label>
-                    <input
-                        type="checkbox"
-                        id="togglePasswordFields"
-                        checked={showPasswordFields}
-                        onChange={() => setShowPasswordFields(!showPasswordFields)}
-                        className="mt-1"
-                    />
-                </div>
-                {showPasswordFields && (
-                    <>
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mt-4">
-                                รหัสผ่าน
-                            </label>
-                            <input
-                                type="password"
-                                name="password"
-                                id="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-300 shadow-lg focus:border-indigo-500 focus:ring-indigo-500 text-lg"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="confirmpassword" className="block text-sm font-medium text-gray-700 mt-4">
-                                ยืนยันรหัสผ่าน
-                            </label>
-                            <input
-                                type="password"
-                                name="confirmpassword"
-                                id="confirmpassword"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-300 shadow-lg focus:border-indigo-500 focus:ring-indigo-500 text-lg"
-                            />
-                        </div>
-                    </>
-
-                )}
                 <div>
                     <label htmlFor="role" className="block text-sm font-medium text-gray-700">
                         บทบาท

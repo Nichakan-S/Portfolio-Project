@@ -1,16 +1,16 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Button, Input, Flex, Modal } from 'antd';
+import { Button, Input, Modal } from 'antd';
 
 const Status = {
-    wait: 'รอ',
+    wait: 'รอตรวจ',
     pass: 'ผ่าน',
     fail: 'ไม่ผ่าน'
 };
 
 const ActivityList = ({ params }) => {
+    const [username, setUsername] = useState('');
     const [activity, setActivity] = useState([])
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +24,7 @@ const ActivityList = ({ params }) => {
             const data = await response.json()
             console.log('activity data fetched:', data);
             setActivity(data)
+            setUsername(data[0]?.user?.username);
         } catch (error) {
             console.error('Failed to fetch activity', error)
         } finally {
@@ -46,21 +47,25 @@ const ActivityList = ({ params }) => {
         setIsModalVisible(false);
     };
 
+    const handleBack = () => {
+        window.history.back();
+    };
+
     if (isLoading) {
         return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
 
     const filteredactivity = activity.filter((activity) => {
         return activity.activity?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               activity.activity?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               activity.activity?.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-               Status[activity.status].includes(searchTerm.toLowerCase()) ;
+            activity.activity?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            activity.activity?.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+            Status[activity.status].includes(searchTerm.toLowerCase());
     });
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">ผลงานกิจกรรม</h1>
+                <h1 className="text-2xl font-semibold mb-6">ผลงานกิจกรรมของ{username}</h1>
                 <div className="flex items-center">
                     <Input
                         type="text"
@@ -69,11 +74,6 @@ const ActivityList = ({ params }) => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="flex-grow mr-2"
                     />
-                    <Flex align="flex-start" gap="small" vertical  >
-                        <Link href="create">
-                            <Button type="primary" style={{ backgroundColor: '#2D427C', borderColor: '#2D427C', color: 'white' }}>เพิ่มผลงานกิจกรรม</Button>
-                        </Link>
-                    </Flex>
                 </div>
             </div>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -86,7 +86,6 @@ const ActivityList = ({ params }) => {
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปี</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
-                            <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
                     </thead>
                 </table>
@@ -128,14 +127,6 @@ const ActivityList = ({ params }) => {
                                                 เปิดไฟล์
                                             </Button>
                                         </td>
-                                        <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
-                                            <Link
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/users/manage_activity/edit/${activity.id}`}
-                                            >
-                                                แก้ไข
-                                            </Link>
-                                        </td>
                                     </tr>
                                 ))
                             ) : (
@@ -149,26 +140,33 @@ const ActivityList = ({ params }) => {
                     </table>
                 </div>
                 <Modal
-                title="Preview File"
-                open={isModalVisible}
-                onCancel={closeModal}
-                footer={[
-                    <Button key="download" type="primary" href={modalContent} target="_blank" download>
-                        ดาวน์โหลด PDF
-                    </Button>,
-                    <Button key="cancel" onClick={closeModal}>
-                        ยกเลิก
-                    </Button>
-                ]}
-                width="70%"
-                style={{ top: 20 }}
-            >
-                {modalContent ? (
-                    <iframe src={`${modalContent}`} loading="lazy" style={{ width: '100%', height: '75vh' }}></iframe>
-                ) : (
-                    <p>Error displaying the document. Please try again.</p>
-                )}
-            </Modal>
+                    title="Preview File"
+                    open={isModalVisible}
+                    onCancel={closeModal}
+                    footer={[
+                        <Button key="download" type="primary" href={modalContent} target="_blank" download>
+                            ดาวน์โหลด PDF
+                        </Button>,
+                        <Button key="cancel" onClick={closeModal}>
+                            ยกเลิก
+                        </Button>
+                    ]}
+                    width="70%"
+                    style={{ top: 20 }}
+                >
+                    {modalContent ? (
+                        <iframe src={`${modalContent}`} loading="lazy" style={{ width: '100%', height: '75vh' }}></iframe>
+                    ) : (
+                        <p>Error displaying the document. Please try again.</p>
+                    )}
+                </Modal>
+            </div>
+            <div>
+                <Button className="inline-flex justify-center mt-4"
+                    onClick={handleBack}
+                >
+                    ย้อนกลับ
+                </Button>
             </div>
         </div>
     )

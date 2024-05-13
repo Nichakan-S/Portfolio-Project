@@ -7,10 +7,10 @@ import { Menu } from 'antd';
 
 function getItem(label, key, url) {
     return {
-      key,
-      label: <Link href={url}><a>{label}</a></Link>,
+        key,
+        label: <Link href={url}><a>{label}</a></Link>,
     };
-  }
+}
 
 const Sidebar = () => {
     const { data: session, status } = useSession();
@@ -45,29 +45,50 @@ const Sidebar = () => {
     const userMenuItems = [
         isUser && { key: 'Home', label: (<Link href={`/users/${session.user.id}`}>หน้าแรก</Link>) },
         isUser && { key: 'Schedule', label: (<Link href={`/users/manage_teaching/${session.user.id}`}>บันทึกการสอน</Link>) },
-        isUser && { key: 'Activity', label: (<Link href={`/users/manage_activity/${session.user.id}`}>ผลงานกิจกรรม</Link>) },
-        isUser && { key: 'Research', label: (<Link href={`/users/manage_research/${session.user.id}`}>ผลงานวิจัย</Link>) },
+
+        isUser && {
+            key: 'Work',
+            label: 'ผลงานทั้งหมด',
+            children: [
+                { key: 'Activity', label: (<Link href={`/users/manage_activity/${session.user.id}`}>ผลงานกิจกรรม</Link>) },
+                { key: 'Research', label: (<Link href={`/users/manage_research/${session.user.id}`}>ผลงานวิจัย</Link>) },
+            ],
+        },
     ];
 
     const adminMenuItems = [
-        isAdmin && { key: 'admin', label: (<Link href="/admin" >หน้าแรก</Link>) },
+        isAdmin && { key: 'home', label: (<Link href="/admin">หน้าแรก</Link>) },
         isAdmin && { key: 'faculty', label: (<Link href="/admin/faculty">คณะ</Link>) },
         isAdmin && { key: 'major', label: (<Link href="/admin/major">สาขา</Link>) },
         isAdmin && { key: 'rank', label: (<Link href="/admin/rank">ตำแหน่ง</Link>) },
-        isAdmin && { key: 'users_management', label: (<Link href="/admin/users_management">จัดการผู้ใช้</Link>) },
+        isAdmin && { key: 'users_management', label: (<Link href="/admin/users_management">บัญชีผู้ใช้งาน</Link>) },
         isAdmin && { key: 'subject', label: (<Link href="/admin/subject">วิชาทั้งหมด</Link>) },
-        isAdmin && { key: 'manage_supject', label: (<Link href="/admin/manage_teaching">บันทึกการสอน</Link>) },
         isAdmin && { key: 'activity', label: (<Link href="/admin/activity">กิจกรรมทั้งหมด</Link>) },
-        isAdmin && { key: 'manage_activity', label: (<Link href="/admin/manage_activity">ผลงานกิจกรรม</Link>) },
-        isAdmin && { key: 'manage_research', label: (<Link href="/admin/manage_research">ผลงานวิจัย</Link>) },
+        isAdmin && {
+            key: 'allwork',
+            label: 'ผลงานทั้งหมด',
+            children: [
+                { key: 'manage_teaching', label: (<Link href="/admin/manage_teaching">บันทึกการสอน</Link>) },
+                { key: 'manage_activity', label: (<Link href="/admin/manage_activity">ผลงานกิจกรรม</Link>) },
+                { key: 'manage_research', label: (<Link href="/admin/manage_research">ผลงานวิจัย</Link>) },
+            ],
+        },
     ];
+    
 
     const employeeMenuItems = [
         isEmployee && isUser && { key: 'employee', label: (<Link href="/users/employee">สำรวจบุคลากร</Link>) },
     ];
 
     const evaluationMenuItem = [
-        isEvaluation && isUser && { key: 'evaluation', label: (<Link href="/users/evaluation">ประเมินบุคลากร</Link>) },
+        isEvaluation && isUser && {
+            key: 'evaluation',
+            label: 'ประเมินบุคลากร',
+            children: [
+                { key: 'evaluationA', label: (<Link href="/users/evaluation/activity">ประเมินกิจกรรม</Link>) },
+                { key: 'evaluationR', label: (<Link href="/users/evaluation/research">ประเมินวิจัย</Link>) }
+            ],
+        },
     ];
 
     const overviewMenuItem = [
@@ -77,14 +98,17 @@ const Sidebar = () => {
     const items = [...userMenuItems, ...adminMenuItems, ...employeeMenuItems, ...evaluationMenuItem, ...overviewMenuItem].filter(Boolean);
 
     const onClick = e => {
-        setSelectedKey(e.key);  // Update the selected key on click
+        setSelectedKey(e.key);
     };
 
     if (isLoading || !user) {
-        return <div>Loading...</div>;
+        return (
+            <aside>
+            </aside>
+        );
     }
 
-    return (      
+    return (
         <aside>
             <Menu
                 onClick={onClick}
@@ -96,16 +120,14 @@ const Sidebar = () => {
                     padding: '1rem',
                     fontSize: '16px',
                     fontWeight: 300,
-                    margin: '5px 0'  // Default weight
+                    margin: '5px 0'
                 }}
                 selectedKeys={[selectedKey]}
-                defaultOpenKeys={['sub1']}
                 mode="inline"
                 items={items.map(item => ({
                     ...item,
                     style: {
-                        fontWeight: item.key === selectedKey ? 800 : 300 ,  // Conditional fontWeight
-                        margin: '8px 0'
+                        fontWeight: item.key === selectedKey ? 800 : 300,
                     }
                 }))}
                 theme="light"

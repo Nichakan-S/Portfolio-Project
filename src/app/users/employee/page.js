@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Avatar, Space } from 'antd';
+import Image from 'next/image';
 
 const UserList = () => {
     const [user, setUser] = useState([])
@@ -29,33 +31,27 @@ const UserList = () => {
 
     const filtereduser = user.filter((user) => {
         return user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               user.faculty?.facultyName.toLowerCase().includes(searchTerm.toLowerCase())||
-               user.major?.majorName.toLowerCase().includes(searchTerm.toLowerCase())||
-               user.rank?.rankname.toLowerCase().includes(searchTerm.toLowerCase())||
-               user.lastname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               user.role.toLowerCase().includes(searchTerm.toLowerCase()) ;
+            user.faculty?.facultyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.major?.majorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.rank?.rankname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.lastname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.role.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">บัญชีผู้ใช้งาน</h1>
+                <h1 className="text-2xl font-semibold mb-6">บุคลากร</h1>
                 <div className="flex items-center">
                     <input
                         type="text"
-                        placeholder="ค้นหาบัญชีผู้ใช้งาน..."
+                        placeholder="ค้นหาบุคลากร..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="mt-4 inline-flex items-center px-4 py-2 border rounded-lg shadow-sm text-sm font-medium mr-4"
                     />
-                    <Link
-                        className="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        href="users_management/create"
-                    >
-                        เพิ่มบัญชีผู้ใช้งาน
-                    </Link>
                 </div>
             </div>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -68,10 +64,9 @@ const UserList = () => {
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตำแหน่ง</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อ</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">นามสกุล</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เปลี่ยนรหัสผ่าน</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รูปโปรไฟล์</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">ดูกิจกรรม</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">ดูวิจัย</th>
                         </tr>
                     </thead>
                 </table>
@@ -110,29 +105,43 @@ const UserList = () => {
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.email}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.role}
+                                            <div className="cursor-pointer">
+                                                {user.user_image ? (
+                                                    <Space wrap size={16}>
+                                                        <Avatar
+                                                            size={40}
+                                                            src={user.user_image || '/image/none_image.png'}
+                                                            icon={!user.user_image && <UserOutlined />}
+                                                            onError={() => {
+                                                                return true;
+                                                            }}
+                                                        />
+                                                    </Space>
+                                                ) : (
+                                                    <Image
+                                                        src="/image/none_image.png"
+                                                        alt="Default profile image"
+                                                        width={40}
+                                                        height={40}
+                                                        className="rounded-full"
+                                                    />
+                                                )}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/admin/users_management/change_pass/${user.id}`}
+                                                href={`/users/employee/activity/${user.id}`}
                                             >
-                                                เปลี่ยนรหัสผ่าน
+                                                ดู
                                             </Link>
                                         </td>
-                                        <td className="w-1/5 px-6 py-4 text-right whitespace-nowrap">
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/admin/users_management/${user.id}`}
+                                                href={`/users/employee/research/${user.id}`}
                                             >
-                                                แก้ไข
+                                                ดู
                                             </Link>
                                         </td>
                                     </tr>
