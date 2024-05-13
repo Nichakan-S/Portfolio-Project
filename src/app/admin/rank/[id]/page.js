@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
+import { Select , Input , Button , Card , message } from 'antd';
 
 
 const EditRank = ({ params }) => {
@@ -99,92 +100,137 @@ const EditRank = ({ params }) => {
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-2xl font-semibold mb-6">แก้ไขชื่อคณะ{rankname}</h1>
+            <h1 className="text-2xl font-semibold mb-6">แก้ไข {rankname}</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label
-                        htmlFor="rankname"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        ชื่อคณะ
-                    </label>
-                    <input
-                        type="text"
-                        name="rankname"
-                        id="rankname"
-                        required
-                        value={rankname}
-                        onChange={(e) => setRankName(e.target.value)}
-                        className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-300 shadow-lg focus:border-indigo-500 focus:ring-indigo-500 text-lg"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="employeeAccess" className="block text-sm font-medium text-gray-700">
-                        เข้าถึงหน้าพนักงาน
-                    </label>
-                    <select
-                        id="employeeAccess"
-                        required
-                        value={employeeAccess}
-                        onChange={(e) => setEmployeeAccess(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="disable">ปิดใช้งาน</option>
-                        <option value="enable">เปิดใช้งาน</option>
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="evaluationAccess" className="block text-sm font-medium text-gray-700">
-                        เข้าถึงหน้าประเมิน
-                    </label>
-                    <select
-                        id="evaluationAccess"
-                        required
-                        value={evaluationAccess}
-                        onChange={(e) => setEvaluationAccess(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="disable">ปิดใช้งาน</option>
-                        <option value="enable">เปิดใช้งาน</option>
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="overviewAccess" className="block text-sm font-medium text-gray-700">
-                        เข้าถึงหน้าภาพรวม
-                    </label>
-                    <select
-                        id="overviewAccess"
-                        required
-                        value={overviewAccess}
-                        onChange={(e) => setOverviewAccess(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="disable">ปิดใช้งาน</option>
-                        <option value="enable">เปิดใช้งาน</option>
-                    </select>
-                </div>
-                <div className="flex items-center">
-                    <button
-                        type="submit"
-                        className="mr-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        บันทึก
-                    </button>
-                    <button
-                        type="button"
-                        onClick={handleDelete}
-                        className="mr-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                    >
-                        ลบ
-                    </button>
-                    <button
-                        type="button"
-                        onClick={handleBack}
-                        className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                    >
-                        ยกเลิก
-                    </button>
-                </div>
+                <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl">
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <label htmlFor="rankname" className="block mr-4 mb-4">
+                                    <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span>ชื่อคณะ : </span>
+                                </label>
+                            </div>
+                            <Input
+                                type="text"
+                                name="rankname"
+                                id="rankname"
+                                required
+                                value={rankname}
+                                onChange={(e) => setRankName(e.target.value)}
+                                className="flex-grow mr-4"
+                                showCount
+                                maxLength={100}
+                                style={{
+                                    flexGrow: 1,
+                                    flexShrink: 1,
+                                    flexBasis: '50%',
+                                    minWidth: '300px',
+                                    fontSize: '16px',
+                                    height: '40px'
+                                }}
+                            />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                            <label htmlFor="employeeAccess" className="block mr-4 mb-4">
+                                <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}> *</span> เข้าถึงหน้าสำรวจบุคคลากร : </span>
+                            </label>
+                            <Select
+                                id="employeeAccess"
+                                value={employeeAccess}
+                                onChange={(value) => setEmployeeAccess(value)}
+                                className="flex-grow mr-4 mb-4 custom-select"
+                                size='large'
+                                style={{
+                                    flexBasis: '0%',
+                                    flexGrow: 1,
+                                    width: '100%',
+                                    borderColor: '#DADEE9',
+                                    fontSize: '16px',
+                                    height: '40px',
+                                    minWidth: '300px'
+                                }}
+                                options={[
+                                    { value: 'disable', label: 'ปิดใช้งาน' },
+                                    { value: 'enable', label: 'เปิดใช้งาน' }
+                                ]}
+                            />
+                        </div>            
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                            <label htmlFor="evaluationAccess" className="block mr-4 mb-4">
+                                <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เข้าถึงหน้าประเมินบุคคลากร : </span>
+                            </label>
+                            <Select
+                                id="evaluationAccess"
+                                value={evaluationAccess}
+                                onChange={(value) => setEvaluationAccess(value)}
+                                className="flex-grow mr-4 mb-4 custom-select"
+                                size="large"
+                                style={{
+                                    flexBasis: '0%',
+                                    flexGrow: 1,
+                                    width: '100%',
+                                    borderColor: '#DADEE9',
+                                    fontSize: '16px',
+                                    height: '40px',
+                                    minWidth: '300px'
+                                }}
+                                options={[
+                                    { value: 'disable', label: 'ปิดใช้งาน' },
+                                    { value: 'enable', label: 'เปิดใช้งาน' }
+                                ]}
+                            />
+                        </div>    
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                            <label htmlFor="overviewAccess" className="block mr-4 mb-4">
+                                <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เข้าถึงหน้าภาพรวม : </span>
+                            </label>
+                            <Select
+                                id="overviewAccess"
+                                value={overviewAccess}
+                                onChange={(value) => setOverviewAccess(value)}
+                                className="flex-grow mr-4 mb-4 custom-select"
+                                size="large"
+                                style={{
+                                    flexBasis: '0%',
+                                    flexGrow: 1,
+                                    width: '100%',
+                                    borderColor: '#DADEE9',
+                                    fontSize: '16px',
+                                    height: '40px',
+                                    minWidth: '300px'
+                                }}
+                                options={[
+                                    { value: 'disable', label: 'ปิดใช้งาน' },
+                                    { value: 'enable', label: 'เปิดใช้งาน' }
+                                ]}
+                            />
+                        </div>                 
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', width: '100%' , padding: '8px 0' }}>
+                            <Button className="inline-flex justify-center"
+                                type="primary"
+                                size="middle"
+                                onClick={handleSubmit}
+                                style={{ backgroundColor: '#02964F', borderColor: '#02964F', marginRight: '8px' }}
+                            >
+                                บันทึก
+                            </Button>
+                            <Button className="inline-flex justify-center"
+                                type="primary" danger
+                                size="middle"
+                                onClick={handleDelete}
+                                style={{ backgroundColor: '#E50000', borderColor: '#E50000', marginRight: '8px' }}
+                            >
+                                ลบ
+                            </Button>
+                            <Button className="inline-flex justify-center"
+                                onClick={handleBack}
+                                style={{ marginRight: '15px' }}
+                            >
+                                ยกเลิก
+                            </Button>
+                        </div>
+                </Card>
             </form>
         </div>
     );

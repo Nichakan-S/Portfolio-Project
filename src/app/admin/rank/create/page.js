@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
-import { Input , Select } from 'antd';
+import { Input , Select , Card , Button} from 'antd';
 
 const CreateRank = () => {
     const [rankname, setRankName] = useState('');
@@ -59,79 +59,128 @@ const CreateRank = () => {
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-2xl font-semibold mb-6">เพิ่มตำแหน่งใหม่</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label htmlFor="rankname" className="block text-base font-medium text-gray-700 mb-4 ">
-                        ชื่อตำแหน่ง
-                    </label>
-                    <Input 
-                        placeholder="rankname" 
-                        size="large"
-                        type="text"
-                        name="rankname"
-                        id="rankname"
-                        required
-                        value={rankname}
-                        onChange={(e) => setRankName(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="employeeAccess" className="block text-sm font-medium text-gray-700 mb-4">
-                        เข้าถึงหน้าพนักงาน
-                    </label>
-                    <Select
-                        defaultValue="enable"
-                        style={{ width: '100%' }}
-                        onChange={EmployeehandleChange}
-                        options={[
-                            { value: 'disable', label: 'ปิดใช้งาน' },
-                            { value: 'enable', label: 'เปิดใช้งาน' }
-                        ]}
-                    />
-
-                </div>
-                <div>
-                    <label htmlFor="evaluationAccess" className="block text-sm font-medium text-gray-700 mb-4">
-                        เข้าถึงหน้าประเมิน
-                    </label>
-                    <Select
-                        defaultValue="enable" 
-                        style={{ width: '100%' }}
-                        onChange={EvaluationhandleChange}
-                        options={[
-                            { value: 'disable', label: 'ปิดใช้งาน' ,color: '#ff0000'},
-                            { value: 'enable', label: 'เปิดใช้งาน' }
-                        ]}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="overviewAccess" className="block text-sm font-medium text-gray-700 mb-4">
-                        เข้าถึงหน้าภาพรวม
-                    </label>
-                    <Select
-                        defaultValue="enable"
-                        style={{ width: '100%' }}
-                        onChange={OverviewhandleChange}
-                        options={[
-                            { value: 'disable', label: 'ปิดใช้งาน' },
-                            { value: 'enable', label: 'เปิดใช้งาน' }
-                        ]}
-                    />
-                </div>
-                <div>
-                    <button
-                        type="submit"
-                        className="mr-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        บันทึก
-                    </button>
-                    <button
-                        type="button"
-                        onClick={handleBack}
-                        className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                    >
-                        ยกเลิก
-                    </button>
-                </div>
+                <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl" >
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <label htmlFor="rankname" className="block mr-4 mb-4">
+                                    <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span>ชื่อตำแหน่ง : </span>
+                                </label>
+                            </div>
+                            <Input
+                                type="text"
+                                name="rankname"
+                                id="rankname"
+                                required
+                                value={rankname}
+                                onChange={(e) => setRankName(e.target.value)}
+                                className="flex-grow mr-4"
+                                showCount
+                                maxLength={100}
+                                style={{
+                                    flexGrow: 1,
+                                    flexShrink: 1,
+                                    flexBasis: '50%',
+                                    minWidth: '300px',
+                                    fontSize: '16px',
+                                    height: '40px'
+                                }}
+                            />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                            <label htmlFor="employeeAccess" className="block mr-4 mb-4">
+                                <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}> *</span> เข้าถึงหน้าสำรวจบุคคลากร : </span>
+                            </label>
+                            <Select
+                                id="employeeAccess"
+                                value={employeeAccess}
+                                onChange={EmployeehandleChange}
+                                className="flex-grow mr-4 mb-4 custom-select"
+                                size='large'
+                                style={{
+                                    flexBasis: '0%',
+                                    flexGrow: 1,
+                                    width: '100%',
+                                    borderColor: '#DADEE9',
+                                    fontSize: '16px',
+                                    height: '40px',
+                                    minWidth: '300px'
+                                }}
+                                options={[
+                                    { value: 'disable', label: 'ปิดใช้งาน' },
+                                    { value: 'enable', label: 'เปิดใช้งาน' }
+                                ]}
+                            />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                            <label htmlFor="evaluationAccess" className="block mr-4 mb-4">
+                                <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เข้าถึงหน้าประเมินบุคคลากร : </span>
+                            </label>
+                            <Select
+                                id="evaluationAccess"
+                                value={evaluationAccess}
+                                onChange={EvaluationhandleChange}
+                                className="flex-grow mr-4 mb-4 custom-select"
+                                size="large"
+                                style={{
+                                    flexBasis: '0%',
+                                    flexGrow: 1,
+                                    width: '100%',
+                                    borderColor: '#DADEE9',
+                                    fontSize: '16px',
+                                    height: '40px',
+                                    minWidth: '300px'
+                                }}
+                                options={[
+                                    { value: 'disable', label: 'ปิดใช้งาน' },
+                                    { value: 'enable', label: 'เปิดใช้งาน' }
+                                ]}
+                            />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                            <label htmlFor="overviewAccess" className="block mr-4 mb-4">
+                                <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เข้าถึงหน้าภาพรวม : </span>
+                            </label>            
+                            <Select
+                                id="overviewAccess"
+                                value={overviewAccess}
+                                onChange={OverviewhandleChange}
+                                className="flex-grow mr-4 mb-4 custom-select"
+                                size="large"
+                                style={{
+                                    flexBasis: '0%',
+                                    flexGrow: 1,
+                                    width: '100%',
+                                    borderColor: '#DADEE9',
+                                    fontSize: '16px',
+                                    height: '40px',
+                                    minWidth: '300px'
+                                }}
+                                options={[
+                                    { value: 'disable', label: 'ปิดใช้งาน' },
+                                    { value: 'enable', label: 'เปิดใช้งาน' }
+                                ]}
+                            />
+                        </div>
+                    </div>                    
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', width: '100%' , padding: '8px 0' }} >
+                        <Button className="inline-flex justify-center"
+                            type="primary"
+                            size="middle"
+                            onClick={handleSubmit}
+                            style={{ backgroundColor: '#02964F', borderColor: '#02964F', marginRight: '8px' }}
+                        >
+                            บันทึก
+                        </Button>
+                        <Button 
+                            className="inline-flex justify-center"
+                            onClick={handleBack}
+                            style={{ marginRight: '15px' }}
+                            >
+                            ยกเลิก
+                        </Button>
+                    </div>
+                </Card>
             </form>
         </div>
     );

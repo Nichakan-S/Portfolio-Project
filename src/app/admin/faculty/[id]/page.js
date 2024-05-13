@@ -131,7 +131,7 @@ const EditFaculty = ({ params }) => {
               >
               ลบ
             </Button>
-            <Button className="inline-flex justify-center  mb-4"
+            <Button className="inline-flex justify-center  mb-4 "
                 onClick={handleBack}
                 >
                 ยกเลิก

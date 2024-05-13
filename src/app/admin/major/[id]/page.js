@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
-import { Select , Input , Button , Alert , Space , Card , message } from 'antd';
+import { Select , Input , Button , Card , message } from 'antd';
 import '/src/app/globals.css'
 
 
@@ -74,13 +74,13 @@ const EditMajor = ({ params }) => {
                 });
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.message || 'ไม่สามารถลบข้อมูลสาขาได้');
+                    throw new Error(errorData.message || 'เนื่องจากสาขาถูกใช้งานอยู่');
                 }
                 SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
                 router.push('/admin/major');
             } catch (error) {
-                console.error('ไม่สามารถลบข้อมูลสาขาได้', error);
-                message.error(`ไม่สามารถลบข้อมูลได้: ${error.message}`);
+                console.error('ไม่สามารถลบข้อมูลสาขาได้ เนื่องจากสาขาถูกใช้งานอยู่', error);
+                message.error(`ไม่สามารถลบข้อมูลได้ : ${error.message}`);
             }
         });
     };
@@ -109,17 +109,17 @@ const EditMajor = ({ params }) => {
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-2xl font-semibold mb-6">แก้ไขชื่อสาขา {majorName}</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <Card
+            <Card
                     className="max-w-6xl mx-auto px-4 py-8 shadow-xl"
                 >
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
                             <label htmlFor="facultyName" className="block mr-4 mb-4">
                                 <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เลือกคณะ : </span>
                             </label>
                             <Select
                                 defaultValue={selectedFaculty}
-                                className="flex-grow mr-4 mb-4 custom-select "
+                                className="flex-grow mr-4 mb-4 custom-select"
                                 size='large'
                                 style={{
                                     flexBasis: '0%',
@@ -131,11 +131,11 @@ const EditMajor = ({ params }) => {
                                     minWidth: '300px'
                                 }}
                                 onChange={handleChange}
-                                options={[{ value: '',alignItems: 'center', label: 'กรุณาเลือกคณะ', disabled: true }, ...facultyOptions]}
+                                options={[{ value: '', alignItems: 'center', label: 'กรุณาเลือกคณะ', disabled: true }, ...facultyOptions]}
                             />
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
-                            <label className="block mr-7 mb-4" > 
+                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                            <label className="block mr-7 mb-4">
                                 <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ชื่อสาขา : </span>
                             </label>
                             <Input
@@ -147,56 +147,45 @@ const EditMajor = ({ params }) => {
                                 value={majorName}
                                 onChange={(e) => setMajorName(e.target.value)}
                                 className="flex-grow mr-4 mb-4"
-                                showCount 
-                                maxLength={250} 
-                                style={{ 
-                                    flexGrow: 1, 
-                                    flexShrink: 1, 
-                                    flexBasis: '50%', 
-                                    minWidth: '300px', 
+                                showCount
+                                maxLength={250}
+                                style={{
+                                    flexGrow: 1,
+                                    flexShrink: 1,
+                                    flexBasis: '50%',
+                                    minWidth: '300px',
                                     fontSize: '16px',
                                     height: '40px'
                                 }}
                             />
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                            <Space
-                                direction="vertical"
-                                style={{
-                                    flexGrow: 1,
-                                    flexShrink: 1,
-                                    flexBasis: '50%',
-                                    minWidth: '300px'
-                                }}
-                                className="mt-4"
-                                >
-                                
-                            </Space>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', width: '100%' , padding: '8px 0' }}>
+                            <Button className="inline-flex justify-center"
+                                type="primary"
+                                size="middle"
+                                onClick={handleSubmit}
+                                style={{ backgroundColor: '#02964F', borderColor: '#02964F', marginRight: '8px' }}
+                            >
+                                บันทึก
+                            </Button>
+                            <Button className="inline-flex justify-center"
+                                type="primary" danger
+                                size="middle"
+                                onClick={handleDelete}
+                                style={{ backgroundColor: '#E50000', borderColor: '#E50000', marginRight: '8px' }}
+                            >
+                                ลบ
+                            </Button>
+                            <Button className="inline-flex justify-center"
+                                onClick={handleBack}
+                                style={{ marginRight: '15px' }}
+                            >
+                                ยกเลิก
+                            </Button>
                         </div>
                     </div>
-                    <div className="flex items-center">
-                        <Button className="inline-flex justify-center mr-4"
-                            type="primary"
-                            size="middle"
-                            onClick={handleSubmit}
-                            style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
-                        >
-                            บันทึก
-                        </Button>
-                        <Button className="inline-flex justify-center mr-4"
-                            type="primary" danger
-                            size="middle"
-                            onClick={handleDelete}
-                        >
-                            ลบ
-                        </Button>
-                        <Button className="inline-flex justify-center mr-4"
-                            onClick={handleBack}
-                        >
-                            ยกเลิก
-                        </Button>
-                    </div>
                 </Card>
+
             </form>
         </div>
     );
