@@ -4,7 +4,16 @@ const prisma = new PrismaClient();
 
 export async function GET() {
     try {
-      const teaching = await prisma.teaching.findMany();
+      const teaching = await prisma.teaching.findMany({
+        include: {
+            subjects: true,
+            user: {
+              select: {
+                  username: true
+              }
+          }
+        }
+    });
       return new Response(JSON.stringify(teaching), {
         status: 200,
         headers: {

@@ -51,7 +51,28 @@ const Navbar = ({ isAdmin }) => {
   };
 
   if (isLoading || !user) {
-    return <div>Loading...</div>;
+    return (
+      <div className=" bg-white shadow-lg flex flex-col w-full">
+        <nav className="p-3">
+          <Row justify="space-around" align="middle" >
+            <Col span={1} className="flex items-center justify-center">
+            </Col>
+            <Col span={15} className="text-left">
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+              </div>
+            </Col>
+
+            <Col span={8} className="text-right" style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', height: '100%' }}>
+              <div>
+              </div>
+              <div className="flex items-center relative ml-4">
+                
+              </div>
+            </Col>
+          </Row>
+        </nav>
+      </div>
+    );
   }
 
   return (

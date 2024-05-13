@@ -7,6 +7,13 @@ export async function GET(req, { params }) {
         return new Response(JSON.stringify(await prisma.manageResearch.findMany({
             where: {
                 userId: Number(params.id)
+            },
+            include: {
+                user: {
+                    select: {
+                        username: true
+                    }
+                }
             }
         })), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {

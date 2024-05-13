@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Button, Input, Flex, Modal } from 'antd';
+import { Button, Input, Modal } from 'antd';
 
 const Status = {
     wait: 'รอ',
@@ -10,17 +10,16 @@ const Status = {
     fail: 'ไม่ผ่าน'
 };
 
-const ActivityList = ({ params }) => {
+const ActivityList = () => {
     const [activity, setActivity] = useState([])
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
-    const { id } = params;
 
-    const fetchactivity = async (id) => {
+    const fetchactivity = async () => {
         try {
-            const response = await fetch(`/api/userActivity/${id}`)
+            const response = await fetch('/api/manageActivity/')
             const data = await response.json()
             console.log('activity data fetched:', data);
             setActivity(data)
@@ -32,10 +31,8 @@ const ActivityList = ({ params }) => {
     }
 
     useEffect(() => {
-        if (id) {
-            fetchactivity(parseInt(id));
-        }
-    }, [id]);
+            fetchactivity();
+    }, []);
 
     const showModal = (file) => {
         setModalContent(file);
@@ -69,11 +66,6 @@ const ActivityList = ({ params }) => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="flex-grow mr-2"
                     />
-                    <Flex align="flex-start" gap="small" vertical  >
-                        <Link href="create">
-                            <Button type="primary" style={{ backgroundColor: '#2D427C', borderColor: '#2D427C', color: 'white' }}>เพิ่มผลงานกิจกรรม</Button>
-                        </Link>
-                    </Flex>
                 </div>
             </div>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -84,8 +76,9 @@ const ActivityList = ({ params }) => {
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อกิจกรรม</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปี</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ผู้ใช้</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
                             <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
                     </thead>
@@ -117,6 +110,11 @@ const ActivityList = ({ params }) => {
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
                                                 {Status[activity.status]}
+                                            </div>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {activity.user?.username}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { SuccessAlert, WarningAlert, ConfirmAlert} from '../../../../components/sweetalert';
 import { Input, Button, Upload, Modal, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import moment from 'moment';
 
 const { Option } = Select;
 

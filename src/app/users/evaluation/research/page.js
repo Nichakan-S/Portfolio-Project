@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Button, Input, Flex, Modal } from 'antd';
+import { Button, Input, Modal, Select  } from 'antd';
 
 const ResearchType = {
     journalism: 'ผ่านสื่อ',
@@ -15,18 +15,21 @@ const Status = {
     fail: 'ไม่ผ่าน'
 };
 
-const ResearchList = ({ params }) => {
+const ResearchList = () => {
     const [research, setResearch] = useState([])
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState('รอ');
     const [isLoading, setIsLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
-    const { id } = params;
 
-    const fetchresearch = async (id) => {
+    useEffect(() => {
+        fetchresearch()
+    }, [])
+
+    const fetchresearch = async () => {
         try {
-            const response = await fetch(`/api/userReseardh/${id}`)
-            const data = await response.json()
+            const res = await fetch('/api/research')
+            const data = await res.json()
             console.log('research data fetched:', data);
             setResearch(data)
         } catch (error) {
@@ -35,12 +38,6 @@ const ResearchList = ({ params }) => {
             setIsLoading(false);
         }
     }
-
-    useEffect(() => {
-        if (id) {
-            fetchresearch(parseInt(id));
-        }
-    }, [id]);
 
     const showModal = (file) => {
         setModalContent(file);
@@ -55,12 +52,13 @@ const ResearchList = ({ params }) => {
         return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
 
+
     const filteredresearch = research.filter((research) => {
         return research.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.researchfund.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ResearchType[research.type].includes(searchTerm.toLowerCase()) ||
-            Status[research.status].includes(searchTerm.toLowerCase()) ||
-            research.year.toString().toLowerCase().includes(searchTerm.toLowerCase());
+            research.Researchfund.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            research.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            research.year.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            research.status.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
     return (
@@ -68,6 +66,23 @@ const ResearchList = ({ params }) => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold mb-6">ผลงานวิจัย</h1>
                 <div className="flex items-center">
+                    <Select
+                        value={searchTerm}
+                        onChange={(value) => setSearchTerm(value)}
+                        className="flex-grow mr-4 "
+                        style={{
+                            flexBasis: '0%',
+                            flexGrow: 1,
+                            width: '100%',
+                            borderColor: '#DADEE9',
+                            minWidth: '100px'
+                        }}
+                        options={[
+                            { value: 'รอ', label: 'รอ' },
+                            { value: 'ผ่าน', label: 'ผ่าน' },
+                            { value: 'ไม่ผ่าน', label: 'ไม่ผ่าน' }
+                        ]}
+                    />
                     <Input
                         type="text"
                         placeholder="ค้นหาผลงานวิจัย..."
@@ -75,11 +90,6 @@ const ResearchList = ({ params }) => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="flex-grow mr-2"
                     />
-                    <Flex align="flex-start" gap="small" vertical  >
-                        <Link href="create">
-                            <Button type="primary" style={{ backgroundColor: '#2D427C', borderColor: '#2D427C', color: 'white' }}>เพิ่มผลงานวิจัย</Button>
-                        </Link>
-                    </Flex>
                 </div>
             </div>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -92,6 +102,7 @@ const ResearchList = ({ params }) => {
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปีที่ตีพิมพ์</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ผู้ใช้</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
                             <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
@@ -132,6 +143,11 @@ const ResearchList = ({ params }) => {
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {research.user?.username}
+                                            </div>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <Button
                                                 onClick={() => showModal(research.file)}
                                                 type="link"
@@ -161,26 +177,26 @@ const ResearchList = ({ params }) => {
                     </table>
                 </div>
                 <Modal
-                title="Preview File"
-                open={isModalVisible}
-                onCancel={closeModal}
-                footer={[
-                    <Button key="download" type="primary" href={modalContent} target="_blank" download>
-                        ดาวน์โหลด PDF
-                    </Button>,
-                    <Button key="cancel" onClick={closeModal}>
-                        ยกเลิก
-                    </Button>
-                ]}
-                width="70%"
-                style={{ top: 20 }}
-            >
-                {modalContent ? (
-                    <iframe src={`${modalContent}`} loading="lazy" style={{ width: '100%', height: '75vh' }}></iframe>
-                ) : (
-                    <p>Error displaying the document. Please try again.</p>
-                )}
-            </Modal>
+                    title="Preview File"
+                    open={isModalVisible}
+                    onCancel={closeModal}
+                    footer={[
+                        <Button key="download" type="primary" href={modalContent} target="_blank" download>
+                            ดาวน์โหลด PDF
+                        </Button>,
+                        <Button key="cancel" onClick={closeModal}>
+                            ยกเลิก
+                        </Button>
+                    ]}
+                    width="70%"
+                    style={{ top: 20 }}
+                >
+                    {modalContent ? (
+                        <iframe src={`${modalContent}`} loading="lazy" style={{ width: '100%', height: '75vh' }}></iframe>
+                    ) : (
+                        <p>Error displaying the document. Please try again.</p>
+                    )}
+                </Modal>
             </div>
         </div>
     )

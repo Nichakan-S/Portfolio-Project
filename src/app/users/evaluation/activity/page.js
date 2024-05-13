@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Button, Input, Flex, Modal } from 'antd';
+import { Button, Input, Modal, Select } from 'antd';
 
 const Status = {
     wait: 'รอ',
@@ -10,17 +10,16 @@ const Status = {
     fail: 'ไม่ผ่าน'
 };
 
-const ActivityList = ({ params }) => {
+const ActivityList = () => {
     const [activity, setActivity] = useState([])
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState('รอ');
     const [isLoading, setIsLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
-    const { id } = params;
 
-    const fetchactivity = async (id) => {
+    const fetchactivity = async () => {
         try {
-            const response = await fetch(`/api/userActivity/${id}`)
+            const response = await fetch('/api/manageActivity/')
             const data = await response.json()
             console.log('activity data fetched:', data);
             setActivity(data)
@@ -32,10 +31,8 @@ const ActivityList = ({ params }) => {
     }
 
     useEffect(() => {
-        if (id) {
-            fetchactivity(parseInt(id));
-        }
-    }, [id]);
+        fetchactivity();
+    }, []);
 
     const showModal = (file) => {
         setModalContent(file);
@@ -52,9 +49,9 @@ const ActivityList = ({ params }) => {
 
     const filteredactivity = activity.filter((activity) => {
         return activity.activity?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               activity.activity?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               activity.activity?.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-               Status[activity.status].includes(searchTerm.toLowerCase()) ;
+            activity.activity?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            activity.activity?.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+            Status[activity.status].includes(searchTerm.toLowerCase());
     });
 
     return (
@@ -62,6 +59,23 @@ const ActivityList = ({ params }) => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold mb-6">ผลงานกิจกรรม</h1>
                 <div className="flex items-center">
+                    <Select
+                        value={searchTerm}
+                        onChange={(value) => setSearchTerm(value)}
+                        className="flex-grow mr-4 "
+                        style={{
+                            flexBasis: '0%',
+                            flexGrow: 1,
+                            width: '100%',
+                            borderColor: '#DADEE9',
+                            minWidth: '100px'
+                        }}
+                        options={[
+                            { value: 'รอ', label: 'รอ' },
+                            { value: 'ผ่าน', label: 'ผ่าน' },
+                            { value: 'ไม่ผ่าน', label: 'ไม่ผ่าน' }
+                        ]}
+                    />
                     <Input
                         type="text"
                         placeholder="ค้นหาผลงานกิจกรรม..."
@@ -69,11 +83,6 @@ const ActivityList = ({ params }) => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="flex-grow mr-2"
                     />
-                    <Flex align="flex-start" gap="small" vertical  >
-                        <Link href="create">
-                            <Button type="primary" style={{ backgroundColor: '#2D427C', borderColor: '#2D427C', color: 'white' }}>เพิ่มผลงานกิจกรรม</Button>
-                        </Link>
-                    </Flex>
                 </div>
             </div>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -84,8 +93,9 @@ const ActivityList = ({ params }) => {
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อกิจกรรม</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปี</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ผู้ใช้</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
                             <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
                     </thead>
@@ -120,6 +130,11 @@ const ActivityList = ({ params }) => {
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {activity.user?.username}
+                                            </div>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <Button
                                                 onClick={() => showModal(activity.file)}
                                                 type="link"
@@ -149,26 +164,26 @@ const ActivityList = ({ params }) => {
                     </table>
                 </div>
                 <Modal
-                title="Preview File"
-                open={isModalVisible}
-                onCancel={closeModal}
-                footer={[
-                    <Button key="download" type="primary" href={modalContent} target="_blank" download>
-                        ดาวน์โหลด PDF
-                    </Button>,
-                    <Button key="cancel" onClick={closeModal}>
-                        ยกเลิก
-                    </Button>
-                ]}
-                width="70%"
-                style={{ top: 20 }}
-            >
-                {modalContent ? (
-                    <iframe src={`${modalContent}`} loading="lazy" style={{ width: '100%', height: '75vh' }}></iframe>
-                ) : (
-                    <p>Error displaying the document. Please try again.</p>
-                )}
-            </Modal>
+                    title="Preview File"
+                    open={isModalVisible}
+                    onCancel={closeModal}
+                    footer={[
+                        <Button key="download" type="primary" href={modalContent} target="_blank" download>
+                            ดาวน์โหลด PDF
+                        </Button>,
+                        <Button key="cancel" onClick={closeModal}>
+                            ยกเลิก
+                        </Button>
+                    ]}
+                    width="70%"
+                    style={{ top: 20 }}
+                >
+                    {modalContent ? (
+                        <iframe src={`${modalContent}`} loading="lazy" style={{ width: '100%', height: '75vh' }}></iframe>
+                    ) : (
+                        <p>Error displaying the document. Please try again.</p>
+                    )}
+                </Modal>
             </div>
         </div>
     )

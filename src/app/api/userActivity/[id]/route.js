@@ -15,6 +15,11 @@ export async function GET(req, { params }) {
                         type: true,
                         year: true 
                     }
+                },
+                user: {
+                    select: {
+                        username: true
+                    }
                 }
             }
         });

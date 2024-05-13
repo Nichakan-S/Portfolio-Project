@@ -138,6 +138,7 @@ const CreateActivity = () => {
                     <DatePicker
                         style={{ width: '100%' }}
                         showTime
+                        format="YYYY-MM-DD HH:mm"
                         onChange={(result, dateString) => {
                             console.log('Selected Time: ', result);
                             console.log('Formatted Selected Time: ', dateString);

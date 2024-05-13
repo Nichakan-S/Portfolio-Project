@@ -4,7 +4,22 @@ const prisma = new PrismaClient();
 
 export async function GET() {
     try {
-      const activitySheet = await prisma.manageActivity.findMany();
+      const activitySheet = await prisma.manageActivity.findMany({
+        include: {
+          activity: {
+            select: {
+                name: true,
+                type: true,
+                year: true 
+            }
+        },
+            user: {
+              select: {
+                  username: true
+              }
+          }
+        }
+    });
       return new Response(JSON.stringify(activitySheet), {
         status: 200,
         headers: {
