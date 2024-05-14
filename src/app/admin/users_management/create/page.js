@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
-import { Button , Avatar , Select ,Card , Row , Col , Input} from 'antd';
+import { Button, Avatar, Select, Card, Row, Col, Input } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 const CreateUser = () => {
@@ -26,7 +26,6 @@ const CreateUser = () => {
 
     const router = useRouter();
 
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -43,6 +42,9 @@ const CreateUser = () => {
                 setFaculty(faculties);
                 setMajors(majors);
                 setRank(ranks);
+                
+                console.log(faculties)
+                console.log(majors)
             } catch (error) {
                 console.error('Failed to fetch data', error);
             }
@@ -52,9 +54,11 @@ const CreateUser = () => {
     }, []);
 
     useEffect(() => {
-        const newFilteredMajors = majors.filter(major => major.facultyId.toString() === selectedFacultyId);
+        majors.forEach(major => {});
+        const newFilteredMajors = majors.filter(major => major.facultyId === parseInt(selectedFacultyId, 10));
         setFilteredMajors(newFilteredMajors);
     }, [selectedFacultyId, majors]);
+    
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -134,37 +138,37 @@ const CreateUser = () => {
             <h1 className="text-2xl font-semibold mb-6">เพิ่มผู้ใช้ใหม่</h1>
             <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
                 <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl" >
-                    <Row gutter={16} >
+                    <Row gutter={16}>
                         <Col span={6}>
-                                <div className="upload-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 20 , justifyContent: 'flex-end'}}>
-                                    {userImage && (
-                                        <Avatar
-                                            size={128}
-                                            src={userImage}
-                                            style={{ marginBottom: 10 }} // Adds space between the avatar and the button
-                                        />
-                                    )}
-                                    <Button
-                                        type="primary"
-                                        icon={<UploadOutlined />}
-                                        onClick={handleFileInputClick}
-                                        style={{ backgroundColor:"white" , color:"black" , borderColor:"gray"}}
-                                        className="shadow-xl "
-                                    >
-                                        Upload Image
-                                    </Button>
-                                    <input
-                                        type="file"
-                                        id="hiddenFileInput"
-                                        style={{ display: 'none' }}
-                                        accept=".jpg, .png"
-                                        onChange={handleImageChange}
+                            <div className="upload-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 20, justifyContent: 'flex-end' }}>
+                                {userImage && (
+                                    <Avatar
+                                        size={128}
+                                        src={userImage}
+                                        style={{ marginBottom: 10 }}
                                     />
-                                </div>
+                                )}
+                                <Button
+                                    type="primary"
+                                    icon={<UploadOutlined />}
+                                    onClick={handleFileInputClick}
+                                    style={{ backgroundColor: "white", color: "black", borderColor: "gray" }}
+                                    className="shadow-xl"
+                                >
+                                    Upload Image
+                                </Button>
+                                <input
+                                    type="file"
+                                    id="hiddenFileInput"
+                                    style={{ display: 'none' }}
+                                    accept=".jpg, .png"
+                                    onChange={handleImageChange}
+                                />
+                            </div>
                         </Col>
                         <Col span={18}>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
-                                <div  style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
                                     <label htmlFor="faculty" className="block text-base font-medium mr-4 mb-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> คณะ : </span>
                                     </label>
@@ -195,7 +199,7 @@ const CreateUser = () => {
                                 </div>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <div  style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
                                     <label htmlFor="major" className="block text-base font-medium mr-4 mb-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> สาขา : </span>
                                     </label>
@@ -221,7 +225,7 @@ const CreateUser = () => {
                                     </Select>
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }} >
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', width: '50%' }}>
                                     <label htmlFor="rank" className="block text-base font-medium mr-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ตำแหน่ง : </span>
@@ -270,7 +274,7 @@ const CreateUser = () => {
                                 </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                     <label htmlFor="username" className="block text-base font-medium mr-4 mb-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ชื่อ : </span>
                                     </label>
@@ -282,19 +286,19 @@ const CreateUser = () => {
                                         required
                                         value={username}
                                         onChange={(e) => setUsername(e.target.value)}
-                                        className="flex-grow mr-4 mb-4 "
-                                        style={{ 
-                                            flexGrow: 1, 
-                                            flexShrink: 1, 
-                                            flexBasis: '50%', 
-                                            padding: '8px', 
+                                        className="flex-grow mr-4 mb-4"
+                                        style={{
+                                            flexGrow: 1,
+                                            flexShrink: 1,
+                                            flexBasis: '50%',
+                                            padding: '8px',
                                             minWidth: '300px'
                                         }}
                                     />
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }} >
-                                <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                     <label htmlFor="lastname" className="block text-base font-medium mr-4 mb-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> นามสกุล : </span>
                                     </label>
@@ -305,19 +309,19 @@ const CreateUser = () => {
                                         required
                                         value={lastname}
                                         onChange={(e) => setLastname(e.target.value)}
-                                        className="flex-grow mr-4 mb-4 "
-                                        style={{ 
-                                            flexGrow: 1, 
-                                            flexShrink: 1, 
-                                            flexBasis: '50%', 
-                                            padding: '8px', 
+                                        className="flex-grow mr-4 mb-4"
+                                        style={{
+                                            flexGrow: 1,
+                                            flexShrink: 1,
+                                            flexBasis: '50%',
+                                            padding: '8px',
                                             minWidth: '300px'
                                         }}
                                     />
                                 </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', width: '100%'}} >
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                     <label htmlFor="email" className="block text-base font-medium mr-4 mb-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> Email : </span>
                                     </label>
@@ -328,19 +332,19 @@ const CreateUser = () => {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="flex-grow mr-4 mb-4 "
-                                        style={{ 
-                                            flexGrow: 1, 
-                                            flexShrink: 1, 
-                                            flexBasis: '50%', 
-                                            padding: '8px', 
+                                        className="flex-grow mr-4 mb-4"
+                                        style={{
+                                            flexGrow: 1,
+                                            flexShrink: 1,
+                                            flexBasis: '50%',
+                                            padding: '8px',
                                             minWidth: '300px'
                                         }}
                                     />
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }} >
-                                <div style={{ display: 'flex', alignItems: 'center', width: '50%'}} >
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '50%' }}>
                                     <label htmlFor="password" className="block text-base font-medium mr-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> รหัสผ่าน : </span>
                                     </label>
@@ -352,15 +356,15 @@ const CreateUser = () => {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         className="flex-grow mr-4"
-                                        style={{ 
-                                            flexGrow: 1, 
-                                            flexShrink: 1, 
+                                        style={{
+                                            flexGrow: 1,
+                                            flexShrink: 1,
                                             flexBasis: 'calc(100% - 150px)', // Adjust size based on label width
-                                            padding: '8px', 
+                                            padding: '8px',
                                         }}
                                     />
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', width: '50%'}} >
+                                <div style={{ display: 'flex', alignItems: 'center', width: '50%' }}>
                                     <label htmlFor="confirmpassword" className="block text-base font-medium mr-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ยืนยันรหัสผ่าน : </span>
                                     </label>
@@ -372,17 +376,17 @@ const CreateUser = () => {
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         className="flex-grow mr-4"
-                                        style={{ 
-                                            flexGrow: 1, 
-                                            flexShrink: 1, 
+                                        style={{
+                                            flexGrow: 1,
+                                            flexShrink: 1,
                                             flexBasis: 'calc(100% - 150px)', // Adjust size based on label width
-                                            padding: '8px', 
+                                            padding: '8px',
                                         }}
                                     />
                                 </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                     <label htmlFor="role" className="block text-base font-medium mr-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> บทบาท : </span>
                                     </label>
@@ -404,25 +408,26 @@ const CreateUser = () => {
                                     </Select>
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end', width: '102%' , padding: '15px' }}>
-                                <Button 
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', width: '102%', padding: '15px' }}>
+                                <Button
                                     className="inline-flex justify-center mr-4 mb-4"
                                     type="primary"
                                     size="middle"
                                     onClick={handleSubmit}
-                                    style={{ 
-                                        color:'white' , 
-                                        backgroundColor: '#02964F', 
-                                        borderColor: '#02964F' ,}}
-                                    >
+                                    style={{
+                                        color: 'white',
+                                        backgroundColor: '#02964F',
+                                        borderColor: '#02964F',
+                                    }}
+                                >
                                     บันทึก
                                 </Button>
-                                <Button 
+                                <Button
                                     className="inline-flex justify-center mr-4 mb-4"
                                     onClick={handleBack}
                                     size="middle"
-                                    >
-                                ยกเลิก
+                                >
+                                    ยกเลิก
                                 </Button>
                             </div>
                         </Col>
