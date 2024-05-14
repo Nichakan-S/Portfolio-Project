@@ -15,8 +15,36 @@ const DayEnum = {
 
 const TeachingList = ({ params }) => {
     const [teaching, setTeaching] = useState([])
+    const [activity, setActivity] = useState([]);
+    const [research, setResearch] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { id } = params;
+
+    const fetchactivity = async (id) => {
+        try {
+            const response = await fetch(`/api/homeActivity/${id}`)
+            const data = await response.json()
+            console.log('activity data fetched:', data);
+            setActivity(data)
+        } catch (error) {
+            console.error('Failed to fetch activity', error)
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const fetchresearch = async (id) => {
+        try {
+            const response = await fetch(`/api/homeResearch/${id}`)
+            const data = await response.json()
+            console.log('research data fetched:', data);
+            setResearch(data)
+        } catch (error) {
+            console.error('Failed to fetch research', error)
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     const fetchteaching = async (id) => {
         try {
@@ -30,11 +58,12 @@ const TeachingList = ({ params }) => {
             setIsLoading(false);
         }
     }
-    
 
     useEffect(() => {
         if (id) {
             fetchteaching(parseInt(id));
+            fetchactivity(parseInt(id));
+            fetchresearch(parseInt(id));
         }
     }, [id]);
 
@@ -108,19 +137,19 @@ const TeachingList = ({ params }) => {
             <div className="flex mt-8 w-full h-24">
                 <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1">
                     <div className="text-gray-500 text-sm ">ผลงานทั้งหมด</div>
-                    <div className="text-2xl font-bold text-right">9999</div>
+                    <div className="text-2xl font-bold text-right">{activity.length + research.length}</div>
                 </div>
                 <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1">
                     <div className="text-gray-500 text-sm">ผลงานวิจัย</div>
-                    <div className="text-2xl font-bold text-right">9999</div>
+                    <div className="text-2xl font-bold text-right">{research.length}</div>
                 </div>
                 <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1">
                     <div className="text-gray-500 text-sm">ผลงานกิจกรรม</div>
-                    <div className="text-2xl font-bold text-right">9999</div>
+                    <div className="text-2xl font-bold text-right">{activity.length}</div>
                 </div>
                 <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1">
                     <div className="text-gray-500 text-sm">วิชาที่สอน</div>
-                    <div className="text-2xl font-bold text-right">9999</div>
+                    <div className="text-2xl font-bold text-right">{teaching.length}</div>
                 </div>
                 <div className="p-4 bg-white rounded-lg shadow-xl flex-1">
                     <div className="text-gray-500 text-sm">รวมชั่วโมง</div>
