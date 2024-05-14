@@ -55,9 +55,9 @@ const ResearchList = () => {
 
     const filteredresearch = research.filter((research) => {
         return research.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.Researchfund.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            research.researchfund.toLowerCase().includes(searchTerm.toLowerCase()) ||
             research.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.year.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            research.year.toString().includes(searchTerm.toLowerCase()) ||
             research.status.toLowerCase().includes(searchTerm.toLowerCase());
     });
 

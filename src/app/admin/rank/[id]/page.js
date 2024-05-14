@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
-import { Select , Input , Button , Card , message } from 'antd';
+import { Select , Input , Button , Card } from 'antd';
 
 
 const EditRank = ({ params }) => {

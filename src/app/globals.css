@@ -2,12 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-.ant-select-dropdown .ant-select-item, .ant-select-dropdown .ant-select-item-option-content {
-    font-size: 16px; 
-    height: 40px; 
-    line-height: 40px; 
-    padding: 0 10px; 
-    display: flex;
-    align-items: center; 
+.custom-label {
+    font-size: 16px; /* ขนาดของตัวอักษร */
+    font-weight: bold; /* ความหนาของตัวอักษร */
+    color: #333; /* สีของตัวอักษร */
+}
 
+.data-font-medium {
+    font-size: 16px;
+}
+
+.small-descriptions .ant-descriptions-item-label,
+.small-descriptions .ant-descriptions-item-content {
+    font-size: 16px;
+    padding: 0px 0px;
+}
+
+.small-descriptions .ant-descriptions-view {
+    border-spacing: 8px 12px;
+}
+
+.small-card {
+    padding: 0px; /* ลดระยะห่างภายใน */
+    margin-bottom: 10px; /* ลดระยะห่างระหว่าง cards */
+    font-size: 16px; /* ลดขนาดตัวอักษร */
+}
+
+.card-header-small {
+    height: var(--headerHeightSM);
+}
+
+@media (max-width: 600px) {
+    .card-header {
+        height: var(--headerHeightSM); /* ใช้ความสูงนี้เมื่อหน้าจอเล็ก */
+    }
 }

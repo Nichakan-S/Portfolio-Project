@@ -1,155 +1,113 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Descriptions, Card, Input, Button } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import '/src/app/globals.css'
 
 const UserList = () => {
-    const [user, setUser] = useState([])
+    const [users, setUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const headerHeight = '38px';
 
     useEffect(() => {
-        fetchuser()
-    }, [])
+        const fetchUsers = async () => {
+            try {
+                const res = await fetch('/api/user');
+                const data = await res.json();
+                setUsers(data);
+            } catch (error) {
+                console.error('การเรียกข้อมูลผู้ใช้ล้มเหลว', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchUsers();
+    }, []);
 
-    const fetchuser = async () => {
-        try {
-            const res = await fetch('/api/user')
-            const data = await res.json()
-            setUser(data)
-        } catch (error) {
-            console.error('Failed to fetch user', error)
-        } finally {
-            setIsLoading(false);
-        }
-    }
     if (isLoading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+        return <div className="flex justify-center items-center h-screen">กำลังโหลด...</div>;
     }
 
-    const filtereduser = user.filter((user) => {
+    const filteredUsers = users.filter(user => {
         return user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               user.faculty?.facultyName.toLowerCase().includes(searchTerm.toLowerCase())||
-               user.major?.majorName.toLowerCase().includes(searchTerm.toLowerCase())||
-               user.rank?.rankname.toLowerCase().includes(searchTerm.toLowerCase())||
+               user.faculty?.facultyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               user.major?.majorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               user.rank?.rankname.toLowerCase().includes(searchTerm.toLowerCase()) ||
                user.lastname.toLowerCase().includes(searchTerm.toLowerCase()) ||
                user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               user.role.toLowerCase().includes(searchTerm.toLowerCase()) ;
+               user.role.toLowerCase().includes(searchTerm.toLowerCase());
     });
-
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold mb-6">บัญชีผู้ใช้งาน</h1>
                 <div className="flex items-center">
-                    <input
-                        type="text"
+                    <Input
+                        className="flex-grow mr-2 p-1 text-base border rounded-xl custom-input"
                         placeholder="ค้นหาบัญชีผู้ใช้งาน..."
+                        type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="mt-4 inline-flex items-center px-4 py-2 border rounded-lg shadow-sm text-sm font-medium mr-4"
+                        style={{ borderColor: '#2D427C', fontSize: '14px' }}
                     />
-                    <Link
-                        className="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        href="users_management/create"
-                    >
-                        เพิ่มบัญชีผู้ใช้งาน
+                    <Link href="users_management/create">
+                        <Button
+                            className="text-base w-full p-1 border rounded-xl"
+                            style={{
+                                backgroundColor: '#2D427C',
+                                borderColor: '#2D427C',
+                                color: 'white',
+                                height: '35px',
+                                borderWidth: '2px',
+                                fontSize: '18px'
+                            }}
+                        >
+                            เพิ่มบัญชีผู้ใช้งาน
+                        </Button>
                     </Link>
                 </div>
             </div>
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table className="min-w-full">
-                    <thead className="bg-gray-50 ">
-                        <tr>
-                            <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th scope="col" className="w-1/7 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">คณะ</th>
-                            <th scope="col" className="w-1/7 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สาขา</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตำแหน่ง</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อ</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">นามสกุล</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เปลี่ยนรหัสผ่าน</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
-                        </tr>
-                    </thead>
-                </table>
-                <div className="max-h-96 overflow-y-auto">
-                    <table className="min-w-full">
-                        <tbody className="divide-y divide-gray-200">
-                            {filtereduser.length > 0 ? (
-                                filtereduser.map((user, index) => (
-                                    <tr key={user.id}>
-                                        <td className="w-1 px-6 py-4 whitespace-nowrap">
-                                            {index + 1}
-                                        </td>
-                                        <td className="w-1/7 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.faculty?.facultyName}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/7 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.major?.majorName}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.rank?.rankname}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.username}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.lastname}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.email}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.role}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <Link
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/admin/users_management/change_pass/${user.id}`}
-                                            >
-                                                เปลี่ยนรหัสผ่าน
-                                            </Link>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 text-right whitespace-nowrap">
-                                            <Link
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/admin/users_management/${user.id}`}
-                                            >
-                                                แก้ไข
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="2" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        ไม่มีข้อมูล
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div >
-    )
-}
+            {filteredUsers.length > 0 ? (
+                filteredUsers.map((user, index) => (
+                    <Card
+                        key={user.id}
+                        className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
+                        style={{ headerHeight: '38px' }}
+                        title={`ผู้ใช้ ${index + 1}`}
+                    >
+                        <Descriptions layout="horizontal" size="small" className="small-descriptions">
+                            <Descriptions.Item label="คณะ">{user.faculty?.facultyName}</Descriptions.Item>
+                            <Descriptions.Item label="สาขา">{user.major?.majorName}</Descriptions.Item>
+                            <Descriptions.Item label="ตำแหน่ง">{user.rank?.rankname}</Descriptions.Item>
+                            <Descriptions.Item label="ชื่อ">{user.username}</Descriptions.Item>
+                            <Descriptions.Item label="นามสกุล">{user.lastname}</Descriptions.Item>
+                            <Descriptions.Item label="อีเมล">{user.email}</Descriptions.Item>
+                            <Descriptions.Item label="บทบาท">{user.role}</Descriptions.Item>
+                            <Descriptions.Item label="รหัสผ่าน">
+                                <Link href={`/admin/users_management/change_pass/${user.id}`}>เปลี่ยนรหัสผ่าน</Link>
+                            </Descriptions.Item>
+                        </Descriptions>
+                        <div className="text-right">
+                            <Link 
+                                href={`/admin/users_management/${user.id}`}>
+                            <Button 
+                                type="link"
+                                icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}
+                                />
+                            </Link>
+                        </div>
+                    </Card>
+                ))
+            ) : (
+                <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
+            )}
+        </div>
+    );
+};
 
-export default UserList
+export default UserList;

@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
+import { Button , Avatar , Select ,Card , Row , Col , Input} from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 
 const CreateUser = () => {
     const [email, setEmail] = useState('');
@@ -123,209 +125,309 @@ const CreateUser = () => {
         router.push('/admin/users_management');
     };
 
+    const handleFileInputClick = () => {
+        document.getElementById('hiddenFileInput').click();
+    };
+
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-2xl font-semibold mb-6">เพิ่มผู้ใช้ใหม่</h1>
             <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
-                <div>
-                    <label htmlFor="userImage" className="block text-sm font-medium text-gray-700 mt-4">
-                        รูปภาพผู้ใช้
-                    </label>
-                    <input
-                        type="file"
-                        name="userImage"
-                        id="userImage"
-                        accept=".jpg,.png"
-                        onChange={handleImageChange}
-                        className="p-2 mt-1 block w-full text-lg"
-                    />
-                    {userImage && (
-                        <div className="mt-4">
-                            <p>Preview:</p>
-                            <img src={userImage} alt="Preview" className="max-w-xs" />
-                        </div>
-                    )}
-                </div>
-                <div>
-                    <label htmlFor="faculty" className="block text-sm font-medium text-gray-700">
-                        เลือกคณะ
-                    </label>
-                    <select
-                        id="faculty"
-                        required
-                        value={facultyId}
-                        onChange={(e) => {
-                            const newFacultyId = e.target.value;
-                            setFacultyId(newFacultyId);
-                            setSelectedFacultyId(newFacultyId);
-                            setMajorId('');
-                        }}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="">กรุณาเลือกคณะ</option>
-                        {faculty.map(faculty => (
-                            <option key={faculty.id} value={faculty.id}>
-                                {faculty.facultyName}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="major" className="block text-sm font-medium text-gray-700 mt-4">
-                        เลือกสาขา
-                    </label>
-                    <select
-                        id="major"
-                        required
-                        value={majorId}
-                        onChange={(e) => setMajorId(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="">กรุณาเลือกสาขา</option>
-                        {filteredMajors.map(major => (
-                            <option key={major.id} value={major.id}>
-                                {major.majorName}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="rank" className="block text-sm font-medium text-gray-700 mt-4">
-                        ตำแหน่ง
-                    </label>
-                    <select
-                        id="rank"
-                        required
-                        value={rankId}
-                        onChange={(e) => setRankId(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="">กรุณาเลือกตำแหน่ง</option>
-                        {rank.map(rank => (
-                            <option key={rank.id} value={rank.id}>
-                                {rank.rankname}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="prefix" className="block text-sm font-medium text-gray-700">
-                        คำนำหน้าชื่อ
-                    </label>
-                    <select
-                        id="prefix"
-                        required
-                        value={prefix}
-                        onChange={(e) => setPrefix(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="">กรุณาเลือกคำนำหน้าชื่อ</option>
-                        <option value="นาย">นาย</option>
-                        <option value="นาง">นาง</option>
-                        <option value="นางสาว">นางสาว</option>
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="username" className="block text-sm font-medium text-gray-700 mt-4">
-                        ชื่อ
-                    </label>
-                    <input
-                        type="text"
-                        name="username"
-                        id="username"
-                        required
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-300 shadow-lg focus:border-indigo-500 focus:ring-indigo-500 text-lg"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="lastname" className="block text-sm font-medium text-gray-700 mt-4">
-                        นามสกุล
-                    </label>
-                    <input
-                        type="text"
-                        name="lastname"
-                        id="lastname"
-                        required
-                        value={lastname}
-                        onChange={(e) => setLastname(e.target.value)}
-                        className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-300 shadow-lg focus:border-indigo-500 focus:ring-indigo-500 text-lg"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mt-4">
-                        Email
-                    </label>
-                    <input
-                        type="text"
-                        name="email"
-                        id="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-300 shadow-lg focus:border-indigo-500 focus:ring-indigo-500 text-lg"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mt-4">
-                        รหัสผ่าน
-                    </label>
-                    <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-300 shadow-lg focus:border-indigo-500 focus:ring-indigo-500 text-lg"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="confirmpassword" className="block text-sm font-medium text-gray-700 mt-4">
-                        ยืนยันรหัสผ่าน
-                    </label>
-                    <input
-                        type="password"
-                        name="confirmpassword"
-                        id="confirmpassword"
-                        required
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-300 shadow-lg focus:border-indigo-500 focus:ring-indigo-500 text-lg"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                        บทบาท
-                    </label>
-                    <select
-                        id="role"
-                        required
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="">กรุณาเลือกบทบาท</option>
-                        <option value="user">ผู้ใช้งาน</option>
-                        <option value="admin">ผู้ดูแลระบบ</option>
-                    </select>
-                </div>
-                <div>
-                    <button
-                        type="submit"
-                        className="mr-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        บันทึก
-                    </button>
-                    <button
-                        type="button"
-                        onClick={handleBack}
-                        className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                    >
-                        ยกเลิก
-                    </button>
-                </div>
+                <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl" >
+                    <Row gutter={16} >
+                        <Col span={6}>
+                                <div className="upload-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 20 , justifyContent: 'flex-end'}}>
+                                    {userImage && (
+                                        <Avatar
+                                            size={128}
+                                            src={userImage}
+                                            style={{ marginBottom: 10 }} // Adds space between the avatar and the button
+                                        />
+                                    )}
+                                    <Button
+                                        type="primary"
+                                        icon={<UploadOutlined />}
+                                        onClick={handleFileInputClick}
+                                        style={{ backgroundColor:"white" , color:"black" , borderColor:"gray"}}
+                                        className="shadow-xl "
+                                    >
+                                        Upload Image
+                                    </Button>
+                                    <input
+                                        type="file"
+                                        id="hiddenFileInput"
+                                        style={{ display: 'none' }}
+                                        accept=".jpg, .png"
+                                        onChange={handleImageChange}
+                                    />
+                                </div>
+                        </Col>
+                        <Col span={18}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
+                                <div  style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                    <label htmlFor="faculty" className="block text-base font-medium mr-4 mb-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> คณะ : </span>
+                                    </label>
+                                    <Select
+                                        id="faculty"
+                                        value={facultyId}
+                                        onChange={(newFacultyId) => {
+                                            setFacultyId(newFacultyId);
+                                            setSelectedFacultyId(newFacultyId);
+                                            setMajorId('');
+                                        }}
+                                        className="flex-grow mr-4 mb-4 custom-select"
+                                        size="large"
+                                        style={{
+                                            width: '80%',
+                                            borderColor: '#DADEE9',
+                                            fontSize: '16px',
+                                            height: '40px'
+                                        }}
+                                    >
+                                        <Select.Option value="">กรุณาเลือกคณะ</Select.Option>
+                                        {faculty.map((faculty) => (
+                                            <Select.Option key={faculty.id} value={faculty.id}>
+                                                {faculty.facultyName}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <div  style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                    <label htmlFor="major" className="block text-base font-medium mr-4 mb-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> สาขา : </span>
+                                    </label>
+                                    <Select
+                                        id="major"
+                                        value={majorId}
+                                        onChange={(newMajorId) => setMajorId(newMajorId)}
+                                        className="flex-grow mr-4 mb-4 custom-select"
+                                        size="large"
+                                        style={{
+                                            width: '80%',
+                                            borderColor: '#DADEE9',
+                                            fontSize: '16px',
+                                            height: '40px'
+                                        }}
+                                    >
+                                        <Select.Option value="">กรุณาเลือกสาขา</Select.Option>
+                                        {filteredMajors.map((major) => (
+                                            <Select.Option key={major.id} value={major.id}>
+                                                {major.majorName}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }} >
+                                <div style={{ display: 'flex', alignItems: 'center', width: '50%' }}>
+                                    <label htmlFor="rank" className="block text-base font-medium mr-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ตำแหน่ง : </span>
+                                    </label>
+                                    <Select
+                                        id="rank"
+                                        value={rankId}
+                                        onChange={(value) => setRankId(value)}
+                                        className="flex-grow mr-4 custom-select"
+                                        style={{
+                                            width: '50%',
+                                            borderColor: '#DADEE9',
+                                            fontSize: '16px',
+                                            height: '40px'
+                                        }}
+                                    >
+                                        <Select.Option value="">กรุณาเลือกตำแหน่ง</Select.Option>
+                                        {rank.map((rank) => (
+                                            <Select.Option key={rank.id} value={rank.id}>
+                                                {rank.rankname}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '50%' }}>
+                                    <label htmlFor="prefix" className="block text-base font-medium mr-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> คำนำหน้าชื่อ : </span>
+                                    </label>
+                                    <Select
+                                        id="prefix"
+                                        value={prefix}
+                                        onChange={(value) => setPrefix(value)}
+                                        className="flex-grow mr-4 custom-select"
+                                        style={{
+                                            width: '50%',
+                                            borderColor: '#DADEE9',
+                                            fontSize: '16px',
+                                            height: '40px'
+                                        }}
+                                    >
+                                        <Select.Option value="">กรุณาเลือกคำนำหน้าชื่อ</Select.Option>
+                                        <Select.Option value="นาย">นาย</Select.Option>
+                                        <Select.Option value="นาง">นาง</Select.Option>
+                                        <Select.Option value="นางสาว">นางสาว</Select.Option>
+                                    </Select>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
+                                    <label htmlFor="username" className="block text-base font-medium mr-4 mb-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ชื่อ : </span>
+                                    </label>
+                                    <Input
+                                        placeholder="ชื่อผู้ใช้"
+                                        name="username"
+                                        size="large"
+                                        id="username"
+                                        required
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        className="flex-grow mr-4 mb-4 "
+                                        style={{ 
+                                            flexGrow: 1, 
+                                            flexShrink: 1, 
+                                            flexBasis: '50%', 
+                                            padding: '8px', 
+                                            minWidth: '300px'
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }} >
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
+                                    <label htmlFor="lastname" className="block text-base font-medium mr-4 mb-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> นามสกุล : </span>
+                                    </label>
+                                    <Input
+                                        placeholder="นามสกุล"
+                                        name="lastname"
+                                        id="lastname"
+                                        required
+                                        value={lastname}
+                                        onChange={(e) => setLastname(e.target.value)}
+                                        className="flex-grow mr-4 mb-4 "
+                                        style={{ 
+                                            flexGrow: 1, 
+                                            flexShrink: 1, 
+                                            flexBasis: '50%', 
+                                            padding: '8px', 
+                                            minWidth: '300px'
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%'}} >
+                                    <label htmlFor="email" className="block text-base font-medium mr-4 mb-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> Email : </span>
+                                    </label>
+                                    <Input
+                                        placeholder="อีเมล"
+                                        name="email"
+                                        id="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="flex-grow mr-4 mb-4 "
+                                        style={{ 
+                                            flexGrow: 1, 
+                                            flexShrink: 1, 
+                                            flexBasis: '50%', 
+                                            padding: '8px', 
+                                            minWidth: '300px'
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }} >
+                                <div style={{ display: 'flex', alignItems: 'center', width: '50%'}} >
+                                    <label htmlFor="password" className="block text-base font-medium mr-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> รหัสผ่าน : </span>
+                                    </label>
+                                    <Input
+                                        placeholder="รหัสผ่าน"
+                                        name="password"
+                                        id="password"
+                                        required
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="flex-grow mr-4"
+                                        style={{ 
+                                            flexGrow: 1, 
+                                            flexShrink: 1, 
+                                            flexBasis: 'calc(100% - 150px)', // Adjust size based on label width
+                                            padding: '8px', 
+                                        }}
+                                    />
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '50%'}} >
+                                    <label htmlFor="confirmpassword" className="block text-base font-medium mr-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ยืนยันรหัสผ่าน : </span>
+                                    </label>
+                                    <Input
+                                        placeholder="ยืนยันรหัสผ่าน"
+                                        name="confirmpassword"
+                                        id="confirmpassword"
+                                        required
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        className="flex-grow mr-4"
+                                        style={{ 
+                                            flexGrow: 1, 
+                                            flexShrink: 1, 
+                                            flexBasis: 'calc(100% - 150px)', // Adjust size based on label width
+                                            padding: '8px', 
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%'}}>
+                                    <label htmlFor="role" className="block text-base font-medium mr-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> บทบาท : </span>
+                                    </label>
+                                    <Select
+                                        id="role"
+                                        value={role}
+                                        onChange={(value) => setRole(value)}
+                                        className="flex-grow mr-4 custom-select"
+                                        style={{
+                                            width: '50%',
+                                            borderColor: '#DADEE9',
+                                            fontSize: '16px',
+                                            height: '40px'
+                                        }}
+                                    >
+                                        <Select.Option value="">กรุณาเลือกบทบาท</Select.Option>
+                                        <Select.Option value="user">ผู้ใช้งาน</Select.Option>
+                                        <Select.Option value="admin">ผู้ดูแลระบบ</Select.Option>
+                                    </Select>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', width: '102%' , padding: '15px' }}>
+                                <Button 
+                                    className="inline-flex justify-center mr-4 mb-4"
+                                    type="primary"
+                                    size="middle"
+                                    onClick={handleSubmit}
+                                    style={{ 
+                                        color:'white' , 
+                                        backgroundColor: '#02964F', 
+                                        borderColor: '#02964F' ,}}
+                                    >
+                                    บันทึก
+                                </Button>
+                                <Button 
+                                    className="inline-flex justify-center mr-4 mb-4"
+                                    onClick={handleBack}
+                                    size="middle"
+                                    >
+                                ยกเลิก
+                                </Button>
+                            </div>
+                        </Col>
+                    </Row>
+                </Card>
             </form>
         </div>
     );

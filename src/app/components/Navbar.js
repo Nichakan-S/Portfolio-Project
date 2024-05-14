@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation';
-import { Avatar, Space, Col, Row, Popover, Button } from 'antd';
+import { Avatar, Space, Col, Row} from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
 const Navbar = ({ isAdmin }) => {

@@ -110,7 +110,7 @@ const EditMajor = ({ params }) => {
             <h1 className="text-2xl font-semibold mb-6">แก้ไขชื่อสาขา {majorName}</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
             <Card
-                    className="max-w-6xl mx-auto px-4 py-8 shadow-xl"
+                className="max-w-6xl mx-auto px-4 py-8 shadow-xl"
                 >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
