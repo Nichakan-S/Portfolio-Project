@@ -1,13 +1,13 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { Button, Input, Modal, Select } from 'antd';
+import { SuccessAlert, WarningAlert, EvaluationAlert } from '../../../components/sweetalert';
 
 const Status = {
     wait: 'รอ',
     pass: 'ผ่าน',
-    fail: 'ไม่ผ่าน'
+    fail: 'ไม่ผ่ๅน'
 };
 
 const ActivityList = () => {
@@ -17,10 +17,14 @@ const ActivityList = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
 
+    useEffect(() => {
+        fetchactivity()
+    }, [])
+
     const fetchactivity = async () => {
         try {
-            const response = await fetch('/api/manageActivity/')
-            const data = await response.json()
+            const res = await fetch('/api/manageActivity/')
+            const data = await res.json()
             console.log('activity data fetched:', data);
             setActivity(data)
         } catch (error) {
@@ -30,12 +34,36 @@ const ActivityList = () => {
         }
     }
 
-    useEffect(() => {
-        fetchactivity();
-    }, []);
+    const handleSubmit = async (status, id) => {
+        EvaluationAlert('ยืนยันการประเมิน', 'คุณแน่ใจหรือไม่ที่จะทำการประเมินผลงานนี้?')
+            .then(async (result) => {
+                if (result.isConfirmed) {
+                    console.log(status, id)
+                    try {
+                        const response = await fetch(`/api/evaluateActivity/${id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ status })
+                        });
+                        if (!response.ok) throw new Error('Something went wrong');
+                        SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกประเมินแล้ว');
+                        fetchactivity();
+                    } catch (error) {
+                        console.error(error);
+                        WarningAlert('ผิดพลาด!', 'ไม่สามารถประเมินข้อมูลได้');
+                    }
+                    
+                }
+            }).catch((error) => {
+                console.error('Promise error:', error);
+            });
+    };
 
-    const showModal = (file) => {
-        setModalContent(file);
+    const showModal = (file, id) => {
+        setModalContent({ file, id });
+        console.log(file, id);
         setIsModalVisible(true);
     };
 
@@ -55,7 +83,7 @@ const ActivityList = () => {
     });
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold mb-6">ผลงานกิจกรรม</h1>
                 <div className="flex items-center">
@@ -73,7 +101,7 @@ const ActivityList = () => {
                         options={[
                             { value: 'รอ', label: 'รอ' },
                             { value: 'ผ่าน', label: 'ผ่าน' },
-                            { value: 'ไม่ผ่าน', label: 'ไม่ผ่าน' }
+                            { value: 'ไม่ผ่ๅน', label: 'ไม่ผ่ๅน' }
                         ]}
                     />
                     <Input
@@ -96,7 +124,6 @@ const ActivityList = () => {
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ผู้ใช้</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
-                            <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
                     </thead>
                 </table>
@@ -136,20 +163,12 @@ const ActivityList = () => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <Button
-                                                onClick={() => showModal(activity.file)}
+                                                onClick={() => showModal(activity.file, activity.id)}
                                                 type="link"
                                                 style={{ color: '#FFD758' }}
                                             >
                                                 เปิดไฟล์
                                             </Button>
-                                        </td>
-                                        <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
-                                            <Link
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/users/manage_activity/edit/${activity.id}`}
-                                            >
-                                                แก้ไข
-                                            </Link>
                                         </td>
                                     </tr>
                                 ))
@@ -168,18 +187,39 @@ const ActivityList = () => {
                     open={isModalVisible}
                     onCancel={closeModal}
                     footer={[
-                        <Button key="download" type="primary" href={modalContent} target="_blank" download>
-                            ดาวน์โหลด PDF
-                        </Button>,
-                        <Button key="cancel" onClick={closeModal}>
-                            ยกเลิก
-                        </Button>
+                        <div key="footer" style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                            <Button key="download" type="primary" href={modalContent.file} target="_blank" download>
+                                ดาวน์โหลด PDF
+                            </Button>
+                            <div>
+                                <Button
+                                    type="primary"
+                                    className="mr-2"
+                                    style={{ backgroundColor: '#02964F', borderColor: '#02964F' }}
+                                    onClick={() => handleSubmit('pass', modalContent.id)}
+                                >
+                                    ผ่าน
+                                </Button>
+                                <Button
+                                    type="primary"
+                                    danger
+                                    className="mr-2"
+                                    style={{ backgroundColor: '#E50000', borderColor: '#E50000' }}
+                                    onClick={() => handleSubmit('fail', modalContent.id)}
+                                >
+                                    ไม่ผ่าน
+                                </Button>
+                                <Button key="cancel" onClick={closeModal}>
+                                    ยกเลิก
+                                </Button>
+                            </div>
+                        </div>
                     ]}
                     width="70%"
                     style={{ top: 20 }}
                 >
                     {modalContent ? (
-                        <iframe src={`${modalContent}`} loading="lazy" style={{ width: '100%', height: '75vh' }}></iframe>
+                        <iframe src={modalContent.file} loading="lazy" style={{ width: '100%', height: '75vh' }}></iframe>
                     ) : (
                         <p>Error displaying the document. Please try again.</p>
                     )}

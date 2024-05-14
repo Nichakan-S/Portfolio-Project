@@ -89,7 +89,7 @@ const CreateActivity = () => {
 
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4">
             <h1 className="text-2xl font-semibold mb-6">เพิ่มกิจกรรม</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>

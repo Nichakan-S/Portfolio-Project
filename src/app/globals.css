@@ -2,12 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-.ant-select-dropdown .ant-select-item, .ant-select-dropdown .ant-select-item-option-content {
-    font-size: 16px; 
-    height: 40px; 
-    line-height: 40px; 
-    padding: 0 10px; 
-    display: flex;
-    align-items: center; 
+.ant-select-dropdown .ant-select-item,
+.ant-select-dropdown .ant-select-item-option-content {
+  font-size: 16px;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+}
 
+.chartContainer {
+  height: 24rem;
 }

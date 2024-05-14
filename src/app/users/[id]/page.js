@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Button, Input, Flex } from 'antd';
+import { Card } from 'antd';
 
 const DayEnum = {
     mon: 'จันทร์',
@@ -16,7 +15,6 @@ const DayEnum = {
 
 const TeachingList = ({ params }) => {
     const [teaching, setTeaching] = useState([])
-    const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const { id } = params;
 
@@ -32,6 +30,7 @@ const TeachingList = ({ params }) => {
             setIsLoading(false);
         }
     }
+    
 
     useEffect(() => {
         if (id) {
@@ -43,32 +42,12 @@ const TeachingList = ({ params }) => {
         return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
 
-    const filteredteaching = teaching.filter((teaching) => {
-        return teaching.subjects?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            teaching.subjects?.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            teaching.subjects?.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            DayEnum[teaching.subjects?.day].includes(searchTerm.toLowerCase()) ||
-            teaching.subjects?.starttime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            teaching.subjects?.endtime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            teaching.subjects?.year.toString().toLowerCase().includes(searchTerm.toLowerCase());
-    });
-
     const calculateTimeSlots = (startTime, endTime) => {
         const start = startTime.split(':');
         const end = endTime.split(':');
         const startMinutes = parseInt(start[0]) * 60 + parseInt(start[1]);
         const endMinutes = parseInt(end[0]) * 60 + parseInt(end[1]);
         return Math.ceil((endMinutes - startMinutes) / 60);
-    };
-
-    const findStartColumn = (startTime, times) => {
-        const start = startTime.split(':');
-        const startMinutes = parseInt(start[0]) * 60 + parseInt(start[1]);
-        return times.findIndex(time => {
-            const [startHour, startMinute] = time.split('-')[0].split(':');
-            const startTimeInMinutes = parseInt(startHour) * 60 + parseInt(startMinute);
-            return startMinutes >= startTimeInMinutes;
-        });
     };
 
     const checkTimeOverlap = (sessionStart, sessionEnd, slotStart, slotEnd) => {
@@ -82,26 +61,27 @@ const TeachingList = ({ params }) => {
 
     const renderedSessions = new Map();
 
-    const times = ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00', '19:00-20:00', '20:00-21:00'];
+    const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '19:00', '20:00', '21:00'];
+    const fullTimes = ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00', '19:00-20:00', '20:00-21:00', '21:00-22:00'];
     const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8">
-            <div className="container mx-auto px-4">
-                <table className="table-auto">
-                    <thead className="border-2 border-gray-300">
+        <div className="px-4">
+            <div className="mx-auto shadow-md">
+                <table className="w-full rounded-lg border-collapse overflow-hidden">
+                    <thead className="rounded-t-lg">
                         <tr>
-                            <th className="p-2 bg-gray-200">Day/Time</th>
+                            <th className=" bg-gray-950 text-white h-12">Day/Time</th>
                             {times.map(time => (
-                                <th key={time} className="p-2 bg-gray-200 ">{time}</th>
+                                <th key={time} className="p-2 bg-gray-950 text-xs text-white h-12">{time}</th>
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="border-2">
+                    <tbody className="rounded-b-lg">
                         {days.map(day => (
-                            <tr key={day}>
-                                <td className="p-2 uppercase border-2 border-gray-300">{DayEnum[day]}</td>
-                                {times.map((time, index) => {
+                            <tr key={day} className="bg-gray-200 h-10">
+                                <td className="p-2 uppercase bg-gray-700 text-white h-10">{DayEnum[day]}</td>
+                                {fullTimes.map((time, index) => {
                                     const timeRange = time.split('-');
                                     const timeStart = timeRange[0];
                                     const timeEnd = timeRange[1];
@@ -113,21 +93,43 @@ const TeachingList = ({ params }) => {
                                             renderedSessions.set(`${day}-${index + i}`, true);
                                         }
                                         return (
-                                            <td key={time} colSpan={colspan} className="p-2 bg-blue-200 border-2 border-gray-300">
-                                                {`${session.subjects.name}, ${session.subjects.group} (${session.subjects.starttime}-${session.subjects.endtime})`}
+                                            <td key={time} colSpan={colspan} className="p-2 bg-blue-200 text-center border-x-2 h-10">
+                                                {`${session.subjects.name}, ${session.subjects.group}`}
                                             </td>
                                         );
                                     }
-                                    return !renderedSessions.has(`${day}-${index}`) ? <td key={time} className="p-2 border-y-2 border-gray-300"></td> : null;
+                                    return !renderedSessions.has(`${day}-${index}`) ? <td key={time} className="p-2 bg-gray-200 h-10"></td> : null;
                                 })}
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
-            
+            <div className="flex mt-8 w-full h-24">
+                <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1">
+                    <div className="text-gray-500 text-sm ">ผลงานทั้งหมด</div>
+                    <div className="text-2xl font-bold text-right">9999</div>
+                </div>
+                <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1">
+                    <div className="text-gray-500 text-sm">ผลงานวิจัย</div>
+                    <div className="text-2xl font-bold text-right">9999</div>
+                </div>
+                <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1">
+                    <div className="text-gray-500 text-sm">ผลงานกิจกรรม</div>
+                    <div className="text-2xl font-bold text-right">9999</div>
+                </div>
+                <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1">
+                    <div className="text-gray-500 text-sm">วิชาที่สอน</div>
+                    <div className="text-2xl font-bold text-right">9999</div>
+                </div>
+                <div className="p-4 bg-white rounded-lg shadow-xl flex-1">
+                    <div className="text-gray-500 text-sm">รวมชั่วโมง</div>
+                    <div className="text-2xl font-bold text-right">9999</div>
+                </div>
+            </div>
         </div>
     )
+
 }
 
 export default TeachingList
