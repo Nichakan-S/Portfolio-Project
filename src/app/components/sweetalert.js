@@ -28,11 +28,24 @@ export const WarningAlert = (title, text) => {
 };
 
 export const SuccessAlert = (title, text) => {
-    Swal.fire({
-      title,
-      text,
-      icon: 'success',
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: 'ตกลง'
-    });
-  };
+  Swal.fire({
+    title,
+    text,
+    icon: 'success',
+    confirmButtonColor: '#3085d6',
+    confirmButtonText: 'ตกลง'
+  });
+};
+
+export const EvaluationAlert = (title, text) => {
+  return Swal.fire({
+    title,
+    text,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'ใช่, ดำเนินการ!',
+    cancelButtonText: 'ยกเลิก'
+  });
+};

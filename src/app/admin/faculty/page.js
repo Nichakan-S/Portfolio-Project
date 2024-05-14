@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Button, Input, Flex , Empty } from 'antd';
+import { Button, Input, Flex, Empty } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 
@@ -38,7 +38,7 @@ const FacultyList = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold mb-6" style={{color:"#6C7AA3"}} >คณะ</h1>
+        <h1 className="text-2xl font-semibold mb-6" style={{ color: "#6C7AA3" }} >คณะ</h1>
         <div className="flex items-center justify-between">
           <style>
             {`
@@ -47,28 +47,28 @@ const FacultyList = () => {
               }
             `}
           </style>
-          <Input 
+          <Input
             className="flex-grow mr-2 p-1 text-base border rounded-xl custom-input"
-            placeholder="ค้นหาคณะ..." 
+            placeholder="ค้นหาคณะ..."
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ borderColor: '#2D427C' , fontSize: '14px' }}
+            style={{ borderColor: '#2D427C', fontSize: '14px' }}
           />
           <Flex align="flex-start" gap="small" vertical  >
             <Link href="faculty/create">
-              <Button 
+              <Button
                 className="text-base mr-4 w-full p-1 border rounded-xl "
                 style={{
-                  backgroundColor: '#2D427C', 
-                  borderColor: '#2D427C', 
+                  backgroundColor: '#2D427C',
+                  borderColor: '#2D427C',
                   color: 'white',
                   height: '35px',
                   borderWidth: '2px',
                   fontSize: '18px'
                 }}
-                >
-                  เพิ่มคณะ
+              >
+                เพิ่มคณะ
               </Button>
             </Link>
           </Flex>
@@ -77,23 +77,23 @@ const FacultyList = () => {
       <div className="shadow-xl overflow-hidden border-b border-gray-200 sm:rounded-lg ">
         <table className="min-w-full">
           <thead className="text-base rounded-lg border-b "
-                  style={{
-                    color: '#000000',
-                    borderColor: '#2D427C',
-                  }}  >
+            style={{
+              color: '#000000',
+              borderColor: '#2D427C',
+            }}  >
             <tr>
-              <th scope="col" 
-                  className="w-1 px-6 text-left  uppercase tracking-wider" 
-                  style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
-                  >#</th>
-              <th scope="col" 
-                  className="px-5 text-left  uppercase tracking-wider" 
-                  style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
-                  >ชื่อคณะ</th>
-              <th scope="col" 
-                  className="px-6 text-right  uppercase tracking-wider" 
-                  style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
-                  >แก้ไข</th>
+              <th scope="col"
+                className="w-1 px-6 text-left  uppercase tracking-wider"
+                style={{ paddingTop: '12px', paddingBottom: '12px', fontSize: '18px' }}
+              >#</th>
+              <th scope="col"
+                className="px-5 text-left  uppercase tracking-wider"
+                style={{ paddingTop: '12px', paddingBottom: '12px', fontSize: '18px' }}
+              >ชื่อคณะ</th>
+              <th scope="col"
+                className="px-6 text-right  uppercase tracking-wider"
+                style={{ paddingTop: '12px', paddingBottom: '12px', fontSize: '18px' }}
+              >แก้ไข</th>
             </tr>
           </thead>
         </table>
@@ -103,17 +103,17 @@ const FacultyList = () => {
               {filteredFaculty.length > 0 ? (
                 filteredFaculty.map((faculty, index) => (
                   <tr key={faculty.id} >
-                    <td className="w-1 px-6  whitespace-nowrap" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
+                    <td className="w-1 px-6  whitespace-nowrap" style={{ paddingTop: '9px', paddingBottom: '9px', fontSize: '16px' }}>
                       {index + 1}
                     </td>
                     <td className="px-6  whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
+                      <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '9px', paddingBottom: '9px', fontSize: '16px' }}>
                         {faculty.facultyName}
                       </div>
                     </td>
-                    <td className="px-6 whitespace-nowrap text-right" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
+                    <td className="px-6 whitespace-nowrap text-right" style={{ paddingTop: '9px', paddingBottom: '9px', fontSize: '16px' }}>
                       <Link href={`/admin/faculty/${faculty.id}`}>
-                        <Button 
+                        <Button
                           type="link"
                           icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}
                         />

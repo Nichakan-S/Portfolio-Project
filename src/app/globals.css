@@ -35,5 +35,17 @@
 @media (max-width: 600px) {
     .card-header {
         height: var(--headerHeightSM); /* ใช้ความสูงนี้เมื่อหน้าจอเล็ก */
-    }
+    }}
+.ant-select-dropdown .ant-select-item,
+.ant-select-dropdown .ant-select-item-option-content {
+  font-size: 16px;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+}
+
+.chartContainer {
+  height: 24rem;
 }

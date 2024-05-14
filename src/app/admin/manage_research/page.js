@@ -57,7 +57,7 @@ const ResearchList = () => {
         return research.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
             research.researchfund.toLowerCase().includes(searchTerm.toLowerCase()) ||
             research.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.year.toString().includes(searchTerm.toLowerCase()) ||
+            research.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
             research.status.toLowerCase().includes(searchTerm.toLowerCase());
     });
 

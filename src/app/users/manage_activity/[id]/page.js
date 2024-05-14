@@ -58,7 +58,7 @@ const ActivityList = ({ params }) => {
     });
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold mb-6">ผลงานกิจกรรม</h1>
                 <div className="flex items-center">
