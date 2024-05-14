@@ -1,12 +1,10 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Button, Input, Flex, Upload } from 'antd';
-import { EditFilled, InboxOutlined } from '@ant-design/icons';
-import { SuccessAlert, WarningAlert } from '../../components/sweetalert';
-
-const { Dragger } = Upload;
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Descriptions, Card, Input, Button } from 'antd';
+import { EditFilled } from '@ant-design/icons';
+import '/src/app/globals.css'
 
 const DayEnum = {
     mon: 'จันทร์',
@@ -19,188 +17,104 @@ const DayEnum = {
 };
 
 const SubjectList = () => {
-    const [subject, setSubject] = useState([])
+    const [subjects, setSubjects] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetchsubject()
-    }, [])
-
-    const fetchsubject = async () => {
-        try {
-            const res = await fetch('/api/subject');
-            const data = await res.json();
-            setSubject(data);
-        } catch (error) {
-            console.error('Failed to fetch subject', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const uploadFile = async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-    
-        try {
-            const response = await fetch('/api/excelSubject', {
-                method: 'POST',
-                body: formData,
-            });
-    
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        const fetchSubjects = async () => {
+            try {
+                const res = await fetch('/api/subject');
+                const data = await res.json();
+                setSubjects(data);
+            } catch (error) {
+                console.error('การเรียกข้อมูลวิชาล้มเหลว', error);
+            } finally {
+                setIsLoading(false);
             }
-    
-            const result = await response.json();
-            SuccessAlert('สำเร็จ!', `ไฟล์ ${file.name} ถูกอัปโหลดสำเร็จแล้ว`);
-            console.log(result);
-        } catch (error) {
-            WarningAlert('ผิดพลาด!', `การอัปโหลดไฟล์ล้มเหลว: ${error.message}`);
-            console.error('Failed to upload file:', error);
-        }
-    };
+        };
+        fetchSubjects();
+    }, []);
 
     if (isLoading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+        return <div className="flex justify-center items-center h-screen">กำลังโหลด...</div>;
     }
 
-    const UploadExcelButton = () => (
-        <Dragger
-            name="file"
-            multiple={false}
-            action="/api/excelSubject"
-            onChange={uploadFile} 
-            className="p-2 rounded flex justify-center items-center h-12"
-        >
-            <div className="text-sm text-gray-700">
-                อัพโหลด
-            </div>
-        </Dragger>
-    );
-
-    const filteredsubject = subject.filter((subject) => {
+    const filteredSubjects = subjects.filter(subject => {
         return subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            DayEnum[subject.day].includes(searchTerm.toLowerCase()) ||
-            subject.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            subject.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            subject.starttime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            subject.endtime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            subject.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            subject.year.toString().toLowerCase().includes(searchTerm.toLowerCase());
+               DayEnum[subject.day]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               subject.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               subject.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               subject.starttime.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               subject.endtime.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               subject.term.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               subject.year.toString().toLowerCase().includes(searchTerm.toLowerCase());
     });
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold mb-6">วิชา</h1>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center mr-4">
                     <Input
-                        className="flex-grow mr-2"
+                        className="flex-grow mr-2 p-1 text-base border rounded-xl custom-input"
                         placeholder="ค้นหาวิชา..."
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{ borderColor: '#2D427C', fontSize: '14px' }}
                     />
-                    <UploadExcelButton />
-                    <Flex align="flex-start" gap="small" vertical  >
-                        <Link href="subject/create">
-                            <Button type="primary" style={{ backgroundColor: '#2D427C', borderColor: '#2D427C', color: 'white' }}>เพิ่มวิชา</Button>
-                        </Link>
-                    </Flex>
+                    <Link href="subject/create">
+                        <Button
+                            className="text-base w-full p-1 border rounded-xl "
+                            style={{
+                                backgroundColor: '#2D427C',
+                                borderColor: '#2D427C',
+                                color: 'white',
+                                height: '35px',
+                                borderWidth: '2px',
+                                fontSize: '18px', 
+                                width: '120%'
+                            }}
+                        >
+                            เพิ่มวิชา
+                        </Button>
+                    </Link>
                 </div>
             </div>
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table className="min-w-full">
-                    <thead className="bg-gray-100 ">
-                        <tr>
-                            <th scope="col" className="w-1 px-6 py-5 text-left text-base font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">ชื่อวิชา</th>
-                            <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">รหัสวิชา</th>
-                            <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">วันสอน</th>
-                            <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">กลุ่มเรียน</th>
-                            <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">เวลาเริ่ม</th>
-                            <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">เวลาจบ</th>
-                            <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">เทอม</th>
-                            <th scope="col" className="px-9 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">ปีการศึกษา</th>
-                            <th scope="col" className="px-6 py-3 text-right text-base font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
-                        </tr>
-                    </thead>
-                </table>
-                <div className="max-h-96 overflow-y-auto">
-                    <table className="min-w-full">
-                        <tbody className="divide-y divide-gray-200">
-                            {filteredsubject.length > 0 ? (
-                                filteredsubject.map((subject, index) => (
-                                    <tr key={subject.id}>
-                                        <td className="w-1 px-6 py-4 whitespace-nowrap">
-                                            {index + 1}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {subject.name}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {subject.code}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {DayEnum[subject.day]}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {subject.group}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {subject.starttime}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {subject.endtime}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {subject.term}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {subject.year}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                                            <Link href={`/admin/subject/${subject.id}`}>
-                                                <Button
-                                                    type="link"
-                                                    icon={<EditFilled style={{ fontSize: '20px' }} />}
-                                                    style={{ color: '#FFD758' }}
-                                                />
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="2" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        ไม่มีข้อมูล
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            {filteredSubjects.length > 0 ? (
+                filteredSubjects.map((subject, index) => (
+                    <Card
+                        key={subject.id}
+                        className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
+                        style={{ headerHeight: '38px' }}
+                        title={`วิชา ${index + 1}`}
+                    >
+                        <Descriptions layout="horizontal" size="small" className="small-descriptions">
+                            <Descriptions.Item label="ชื่อวิชา">{subject.name}</Descriptions.Item>
+                            <Descriptions.Item label="รหัสวิชา">{subject.code}</Descriptions.Item>
+                            <Descriptions.Item label="วันสอน">{DayEnum[subject.day]}</Descriptions.Item>
+                            <Descriptions.Item label="กลุ่มเรียน">{subject.group}</Descriptions.Item>
+                            <Descriptions.Item label="เวลาเริ่ม">{subject.starttime}</Descriptions.Item>
+                            <Descriptions.Item label="เวลาจบ">{subject.endtime}</Descriptions.Item>
+                            <Descriptions.Item label="เทอม">{subject.term}</Descriptions.Item>
+                            <Descriptions.Item label="ปีการศึกษา">{subject.year}</Descriptions.Item>
+                        </Descriptions>
+                        <div className="text-right">
+                            <Link href={`/admin/subject/${subject.id}`}>
+                                <Button
+                                    type="link"
+                                    icon={<EditFilled style={{ fontSize: '20px', color: '#FFD758' }} />}
+                                />
+                            </Link>
+                        </div>
+                    </Card>
+                ))
+            ) : (
+                <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
+            )}
         </div>
-    )
-}
+    );
+};
 
-export default SubjectList
+export default SubjectList;
