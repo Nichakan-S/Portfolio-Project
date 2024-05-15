@@ -76,7 +76,13 @@ const ResearchList = () => {
     };
 
     if (isLoading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+        return (
+            <div className="flex justify-center items-center h-full">
+                <div className="mt-2">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                </div>
+            </div>
+        );
     }
 
     const filteredresearch = research.filter((research) => {
@@ -88,7 +94,7 @@ const ResearchList = () => {
     });
 
     return (
-        <div className="max-w-6xl mx-auto px-4">
+        <div className="max-w-6xl mx-auto px-4 mt-2">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold mb-6">ผลงานวิจัย</h1>
                 <div className="flex items-center">

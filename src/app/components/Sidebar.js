@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import { Menu } from 'antd';
 import {
     HomeOutlined,
@@ -62,7 +62,7 @@ const Sidebar = () => {
     ];
 
     const adminMenuItems = [
-        isAdmin && { key: 'home', label: (<Link href="/admin">หน้าแรก</Link>), icon: <HomeOutlined /> },
+        isAdmin && { key: 'home', label: (<Link href={`/admin/${session.user.id}`}>หน้าแรก</Link>), icon: <HomeOutlined /> },
         isAdmin && { key: 'faculty', label: (<Link href="/admin/faculty">คณะ</Link>), icon: <TeamOutlined /> },
         isAdmin && { key: 'major', label: (<Link href="/admin/major">สาขา</Link>), icon: <BookOutlined /> },
         isAdmin && { key: 'rank', label: (<Link href="/admin/rank">ตำแหน่ง</Link>), icon: <UserOutlined /> },
@@ -107,11 +107,19 @@ const Sidebar = () => {
         setSelectedKey(e.key);
     };
 
-    if (isLoading || !user) {
+    if (isLoading) {
         return (
-            <aside>
-                {/* Loading or not authenticated */}
-            </aside>
+            <div className="h-screen w-64 bg-[#000c17] p-4 animate-pulse">
+                <div className="flex items-center mb-2">
+                    <div className="rounded-full bg-gray-400 w-12 h-12 "></div>
+                    <div className="ml-4 bg-gray-400 w-32 h-6 rounded py-4"></div>
+                </div>
+                <div className="bg-gray-400 w-full h-4 mb-4 py-4 rounded"></div>
+                <div className="bg-gray-400 w-full h-4 mb-4 py-4 rounded"></div>
+                <div className="bg-gray-400 w-full h-4 mb-4 py-4 rounded"></div>
+                <div className="bg-gray-400 w-full h-4 mb-4 py-4 rounded"></div>
+                <div className="bg-gray-400 w-full h-4 mb-4 py-4 rounded"></div>
+            </div>
         );
     }
 
@@ -122,7 +130,6 @@ const Sidebar = () => {
                 <h1 className="text-xl font-bold ml-2 text-gray-300">Chandra</h1>
             </div>
             <Menu
-            
                 onClick={onClick}
                 className="bg-[#000c17] text-base"
                 selectedKeys={[selectedKey]}
@@ -135,10 +142,8 @@ const Sidebar = () => {
                 }))}
                 theme="dark"
             />
-
         </div>
     );
-
 };
 
 export default Sidebar;

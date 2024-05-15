@@ -1,55 +1,48 @@
-// src/pages/api/excelSubject.js
-import multer from 'multer';
 import { PrismaClient } from '@prisma/client';
-import * as xlsx from 'xlsx';
-
 const prisma = new PrismaClient();
-const upload = multer({ storage: multer.memoryStorage() });
 
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};
+export async function POST(request) {
+  try {
+    const subjects = await request.json();
 
-export default function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
+    if (!Array.isArray(subjects) || subjects.length === 0) {
+      throw new Error('Invalid input: Expected an array of subjects');
     }
 
-    const processUpload = upload.single('file');
+    const createdSubjects = [];
 
-    processUpload(req, res, async (error) => {
-        if (error) {
-            return res.status(500).json({ error: error.message });
-        }
+    for (const subject of subjects) {
+      const { name, code, day, group, starttime, endtime, term, year } = subject;
 
-        try {
-            if (!req.file) {
-                throw new Error('File is not found');
-            }
-            const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
-            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = xlsx.utils.sheet_to_json(worksheet);
+      if (!name || !code || !day || !group || !starttime || !endtime || !term || !year) {
+        throw new Error('All subject fields are required');
+      }
 
-            const newSubjects = await prisma.subjects.createMany({
-                data: jsonData.map(subject => ({
-                    name: subject.name,
-                    code: subject.code,
-                    day: subject.day,
-                    group: subject.group,
-                    starttime: subject.starttime,
-                    endtime: subject.endtime,
-                    term: parseInt(subject.term, 10),
-                    year: parseInt(subject.year, 10)
-                })),
-                skipDuplicates: true,
-            });
+      const newSubject = await prisma.subjects.create({
+        data: {
+          name,
+          day,
+          group,
+          starttime,
+          endtime,
+          term,
+          year,
+          code,
+        },
+      });
 
-            res.status(200).json({ message: 'Data imported successfully', data: newSubjects });
-        } catch (error) {
-            console.error('Error processing the uploaded file:', error);
-            res.status(500).json({ error: 'Could not import data from Excel' });
-        }
+      createdSubjects.push(newSubject);
+    }
+
+    return new Response(JSON.stringify({ message: 'Subjects created', createdSubjects }), {
+      status: 201,
+      headers: { 'Content-Type': 'application/json' },
     });
+  } catch (error) {
+    console.error(error);
+    return new Response(JSON.stringify({ error: 'Subjects could not be created' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 }

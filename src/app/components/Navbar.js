@@ -37,12 +37,30 @@ const Navbar = ({ isAdmin }) => {
   };
 
   const handleSettingsClick = () => {
-    router.push('/settings');
+    router.push(`/users/setting/${session.user.id}`);
   };
 
-  if (isLoading || !user) {
+  if (isLoading) {
     return (
-      <div className="bg-white shadow-lg w-full">
+      <div className="w-full">
+        <nav className="p-6 ">
+          <div className="bg-yellow-400 shadow-xl w-full p-3 flex items-center justify-between rounded-lg animate-pulse">
+            <div className="flex items-center">
+              <div className="ml-3 bg-white bg-opacity-50 p-2 rounded h-6 w-52"></div>
+            </div>
+            <div className="flex items-center">
+              <div>
+                <div className="bg-white bg-opacity-50 p-2 rounded h-6 w-40">
+                </div>
+                <div className="bg-white bg-opacity-50 p-2 rounded h-6 w-40">
+                </div>
+              </div>
+              <div className="ml-4">
+                <div className="rounded-full bg-white bg-opacity-50 w-12 h-12"></div>
+              </div>
+            </div>
+          </div>
+        </nav>
       </div>
     );
   }
@@ -50,10 +68,10 @@ const Navbar = ({ isAdmin }) => {
   return (
     <div className="w-full">
       <nav className="p-6">
-        <div className="bg-amber-300 shadow-xl w-full p-3 flex items-center justify-between rounded-lg">
+        <div className="bg-yellow-400 shadow-xl w-full p-3 flex items-center justify-between rounded-lg">
           <div className="flex items-center">
             <div className="ml-3">
-              <div className="text-xl text-black">Professor Portfolio - แฟ้มรวมผลงานอาจารย์</div>
+              <div className="text-xl text-black font-bold">Professor Portfolio - แฟ้มรวมผลงานอาจารย์</div>
             </div>
           </div>
           <div className="flex items-center">
@@ -83,18 +101,18 @@ const Navbar = ({ isAdmin }) => {
                 )}
               </div>
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-10">
+                <div className="absolute right-6 w-48 bg-[#000c17] rounded-md shadow-xl">
                   <button
                     onClick={handleSettingsClick}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white"
+                    className="block w-full text-left px-4 py-2 text-sm text-white hover:text-yellow-400"
                   >
-                    Settings
+                    ตั้งค่าโปรไฟล์
                   </button>
                   <button
                     onClick={handleLogoutClick}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white"
+                    className="block w-full text-left px-4 py-2 text-sm text-white hover:text-yellow-400"
                   >
-                    Sign out
+                    ออกจากระบบ
                   </button>
                 </div>
               )}

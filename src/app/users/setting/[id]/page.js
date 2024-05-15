@@ -14,7 +14,7 @@ const EditUser = ({ params }) => {
     const [majorId, setMajorId] = useState('');
     const [rankId, setRankId] = useState('');
     const [userImage, setUserImage] = useState('');
-    const [role, setRole] = useState('');
+    const [role, setRole] = useState('user');
     const [faculty, setFaculty] = useState([]);
     const [majors, setMajors] = useState([]);
     const [rank, setRank] = useState([]);
@@ -120,7 +120,7 @@ const EditUser = ({ params }) => {
             if (!response.ok) throw new Error('เกิดข้อผิดพลาด');
 
             SuccessAlert('สำเร็จ!', 'ข้อมูลผู้ใช้ได้ถูกอัพเดตแล้ว');
-            router.push('/admin/users_management');
+            window.history.back();
         } catch (error) {
             console.error(error);
             WarningAlert('ผิดพลาด!', 'ไม่สามารถอัพเดตผู้ใช้ได้');
@@ -144,7 +144,7 @@ const EditUser = ({ params }) => {
     };
 
     const handleBack = () => {
-        router.push('/admin/users_management');
+        window.history.back();
     };
 
     if (isLoading) {
@@ -300,22 +300,6 @@ const EditUser = ({ params }) => {
                         onChange={(e) => setEmail(e.target.value)}
                         className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-300 shadow-lg focus:border-indigo-500 focus:ring-indigo-500 text-lg"
                     />
-                </div>
-                <div>
-                    <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                        บทบาท
-                    </label>
-                    <select
-                        id="role"
-                        required
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="">กรุณาเลือกบทบาท</option>
-                        <option value="user">ผู้ใช้งาน</option>
-                        <option value="admin">ผู้ดูแลระบบ</option>
-                    </select>
                 </div>
                 <button
                     type="submit"

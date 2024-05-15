@@ -37,7 +37,13 @@ const TeachingList = () => {
     }, []);
 
     if (isLoading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+        return (
+            <div className="flex justify-center items-center h-full">
+                <div className="mt-2">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                </div>
+            </div>
+        );
     }
 
     const filteredteaching = teaching.filter((teaching) => {
@@ -139,7 +145,7 @@ const TeachingList = () => {
                                         <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
                                             <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/users/manage_teaching/edit/${teaching.id}`}
+                                                href={`/admin/manage_teaching/${teaching.id}`}
                                             >
                                                 แก้ไข
                                             </Link>

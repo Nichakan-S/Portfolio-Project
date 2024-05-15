@@ -5,7 +5,6 @@ import { useSession } from 'next-auth/react';
 import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
 import { Input, Button, Upload, Modal, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import moment from 'moment';
 
 const { Option } = Select;
 

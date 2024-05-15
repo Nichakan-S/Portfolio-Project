@@ -6,15 +6,60 @@ import 'chart.js/auto';
 
 const { Option } = Select;
 
-const Overview = () => {
+const AdminView = () => {
+    const [teaching, setTeaching] = useState([]);
+    const [activity, setActivity] = useState([]);
+    const [research, setResearch] = useState([]);
     const [overview, setOverview] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedYears, setSelectedYears] = useState([]);
     const [years, setYears] = useState([]);
     const [chartData, setChartData] = useState(null);
 
+    const fetchteaching = async () => {
+        try {
+            const response = await fetch('/api/manageTeaching/')
+            const data = await response.json()
+            console.log('teaching data fetched:', data);
+            setTeaching(data)
+        } catch (error) {
+            console.error('Failed to fetch teaching', error)
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const fetchactivity = async () => {
+        try {
+            const response = await fetch('/api/manageActivity/')
+            const data = await response.json()
+            console.log('activity data fetched:', data);
+            setActivity(data)
+        } catch (error) {
+            console.error('Failed to fetch activity', error)
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const fetchresearch = async () => {
+        try {
+            const res = await fetch('/api/research')
+            const data = await res.json()
+            console.log('research data fetched:', data);
+            setResearch(data)
+        } catch (error) {
+            console.error('Failed to fetch research', error)
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     useEffect(() => {
         fetchOverview();
+        fetchteaching();
+        fetchactivity();
+        fetchresearch();
     }, []);
 
     useEffect(() => {
@@ -85,15 +130,16 @@ const Overview = () => {
             </div>
         );
     }
+    
 
     return (
         <div>
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold ml-4">กราฟผลงานทั้งหมด</h1>
+                <h1 className="text-2xl font-semibold ml-4">ผลงานบุคลากรทั้งหมด</h1>
             </div>
             <Card className="max-w-6xl mx-4 px-2 shadow-2xl">
                 {chartData ? (
-                    <div className="h-80 w-full flex">
+                    <div className=" h-60 w-full flex">
                         <Line data={chartData} options={{ maintainAspectRatio: false }} />
                     </div>
                 ) : (
@@ -103,7 +149,7 @@ const Overview = () => {
                     <Select
                         mode="multiple"
                         value={selectedYears}
-                        style={{ marginTop: 20, minWidth: 100}}
+                        style={{ marginTop: 20, minWidth: 100 }}
                         onChange={setSelectedYears}
                     >
                         {years.map(year => (
@@ -114,8 +160,29 @@ const Overview = () => {
                     <Empty description="No years available" />
                 )}
             </Card>
+            <div className="px-4">
+                <div className="flex mt-8 w-full h-32">
+                    <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1 flex flex-col justify-between">
+                        <div className="text-gray-500 text-sm">ผลงานทั้งหมด</div>
+                        <div className="text-2xl font-bold text-right">{activity.length + research.length}</div>
+                    </div>
+                    <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1 flex flex-col justify-between">
+                        <div className="text-gray-500 text-sm">ผลงานวิจัย</div>
+                        <div className="text-2xl font-bold text-right">{research.length}</div>
+                    </div>
+                    <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1 flex flex-col justify-between">
+                        <div className="text-gray-500 text-sm">ผลงานกิจกรรม</div>
+                        <div className="text-2xl font-bold text-right">{activity.length}</div>
+                    </div>
+                    <div className="p-4 bg-white rounded-lg shadow-xl flex-1 flex flex-col justify-between">
+                        <div className="text-gray-500 text-sm">วิชาทั้งหมด</div>
+                        <div className="text-2xl font-bold text-right">{teaching.length}</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     );
 };
 
-export default Overview;
+export default AdminView;

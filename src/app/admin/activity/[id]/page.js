@@ -113,10 +113,16 @@ const EditActivity = ({ params }) => {
         });
       };
 
-    if (isLoading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+      if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-full">
+                <div className="mt-2">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                </div>
+            </div>
+        );
     }
-
+    
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-2xl font-semibold mb-6">แก้ไขกิจกรรม</h1>
