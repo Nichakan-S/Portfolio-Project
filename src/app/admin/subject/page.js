@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Descriptions, Card, Input, Button } from 'antd';
-import { EditFilled } from '@ant-design/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 import '/src/app/globals.css'
 
 const DayEnum = {
@@ -104,7 +105,7 @@ const SubjectList = () => {
                             <Link href={`/admin/subject/${subject.id}`}>
                                 <Button
                                     type="link"
-                                    icon={<EditFilled style={{ fontSize: '20px', color: '#FFD758' }} />}
+                                    icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}
                                 />
                             </Link>
                         </div>
