@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
-import { Input, Button, DatePicker, Upload, Modal, Select } from 'antd';
+import { Input, Button, DatePicker, Upload, Modal, Select, Col , Card , Row } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 
@@ -122,131 +122,197 @@ const EditActivity = ({ params }) => {
             </div>
         );
     }
+<<<<<<< HEAD
     
+=======
+
+    const onOk = (result) => {
+        console.log('onOk: ', result);
+      };
+
+
+>>>>>>> 7df96e94ba522c0ee4b5dd811443a14db3398902
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-2xl font-semibold mb-6">แก้ไขกิจกรรม</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label htmlFor="name" className="block text-base font-medium text-gray-700 mb-4">
-                        ชื่อกิจกรรม
-                    </label>
-                    <Input
-                        placeholder="ชื่อกิจกรรม"
-                        size="large"
-                        type="text"
-                        name="name"
-                        id="name"
-                        required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="type" className="block text-base font-medium text-gray-700 mb-4">
-                        ประเภท
-                    </label>
-                    <select
-                        className="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        value={type}
-                        onChange={(e) => setType(e.target.value)}
-                        required
-                    >
-                        <option value="">เลือกประเภท</option>
-                        <option value="culture">ศิลปะวัฒนธรรม</option>
-                        <option value="service">บริการวิชาการ</option>
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="file" className="block text-base font-medium text-gray-700 mb-4">
-                        ไฟล์ PDF
-                    </label>
-                    <Upload
-                        customRequest={customRequest}
-                        beforeUpload={beforeUpload}
-                        showUploadList={false}
-                    >
-                        <Button icon={<UploadOutlined />}>เลือกไฟล์</Button>
-                    </Upload>
-                    <Button onClick={() => setModalVisible(true)}>ดูตัวอย่างไฟล์ PDF</Button>
-                    <Modal
-                        title="ตัวอย่างไฟล์ PDF"
-                        open={modalVisible}
-                        onCancel={() => setModalVisible(false)}
-                        footer={[]}
-                        width="70%"
-                        style={{ top: 20 }}
-                    >
-                        {previewFile && (
-                            <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
-                        )}
-                    </Modal>
+                <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl" >
+                    <Row gutter={16}>
+                        <Col span={12} >
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                    <label htmlFor="name" className="block text-base font-medium mr-4 mb-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ชื่อกิจกรรม : </span>
+                                    </label>
+                                    <Input
+                                        placeholder="ชื่อกิจกรรม"
+                                        size="large"
+                                        name="name"
+                                        id="name"
+                                        required
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        className="flex-grow mr-4 mb-4"
+                                        style={{
+                                            flexGrow: 1,
+                                            flexShrink: 1,
+                                            flexBasis: '50%',
+                                            padding: '8px',
+                                            minWidth: '300px'
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                    <label htmlFor="type" className="block text-base font-medium mr-4 mb-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ประเภท : </span>
+                                    </label>
+                                    <Select
+                                        value={type}
+                                        size="large"
+                                        onChange={(value) => setType(value)}
+                                        required
+                                        className="flex-grow mr-4 mb-4 custom-select"
+                                        style={{
+                                            width: '50%',
+                                            borderColor: '#DADEE9',
+                                            fontSize: '16px',
+                                            height: '40px'
+                                        }}
+                                    >
+                                        <Select.Option value="">เลือกประเภท</Select.Option>
+                                        <Select.Option value="culture">ศิลปะวัฒนธรรม</Select.Option>
+                                        <Select.Option value="service">บริการวิชาการ</Select.Option>
+                                    </Select>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                    <label htmlFor="start" className="block text-base font-medium mr-4 mb-4" >
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เวลาเริ่ม : </span>
+                                    </label>
+                                    <DatePicker
+                                        showTime
+                                        format="YYYY-MM-DD HH:mm"
+                                        onChange={(value, dateString) => setStart(dateString)}
+                                        onOk={onOk}
+                                        required
+                                        className="flex-grow mr-4 mb-4 "
+                                        style={{
+                                            width: '50%',
+                                            borderColor: '#DADEE9',
+                                            fontSize: '16px',
+                                            height: '40px'
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }} >
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                    <label htmlFor="end" className="block text-base font-medium mr-4 mb-4" >
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> สิ้นสุดเวลา : </span>
+                                    </label>
+                                    <DatePicker
+                                        showTime
+                                        format="YYYY-MM-DD HH:mm"
+                                        value={end ? moment(end) : null}
+                                        onChange={(dateString) => setEnd(dateString)}
+                                        required
+                                        className="flex-grow mr-4 mb-4 "
+                                        style={{
+                                            width: '50%',
+                                            borderColor: '#DADEE9',
+                                            fontSize: '16px',
+                                            height: '40px'
+                                        }}
+                                        
+                                    />
+                                </div>
+                            </div>
 
-                </div>
-                <div>
-                    <label htmlFor="start" className="block text-base font-medium text-gray-700 mb-4">
-                        เริ่ม
-                    </label>
-                    <DatePicker
-                        style={{ width: '100%' }}
-                        showTime
-                        format="YYYY-MM-DD HH:mm"
-                        value={start ? moment(start) : null}
-                        onChange={(date, dateString) => setStart(dateString)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="end" className="block text-base font-medium text-gray-700 mb-4">
-                        สิ้นสุด
-                    </label>
-                    <DatePicker
-                        style={{ width: '100%' }}
-                        showTime
-                        format="YYYY-MM-DD HH:mm"
-                        value={end ? moment(end) : null}
-                        onChange={(date, dateString) => setEnd(dateString)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="year" className="block text-base font-medium text-gray-700 mb-4">
-                        ปี
-                    </label>
-                    <Input
-                        placeholder="เลือกปี"
-                        size="large"
-                        type="number"
-                        name="year"
-                        id="year"
-                        required
-                        value={year}
-                        onChange={(e) => setYear(e.target.value)}
-                        style={{ width: 200 }}
-                    />
-                </div>
-                <div>
-                    <Button className="inline-flex justify-center mr-4 "
-                        type="primary"
-                        size="middle"
-                        onClick={handleSubmit}
-                        style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
-                    >
-                        บันทึก
-                    </Button>
-                    <Button className="inline-flex justify-center mr-4"
-                        type="primary" danger
-                        size="middle"
-                        onClick={handleDelete}
-                    >
-                        ลบ
-                    </Button>
-                    <Button className="inline-flex justify-center mr-4"
-                        onClick={handleBack}
-                    >
-                        ยกเลิก
-                    </Button>
-                </div>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }} >
+                                <div style={{ display: 'flex', alignItems: 'center', width: '50%' }}>
+                                    <label htmlFor="year" className="block text-base font-medium mr-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ปี : </span>
+                                    </label>
+                                    <Input
+                                        placeholder="เลือกปี"
+                                        size="large"
+                                        type="number"
+                                        name="year"
+                                        id="year"
+                                        required
+                                        value={year}
+                                        onChange={(e) => setYear(e.target.value)}
+                                        style={{ width: 200 }}
+                                    />
+                                </div>
+                            </div>
+                        </Col>
+                        <Col span={12}>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                    <label htmlFor="file" className="block text-base font-medium mr-4 mb-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ไฟล์ PDF : </span>
+                                    </label>
+                                    <Upload
+                                        customRequest={customRequest}
+                                        beforeUpload={beforeUpload}
+                                        showUploadList={false}
+                                    >
+                                        <Button 
+                                            icon={<UploadOutlined />} 
+                                            className="mr-4 mb-4">เลือกไฟล์</Button>
+                                    </Upload>
+                                    <Button onClick={() => setModalVisible(true)} className="mr-4 mb-4">ดูตัวอย่างไฟล์ PDF</Button>
+                                    <Modal
+                                        title="ตัวอย่างไฟล์ PDF"
+                                        open={modalVisible}
+                                        onCancel={() => setModalVisible(false)}
+                                        footer={[]}
+                                        width="70%"
+                                        style={{ top: 20 }}
+                                    >
+                                        {previewFile && (
+                                            <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
+                                        )}
+                                    </Modal>
+
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', width: '102%', padding: '15px' }}>
+                                <Button
+                                    className="inline-flex justify-center mr-4 mb-4"
+                                    type="primary"
+                                    size="middle"
+                                    onClick={handleSubmit}
+                                    style={{
+                                        color: 'white',
+                                        backgroundColor: '#02964F',
+                                        borderColor: '#02964F',
+                                    }}
+                                >
+                                    บันทึก
+                                </Button>
+                                <Button className="inline-flex justify-center mr-4 mb-4"
+                                    type="primary" danger
+                                    size="middle"
+                                    onClick={handleDelete}
+                                >
+                                    ลบ
+                                </Button>
+                                <Button
+                                    className="inline-flex justify-center mr-4 mb-4"
+                                    onClick={handleBack}
+                                    size="middle"
+                                >
+                                    ยกเลิก
+                                </Button>
+                            </div>
+                        </Col>
+                    </Row>
+                </Card>
             </form>
         </div>
     );

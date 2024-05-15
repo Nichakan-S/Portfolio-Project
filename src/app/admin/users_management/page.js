@@ -94,8 +94,11 @@ const UserList = () => {
                             <Descriptions.Item label="นามสกุล">{user.lastname}</Descriptions.Item>
                             <Descriptions.Item label="อีเมล">{user.email}</Descriptions.Item>
                             <Descriptions.Item label="บทบาท">{user.role}</Descriptions.Item>
-                            <Descriptions.Item label="รหัสผ่าน">
-                                <Link href={`/admin/users_management/change_pass/${user.id}`}>เปลี่ยนรหัสผ่าน</Link>
+                            <Descriptions.Item label="รหัสผ่าน">  
+                                <Link href={`/admin/users_management/change_pass/${user.id}`} style={{ color: '#FFD700', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    เปลี่ยนรหัสผ่าน
+                                    <FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758', marginLeft: '8px' }} />
+                                </Link>
                             </Descriptions.Item>
                         </Descriptions>
                         <div className="text-right">
