@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Menu , Skeleton} from 'antd';
+import { Menu } from 'antd';
 import {
     HomeOutlined,
     ScheduleOutlined,
@@ -40,14 +40,6 @@ const Sidebar = () => {
             signIn('credentials', { callbackUrl: '/' });
         }
     }, [status, session]);
-
-    if (isLoading || !user) {
-        return (
-            <aside>
-                <Skeleton active />
-            </aside>
-        );
-    }
 
     const isAdmin = user?.role === 'admin';
     const isUser = user?.role === 'user';
