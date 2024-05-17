@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
+import { Skeleton } from 'antd';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -29,7 +30,7 @@ export default function Dashboard() {
 
 
   if (isLoading || !user) {
-    return <div>กำลังโหลด...</div>;
+    return <div><Skeleton /></div>;
   }
 
   if (user.role === 'admin') {

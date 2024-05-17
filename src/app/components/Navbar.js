@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Avatar, Space } from 'antd';
+import { Avatar, Space , Skeleton } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
 const Navbar = ({ isAdmin }) => {
@@ -31,6 +31,14 @@ const Navbar = ({ isAdmin }) => {
       signIn('credentials', { callbackUrl: '/' });
     }
   }, [status, session]);
+
+  if (isLoading || !user) {
+    return (
+      <div className="bg-white shadow-lg w-full">
+        <Skeleton active />
+      </div>
+    );
+  }
 
   const handleLogoutClick = () => {
     signOut({ redirect: true, callbackUrl: '/' });
