@@ -23,21 +23,17 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const { name, code, day, group, starttime, endtime, term, year } = await request.json();
+    const { nameTH, nameEN, code, majorId } = await request.json();
 
-    if (!name || !code || !day || !group || !starttime || !endtime || !term || !year) {
+    if (!nameTH || !nameEN || !code || !majorId) {
       throw new Error('All subject fields are required');
     }
     const newSubject = await prisma.subjects.create({
       data: {
-        name, 
-        day,
-        group, 
-        starttime, 
-        endtime, 
-        term, 
-        year,
-        code
+        nameTH, 
+        nameEN, 
+        code, 
+        majorId 
       },
     });
     return new Response(JSON.stringify({ message: 'Subject created', newSubject }), { status: 201, headers: { 'Content-Type': 'application/json' } });

@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 export async function GET(req, { params }) {
     try {
-        return new Response(JSON.stringify(await prisma.manageResearch.findMany({
+        return new Response(JSON.stringify(await prisma.research.findMany({
             where: {
                 userId: Number(params.id)
             },

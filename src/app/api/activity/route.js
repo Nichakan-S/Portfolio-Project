@@ -3,44 +3,59 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function GET() {
-  try {
-    const activitys = await prisma.activity.findMany();
-    return new Response(JSON.stringify(activitys), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    try {
+      const activitySheet = await prisma.activity.findMany({
+        include: {
+          activity: {
+            select: {
+                name: true,
+                type: true,
+                year: true 
+            }
+        },
+            user: {
+              select: {
+                  username: true
+              }
+          }
+        }
     });
-  } catch (error) {
-    console.error('Error fetching activity:', error);
-    return new Response(JSON.stringify({ error: 'Error fetching activity' }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-  }
-}
-
-export async function POST(request) {
-  try {
-    const { type, name, start, end, year, file } = await request.json();
-    if (!type || !name || !start || !end || !year) {
-      throw new Error('All fields (type, name, start, end, year) are required');
+      return new Response(JSON.stringify(activitySheet), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching activity:', error);
+      return new Response(JSON.stringify({ error: 'Error fetching activity' }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
     }
-    const newActivity = await prisma.activity.create({
-      data: {
-        type,
-        name,
-        start: new Date(start),
-        end: new Date(end),
-        year,
-        file
-      },
-    });
-    return new Response(JSON.stringify({ message: 'Activity created', newActivity }), { status: 201, headers: { 'Content-Type': 'application/json' } });
-  } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: 'Activity could not be created' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
-}
+export async function POST(request) {
+    try {
+      const { activityRole, activityId, userId, file, audit, approve } = await request.json();
+      if (!activityRole || !activityId || !userId || !file || !audit || !approve ) {
+        throw new Error('All fields (activityRole, activityId,userId, file, audit, approve) are required');
+      }
+      const activitySheet = await prisma.activity.create({
+        data: {
+          activityRole, 
+          activityId, 
+          userId, 
+          file, 
+          audit, 
+          approve 
+        },
+      });
+      return new Response(JSON.stringify({ message: 'Activity created', activitySheet }), { status: 201, headers: { 'Content-Type': 'application/json' } });
+    } catch (error) {
+      console.error(error);
+      return new Response(JSON.stringify({ error: 'Activity could not be created' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+    }
+  }
+  

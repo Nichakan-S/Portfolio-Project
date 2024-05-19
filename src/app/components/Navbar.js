@@ -44,19 +44,19 @@ const Navbar = ({ isAdmin }) => {
     return (
       <div className="w-full">
         <nav className="p-6 ">
-          <div className="bg-yellow-400 shadow-xl w-full p-3 flex items-center justify-between rounded-lg animate-pulse">
+          <div className="bg-yellow-400 shadow-xl w-full p-3 flex items-center justify-between rounded-lg">
             <div className="flex items-center">
-              <div className="ml-3 bg-white bg-opacity-50 p-2 rounded h-6 w-52"></div>
+              <div className="ml-3 bg-white bg-opacity-50 p-2 rounded h-6 w-52 animate-pulse"></div>
             </div>
             <div className="flex items-center">
               <div>
-                <div className="bg-white bg-opacity-50 p-2 rounded h-6 w-40">
+                <div className="bg-white bg-opacity-50 p-2 rounded h-6 w-40 animate-pulse">
                 </div>
-                <div className="bg-white bg-opacity-50 p-2 rounded h-6 w-40">
+                <div className="bg-white bg-opacity-50 p-2 rounded h-6 w-40 animate-pulse">
                 </div>
               </div>
               <div className="ml-4">
-                <div className="rounded-full bg-white bg-opacity-50 w-12 h-12"></div>
+                <div className="rounded-full bg-white bg-opacity-50 w-12 h-12 animate-pulse"></div>
               </div>
             </div>
           </div>
@@ -76,7 +76,7 @@ const Navbar = ({ isAdmin }) => {
           </div>
           <div className="flex items-center">
             <div>
-              <div className="text-black">{`${user.rank.rankname} ${user.prefix} ${user.username} ${user.lastname}`}</div>
+              <div className="text-black">{`${user.position.name} ${user.prefix} ${user.username} ${user.lastname}`}</div>
               <div className="text-right text-black">{user.email}</div>
             </div>
             <div className="ml-4">

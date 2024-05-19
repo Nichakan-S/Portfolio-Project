@@ -7,9 +7,12 @@ export async function GET() {
   try {
     const users = await prisma.user.findMany({
       include: {
-        rank: true,
-        faculty: true,
-        major: true
+        position: true,
+        major: {
+          include: {
+            faculty: true
+          }
+        }
       }
     });
     return new Response(JSON.stringify(users), {
@@ -31,12 +34,12 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const { email, password, prefix, username, lastname, facultyId, majorId, rankId, user_image, role } = await request.json();
-    if (!email || !password || !prefix || !username || !lastname || !facultyId || !majorId || !rankId || !role) {
+    const { email, password, prefix, username, lastname, majorId, positionId, userImage, role } = await request.json();
+    if (!email || !password || !prefix || !username || !lastname || !majorId || !positionId || !role) {
       throw new Error('All required fields must be provided');
     }
     const hashedPassword = bcrypt.hashSync(password, 10);
-    const finalUserImage = user_image || null;
+    const finalUserImage = userImage || null;
     const newUser = await prisma.user.create({
       data: {
         email,
@@ -44,10 +47,9 @@ export async function POST(request) {
         prefix,
         username,
         lastname,
-        facultyId,
         majorId,
-        rankId,
-        user_image: finalUserImage,
+        positionId,
+        userImage: finalUserImage,
         role
       },
     });

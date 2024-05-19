@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 export async function GET(req, { params }) {
     try {
-        const activities = await prisma.teaching.findMany({
+        const teaching = await prisma.teaching.findMany({
             where: {
                 userId: Number(params.id)
             },
@@ -12,7 +12,7 @@ export async function GET(req, { params }) {
                 subjects: true
             }
         });
-        return new Response(JSON.stringify(activities), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify(teaching), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
         console.error(error);
         return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });

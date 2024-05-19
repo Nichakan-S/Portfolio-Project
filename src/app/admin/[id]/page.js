@@ -18,7 +18,7 @@ const AdminView = () => {
 
     const fetchteaching = async () => {
         try {
-            const response = await fetch('/api/manageTeaching/')
+            const response = await fetch('/api/teaching')
             const data = await response.json()
             console.log('teaching data fetched:', data);
             setTeaching(data)
@@ -31,7 +31,7 @@ const AdminView = () => {
 
     const fetchactivity = async () => {
         try {
-            const response = await fetch('/api/manageActivity/')
+            const response = await fetch('/api/activity')
             const data = await response.json()
             console.log('activity data fetched:', data);
             setActivity(data)

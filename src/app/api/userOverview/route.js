@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 export async function GET() {
     try {
-        const manageActivities = await prisma.manageActivity.findMany({
+        const activities = await prisma.activity.findMany({
             select: {
                 createdAt: true,
                 activity: {
@@ -15,18 +15,18 @@ export async function GET() {
             }
         });
 
-        const manageResearches = await prisma.manageResearch.findMany({
+        const researches = await prisma.research.findMany({
             select: {
                 year: true,
                 createdAt: true
             }
         });
         const combinedResults = [
-            ...manageActivities.map(ma => ({
+            ...activities.map(ma => ({
                 year: ma.activity.year,
                 createdAt: ma.createdAt
             })),
-            ...manageResearches
+            ...researches
         ];
 
         return new Response(JSON.stringify(combinedResults), { status: 200, headers: { 'Content-Type': 'application/json' } });

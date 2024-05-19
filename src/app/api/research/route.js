@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 export async function GET() {
     try {
-        const research = await prisma.manageResearch.findMany({
+        const research = await prisma.research.findMany({
             include: {
                 user: {
                     select: {
@@ -32,14 +32,14 @@ export async function GET() {
 
 export async function POST(request) {
     try {
-        const { userId, nameTH, nameEN, researchfund, type, year, file, status } = await request.json();
+        const { userId, nameTH, nameEN, researchfund, type, year, file, audit, approve  } = await request.json();
 
-        if (!userId || !nameTH || !nameEN || !researchfund || !type || !year || !status) {
+        if (!userId || !nameTH || !nameEN || !researchfund || !type || !year || !audit || !approve || !file) {
             return new Response(JSON.stringify({
                 error: 'All required fields must be provided'
             }), { status: 400 });
         }
-        const newManageResearch = await prisma.manageResearch.create({
+        const newresearch = await prisma.research.create({
             data: {
                 userId,
                 nameTH,
@@ -48,12 +48,13 @@ export async function POST(request) {
                 type,
                 year,
                 file,
-                status
+                audit, 
+                approve 
             },
         });
         return new Response(JSON.stringify({
             message: 'Research management entry created successfully',
-            newManageResearch
+            newresearch
         }), { status: 201 });
     } catch (error) {
         console.error(error);
