@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Menu } from 'antd';
+import { Menu, Skeleton } from 'antd';
 import {
     HomeOutlined,
     ScheduleOutlined,
@@ -108,12 +108,11 @@ const Sidebar = () => {
     };
 
     if (isLoading || !user) {
-        return (
-            <aside>
-                {/* Loading or not authenticated */}
-            </aside>
-        );
-    }
+        const skeletonItems = Array(5).fill(null).map((_, index) => ({
+            key: `skeleton-${index}`,
+            label: <Skeleton.Button style={{ width: 180, marginBottom: 10 }} active size="small" shape="round" />,
+            icon: <Skeleton.Avatar active size="small" shape="circle" />,
+        }));
 
     return (
         <div className="h-screen w-64 bg-[#000c17] p-4">

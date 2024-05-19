@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Select, Empty, Card } from 'antd';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
+import Loading from '/src/app/components/loading'
 
 const { Option } = Select;
 
@@ -123,11 +124,7 @@ const AdminView = () => {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center h-full">
-                <div className="mt-2">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                </div>
-            </div>
+            <Loading />
         );
     }
     

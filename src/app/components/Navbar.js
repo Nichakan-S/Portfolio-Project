@@ -13,6 +13,9 @@ const Navbar = ({ isAdmin }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const [buttonShape, setButtonShape] = useState('default');
+  const [avatarShape, setAvatarShape] = useState('circle');
+  const [active, setActive] = useState(false);
 
   useEffect(() => {
     if (status === 'authenticated' && session?.user?.id) {
@@ -32,14 +35,6 @@ const Navbar = ({ isAdmin }) => {
     }
   }, [status, session]);
 
-  if (isLoading || !user) {
-    return (
-      <div className="bg-white shadow-lg w-full">
-        <Skeleton active />
-      </div>
-    );
-  }
-
   const handleLogoutClick = () => {
     signOut({ redirect: true, callbackUrl: '/' });
   };
@@ -51,25 +46,29 @@ const Navbar = ({ isAdmin }) => {
   if (isLoading) {
     return (
       <div className="w-full">
-        <nav className="p-6 ">
-          <div className="bg-yellow-400 shadow-xl w-full p-3 flex items-center justify-between rounded-lg animate-pulse">
-            <div className="flex items-center">
-              <div className="ml-3 bg-white bg-opacity-50 p-2 rounded h-6 w-52"></div>
-            </div>
-            <div className="flex items-center">
-              <div>
-                <div className="bg-white bg-opacity-50 p-2 rounded h-6 w-40">
-                </div>
-                <div className="bg-white bg-opacity-50 p-2 rounded h-6 w-40">
-                </div>
-              </div>
-              <div className="ml-4">
-                <div className="rounded-full bg-white bg-opacity-50 w-12 h-12"></div>
+      <nav className="p-6">
+        <div className="bg-yellow-400 shadow-xl w-full p-3 flex items-center justify-between rounded-lg">
+          <div className="flex items-center">
+            <div className="ml-3">
+              <div className="text-xl text-black font-bold">
+                <Skeleton.Input active={active} size={'default'} style={{ width: '400px' }} />
               </div>
             </div>
           </div>
-        </nav>
-      </div>
+          <div className="flex items-center">
+            <div>
+              <div className="text-black"><Skeleton.Input active={active} size={'default'} /></div>
+              <div className="text-right text-black"><Skeleton.Input active={active} size={'default'} /></div>
+            </div>
+            <div className="ml-4">
+              <div >
+               <Skeleton.Avatar active={active} size={'large'} shape={avatarShape} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
     );
   }
 
