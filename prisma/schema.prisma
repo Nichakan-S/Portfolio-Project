@@ -15,8 +15,7 @@ datasource db {
 
 model Faculty {
   id           Int      @id @default(autoincrement()) @db.UnsignedInt
-  facultyName  String   @db.VarChar(100)
-  user    User[]
+  facultyName  String   @db.VarChar(30)
   major   Major[]
 }
 
@@ -24,94 +23,102 @@ model Major {
   id         Int      @id @default(autoincrement()) @db.UnsignedInt
   facultyId  Int      @db.UnsignedInt
   faculty    Faculty  @relation(fields: [facultyId], references: [id])
-  majorName  String   @db.VarChar(255)
+  majorName  String   @db.VarChar(50)
   user       User[]
+  Subject    Subjects[]
 }
 
-model Rank {
+model Position {
   id          Int     @id @default(autoincrement()) @db.UnsignedInt
-  rankname    String  @db.VarChar(50)
+  name        String  @db.VarChar(50)
+  audit       Boolean @default(false)
   employee    Boolean @default(false)
-  evaluation  Boolean @default(false)
+  approveResearch     Boolean    @default(false)
+  approveActivity     Boolean    @default(false)
   overview    Boolean @default(false)
   user        User[]
 }
 
 model User {
   id         Int      @id @default(autoincrement()) @db.UnsignedInt
-  rankId     Int      @db.UnsignedInt
-  rank       Rank     @relation(fields: [rankId], references: [id])
-  facultyId  Int      @db.UnsignedInt
-  faculty    Faculty  @relation(fields: [facultyId], references: [id])
+  positionId Int      @db.UnsignedInt
+  position   Position @relation(fields: [positionId], references: [id])
   majorId    Int      @db.UnsignedInt
   major      Major    @relation(fields: [majorId], references: [id])
-  prefix     String   @db.VarChar(15)
-  user_image String?  @db.LongText
-  username   String   @db.VarChar(100)
-  lastname   String   @db.VarChar(100)
-  email      String   @db.VarChar(100) @unique
-  password   String   @db.VarChar(255)
-  role       Role
-  teaching   Teaching[]
-  manageactivity ManageActivity[]
-  manageResearch ManageResearch[]
+  prefix     String   @db.VarChar(10)
+  userImage String?  @db.LongText
+  username   String   @db.VarChar(40)
+  lastname   String   @db.VarChar(40)
+  email      String   @db.VarChar(50) @unique
+  password   String   @db.VarChar(128)
+  role             Role
+  teaching         Teaching[]
+  activity         Activity[]
+  research         Research[]
 }
 
 model Teaching {
   id         Int       @id @default(autoincrement()) @db.UnsignedInt
+  starttime  String    @db.VarChar(10)
+  endtime    String    @db.VarChar(10)
+  day        Day
+  group      String    @db.VarChar(3)
+  term       Int       @db.UnsignedInt
+  year       Int       @db.UnsignedInt
+  audit      Audit
   subjectsId Int       @db.UnsignedInt
   subjects   Subjects  @relation(fields: [subjectsId], references: [id])
   userId     Int       @db.UnsignedInt
   user       User      @relation(fields: [userId], references: [id])
 }
 
-model Subjects { 
+model Subjects {
   id         Int       @id @default(autoincrement()) @db.UnsignedInt
-  name       String    @db.VarChar(100)
-  code       String    @db.VarChar(20)
-  day        Day
-  group      String    @db.VarChar(6)
-  starttime  String    @db.VarChar(10)
-  endtime    String    @db.VarChar(10)
-  term       Int       @db.UnsignedInt
-  year       Int       @db.UnsignedInt
+  nameTH     String    @db.VarChar(60)
+  nameEN     String    @db.VarChar(60)
+  code       String    @db.VarChar(8)
   teaching   Teaching[]
+  majorId    Int       @db.UnsignedInt
+  major      Major     @relation(fields: [majorId], references: [id])
 }
 
-model Activity {
+model ActivityHeader {
   id        Int       @id @default(autoincrement()) @db.UnsignedInt
-  type      Type      
+  type      Type
   name      String    @db.VarChar(70)
   file      String?   @db.LongText
   start     DateTime  
   end       DateTime  
   year      Int       @db.UnsignedInt
-  manageactivity  ManageActivity[]
+  activity      Activity[]
 }
 
-model ManageActivity {
+model Activity {
   id           Int      @id @default(autoincrement()) @db.UnsignedInt
+  activityRole ActivityRole
   activityId   Int      @db.UnsignedInt
-  activity     Activity @relation(fields: [activityId], references: [id])
+  activity     ActivityHeader   @relation(fields: [activityId], references: [id])
   userId       Int      @db.UnsignedInt
   user         User     @relation(fields: [userId], references: [id])
   file         String?  @db.LongText
-  status       Status
+  audit        Audit
+  approve      Approve
   createdAt    DateTime @default(now()) 
   updatedAt    DateTime @updatedAt
 }
 
-model ManageResearch {
+model Research {
   id           Int          @id @default(autoincrement()) @db.UnsignedInt
   userId       Int          @db.UnsignedInt
   user         User         @relation(fields: [userId], references: [id])
   nameTH       String       @db.VarChar(50)
   nameEN       String       @db.VarChar(50)
-  researchfund String       @db.VarChar(20)
+  researchFund String       @db.VarChar(20)
   type         ResearchType
   year         Int          @db.UnsignedInt
   file         String?      @db.LongText
-  status       Status
+  audit        Audit
+  approve      Approve
   createdAt    DateTime     @default(now()) 
   updatedAt    DateTime     @updatedAt
 }
@@ -120,11 +127,18 @@ enum ResearchType {
   researchreports
   posterpresent
 }
-enum Type {
-  culture
-  service
+
+enum ActivityRole {
+  operator
+  joiner 
 }
-enum Status {
+
+enum Approve {
+  wait
+  pass
+  fail
+}
+enum Audit {
   wait
   pass
   fail
@@ -132,6 +146,11 @@ enum Status {
 enum Role {
   admin
   user
+}
+enum Type {
+  culture
+  service
+  other
 }
 enum Day {
   mon

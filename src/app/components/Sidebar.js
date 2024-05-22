@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { Menu, Skeleton } from 'antd';
+import { useSession, signIn, signOut } from 'next-auth/react';
+import { Menu } from 'antd';
 import {
     HomeOutlined,
     ScheduleOutlined,
@@ -43,30 +43,33 @@ const Sidebar = () => {
 
     const isAdmin = user?.role === 'admin';
     const isUser = user?.role === 'user';
-    const isEmployee = user?.rank?.employee;
-    const isEvaluation = user?.rank?.evaluation;
-    const isOverview = user?.rank?.overview;
+    const isEmployee = user?.position?.employee;
+    const isAudit = user?.position?.audit;
+    const isApproveResearch = user?.position?.approveResearch;
+    const isApproveActivity = user?.position?.approveActivity;
+    const isOverview = user?.position?.overview;
+
     const userMenuItems = [
         isUser && { key: 'Home', label: (<Link href={`/users/${session.user.id}`}>หน้าแรก</Link>), icon: <HomeOutlined /> },
-        isUser && { key: 'Schedule', label: (<Link href={`/users/manage_teaching/${session.user.id}`}>บันทึกการสอน</Link>), icon: <ScheduleOutlined /> },
+        isUser && { key: 'Schedule', label: (<Link href={`/users/teaching/${session.user.id}`}>บันทึกการสอน</Link>), icon: <ScheduleOutlined /> },
 
         isUser && {
             key: 'Work',
             label: 'ผลงานทั้งหมด',
             icon: <AppstoreOutlined />,
             children: [
-                { key: 'Activity', label: (<Link href={`/users/manage_activity/${session.user.id}`}>ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
-                { key: 'Research', label: (<Link href={`/users/manage_research/${session.user.id}`}>ผลงานวิจัย</Link>), icon: <FileOutlined /> },
+                { key: 'Activity', label: (<Link href={`/users/activity/${session.user.id}`}>ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
+                { key: 'Research', label: (<Link href={`/users/research/${session.user.id}`}>ผลงานวิจัย</Link>), icon: <FileOutlined /> },
             ],
         },
     ];
 
     const adminMenuItems = [
-        isAdmin && { key: 'home', label: (<Link href="/admin">หน้าแรก</Link>), icon: <HomeOutlined /> },
+        isAdmin && { key: 'home', label: (<Link href={`/admin/${session.user.id}`}>หน้าแรก</Link>), icon: <HomeOutlined /> },
         isAdmin && { key: 'faculty', label: (<Link href="/admin/faculty">คณะ</Link>), icon: <TeamOutlined /> },
         isAdmin && { key: 'major', label: (<Link href="/admin/major">สาขา</Link>), icon: <BookOutlined /> },
-        isAdmin && { key: 'rank', label: (<Link href="/admin/rank">ตำแหน่ง</Link>), icon: <UserOutlined /> },
-        isAdmin && { key: 'users_management', label: (<Link href="/admin/users_management">บัญชีผู้ใช้งาน</Link>), icon: <UserOutlined /> },
+        isAdmin && { key: 'position', label: (<Link href="/admin/position">ตำแหน่ง</Link>), icon: <UserOutlined /> },
+        isAdmin && { key: 'usersManagement', label: (<Link href="/admin/usersManagement">บัญชีผู้ใช้งาน</Link>), icon: <UserOutlined /> },
         isAdmin && { key: 'subject', label: (<Link href="/admin/subject">วิชาทั้งหมด</Link>), icon: <BookOutlined /> },
         isAdmin && { key: 'activity', label: (<Link href="/admin/activity">กิจกรรมทั้งหมด</Link>), icon: <ProjectOutlined /> },
         isAdmin && {
@@ -74,9 +77,9 @@ const Sidebar = () => {
             label: 'ผลงานทั้งหมด',
             icon: <AppstoreOutlined />,
             children: [
-                { key: 'manage_teaching', label: (<Link href="/admin/manage_teaching">บันทึกการสอน</Link>), icon: <ScheduleOutlined /> },
-                { key: 'manage_activity', label: (<Link href="/admin/manage_activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
-                { key: 'manage_research', label: (<Link href="/admin/manage_research">ผลงานวิจัย</Link>), icon: <FileOutlined /> },
+                { key: 'teaching', label: (<Link href="/admin/teaching">บันทึกการสอน</Link>), icon: <ScheduleOutlined /> },
+                { key: 'activity', label: (<Link href="/admin/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
+                { key: 'research', label: (<Link href="/admin/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> },
             ],
         },
     ];
@@ -89,30 +92,52 @@ const Sidebar = () => {
         isOverview && isUser && { key: 'overview', label: (<Link href="/users/overview">ภาพรวมบุคลากร</Link>), icon: <TeamOutlined /> },
     ];
 
-    const evaluationMenuItem = [
-        isEvaluation && isUser && {
-            key: 'evaluation',
-            label: 'ประเมินบุคลากร',
+    const approveMenuItem = [
+        (isApproveResearch || isApproveActivity) && isUser && {
+            key: 'approve',
+            label: 'อนุมัติผลงาน',
             icon: <UserOutlined />,
             children: [
-                { key: 'evaluationA', label: (<Link href="/users/evaluation/activity">ประเมินกิจกรรม</Link>), icon: <ProjectOutlined /> },
-                { key: 'evaluationR', label: (<Link href="/users/evaluation/research">ประเมินวิจัย</Link>), icon: <FileOutlined /> }
+                isApproveResearch && isUser && { key: 'evaluationA', label: (<Link href="/users/evaluation/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
+                isApproveActivity && isUser && { key: 'evaluationR', label: (<Link href="/users/evaluation/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> }
             ],
         },
     ];
 
-    const items = [...userMenuItems, ...adminMenuItems, ...overviewMenuItem, ...employeeMenuItems, ...evaluationMenuItem].filter(Boolean);
+    const auditMenuItem = [
+        isAudit && isUser && {
+            key: 'approve',
+            label: 'ตรวจสอบผลงาน',
+            icon: <UserOutlined />,
+            children: [
+                isApproveResearch && isUser && { key: 'evaluationA', label: (<Link href="/users/evaluation/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
+                isApproveActivity && isUser && { key: 'evaluationR', label: (<Link href="/users/evaluation/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> }
+            ],
+        },
+    ];
+
+
+    const items = [...userMenuItems, ...adminMenuItems, ...overviewMenuItem, ...employeeMenuItems, ...approveMenuItem, ...auditMenuItem].filter(Boolean);
 
     const onClick = e => {
         setSelectedKey(e.key);
     };
 
-    if (isLoading || !user) {
-        const skeletonItems = Array(5).fill(null).map((_, index) => ({
-            key: `skeleton-${index}`,
-            label: <Skeleton.Button style={{ width: 180, marginBottom: 10 }} active size="small" shape="round" />,
-            icon: <Skeleton.Avatar active size="small" shape="circle" />,
-        }));
+    if (isLoading) {
+        return (
+            <div className="h-screen w-64 bg-[#000c17] p-4">
+                <div className="flex items-center mb-2">
+                    <div className="rounded-full bg-gray-400 w-12 h-12 animate-pulse"></div>
+                    <div className="ml-4 bg-gray-400 w-32 h-6 rounded py-4 animate-pulse"></div>
+                </div>
+                <div className="bg-gray-400 w-full h-4 mb-4 py-4 rounded animate-pulse"></div>
+                <div className="bg-gray-400 w-full h-4 mb-4 py-4 rounded animate-pulse"></div>
+                <div className="bg-gray-400 w-full h-4 mb-4 py-4 rounded animate-pulse"></div>
+                <div className="bg-gray-400 w-full h-4 mb-4 py-4 rounded animate-pulse"></div>
+                <div className="bg-gray-400 w-full h-4 mb-4 py-4 rounded animate-pulse"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="h-screen w-64 bg-[#000c17] p-4">
@@ -121,7 +146,6 @@ const Sidebar = () => {
                 <h1 className="text-xl font-bold ml-2 text-gray-300">Chandra</h1>
             </div>
             <Menu
-            
                 onClick={onClick}
                 className="bg-[#000c17] text-base"
                 selectedKeys={[selectedKey]}
@@ -134,10 +158,8 @@ const Sidebar = () => {
                 }))}
                 theme="dark"
             />
-
         </div>
     );
-
 };
 
 export default Sidebar;

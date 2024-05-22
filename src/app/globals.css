@@ -67,3 +67,19 @@
     color: #FFD758;
     margin-right: 8px;
 }
+
+.custom-input {
+    transition: box-shadow 0.3s ease-in-out;
+    outline: none;
+    width: 600px; /* ตั้งค่าความยาวเป็น 50% ของพื้นที่ที่มี */
+    height: 45px; /* ตั้งค่าความสูงเพิ่มเป็น 45px */
+    border-radius: 20px; /* เพิ่มความโค้งมนของขอบ */
+}
+
+.custom-input:hover {
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+.custom-input:focus {
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+}

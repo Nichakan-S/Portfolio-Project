@@ -4,36 +4,39 @@ const prisma = new PrismaClient();
 
 export async function GET(req, { params }) {
   try {
-    return Response.json(await prisma.user.findUnique({
+    return new Response(JSON.stringify(await prisma.user.findUnique({
       where: {
         id: Number(params.id)
       },
       include: {
-        rank: true,
-        faculty: true,
-        major: true
+        position: true,
+        major: {
+          include: {
+            faculty: true
+          }
+        }
       }
-    }))
+    })), { headers: { 'Content-Type': 'application/json' } });
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ error: 'User could not be created' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ error: 'User could not be retrieved' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
 
+
 export async function PUT(req, { params }) {
   try {
-    const { email, prefix, username, lastname, facultyId, majorId, rankId, user_image, role } = await req.json();
-    const finalUserImage = user_image || null;
+    const { email, prefix, username, lastname, majorId, positionId, userImage, role } = await req.json();
+    const finalUserImage = userImage || null;
 
     const dataToUpdate = {
       email,
       prefix,
       username,
       lastname,
-      facultyId,
       majorId,
-      rankId,
-      user_image: finalUserImage,
+      positionId,
+      userImage: finalUserImage,
       role
     };
     return Response.json(await prisma.user.update({

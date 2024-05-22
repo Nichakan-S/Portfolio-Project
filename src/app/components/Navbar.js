@@ -83,7 +83,7 @@ const Navbar = ({ isAdmin }) => {
           </div>
           <div className="flex items-center">
             <div>
-              <div className="text-black">{`${user.rank.rankname} ${user.prefix} ${user.username} ${user.lastname}`}</div>
+              <div className="text-black">{`${user.position.name} ${user.prefix} ${user.username} ${user.lastname}`}</div>
               <div className="text-right text-black">{user.email}</div>
             </div>
             <div className="ml-4">

@@ -4,28 +4,28 @@ const prisma = new PrismaClient();
 
 export async function GET(req, { params }) {
     try {
-        return Response.json(await prisma.manageResearch.findUnique({
+        return Response.json(await prisma.research.findUnique({
             where: {
                 id: Number(params.id)
             }
         }))
     } catch (error) {
         console.error(error);
-        return new Response(JSON.stringify({ error: 'manageResearch could not be created' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ error: 'research could not be created' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
 }
 
 export async function PUT(req, { params }) {
     try {
-        const { nameTH, nameEN, researchfund, type, year, file, status } = await req.json();
+        const { nameTH, nameEN, researchfund, type, year, file, audit, approve } = await req.json();
 
-        if (!nameTH || !nameEN || !researchfund || !type || !year || !status) {
+        if (!nameTH || !nameEN || !researchfund || !type || !year || !audit || !approve) {
             return new Response(JSON.stringify({
                 error: 'All required fields must be provided except userId'
             }), { status: 400, headers: { 'Content-Type': 'application/json' } });
         }
 
-        const updatedManageResearch = await prisma.manageResearch.update({
+        const updatedresearch = await prisma.research.update({
             where: { id: Number(params.id) },
             data: {
                 nameTH,
@@ -34,13 +34,14 @@ export async function PUT(req, { params }) {
                 type,
                 year,
                 file,
-                status
+                audit, 
+                approve 
             },
         });
 
         return new Response(JSON.stringify({
             message: 'Research management entry updated successfully',
-            updatedManageResearch
+            updatedresearch
         }), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
         console.error('Error updating manage research entry:', error);
@@ -53,7 +54,7 @@ export async function PUT(req, { params }) {
 
 export async function DELETE(req, { params }) {
     try {
-      return Response.json(await prisma.manageResearch.delete({
+      return Response.json(await prisma.research.delete({
         where: { id: Number(params.id) },
       }))
     } catch (error) {

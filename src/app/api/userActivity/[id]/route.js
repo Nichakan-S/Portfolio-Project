@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 export async function GET(req, { params }) {
     try {
-        const activities = await prisma.manageActivity.findMany({
+        const activities = await prisma.activity.findMany({
             where: {
                 userId: Number(params.id)
             },

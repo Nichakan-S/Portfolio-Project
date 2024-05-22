@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button, Input, Flex, Empty } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faPen , faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import SearchInput from '/src/app/components/SearchInput';
 
 const FacultyList = () => {
   const [faculty, setFaculty] = useState([])
@@ -43,41 +44,29 @@ const FacultyList = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold mb-6" style={{ color: "#6C7AA3" }} >คณะ</h1>
-        <div className="flex items-center justify-between">
-          <style>
-            {`
-              .custom-input::placeholder {
-                color: #6C7AA3; /* กำหนดสีของ placeholder */
-              }
-            `}
-          </style>
-          <Input
-            className="flex-grow mr-2 p-1 text-base border rounded-xl custom-input"
-            placeholder="ค้นหาคณะ..."
-            type="text"
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl" style={{ color: "#6C7AA3" }}>คณะ</h1>
+          <SearchInput
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ borderColor: '#2D427C', fontSize: '14px' }}
+            onChange={(value) => setSearchTerm(value)}
+            placeholder="ค้นหาคณะ..."
           />
-          <Flex align="flex-start" gap="small" vertical  >
-            <Link href="faculty/create">
-              <Button
-                className="text-base mr-4 w-full p-1 border rounded-xl "
-                style={{
-                  backgroundColor: '#2D427C',
-                  borderColor: '#2D427C',
-                  color: 'white',
-                  height: '35px',
-                  borderWidth: '2px',
-                  fontSize: '18px'
-                }}
-              >
-                เพิ่มคณะ
-              </Button>
-            </Link>
-          </Flex>
+          <Link href="faculty/create">
+            <Button
+              className="text-base p-1 border rounded-xl"
+              style={{
+                backgroundColor: '#2D427C',
+                borderColor: '#2D427C',
+                color: 'white',
+                height: '35px',
+                borderWidth: '2px',
+                fontSize: '18px'
+              }}
+            >
+              เพิ่มคณะ
+            </Button>
+          </Link>
         </div>
       </div>
       <div className="shadow-xl overflow-hidden border-b border-gray-200 sm:rounded-lg ">
