@@ -3,7 +3,11 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const subjects = await prisma.subjects.findMany();
+    const subjects = await prisma.subjects.findMany({
+      include: {
+        major: true
+      }
+    });
     return new Response(JSON.stringify(subjects), {
       status: 200,
       headers: {

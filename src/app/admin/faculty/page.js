@@ -30,13 +30,13 @@ const FacultyList = () => {
 
   if (isLoading) {
     return (
-        <div className="flex justify-center items-center h-full">
-            <div className="mt-2">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            </div>
+      <div className="flex justify-center items-center h-full">
+        <div className="mt-2">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
         </div>
+      </div>
     );
-}
+  }
 
   const filteredFaculty = faculty.filter((faculty) =>
     faculty.facultyName.toLowerCase().includes(searchTerm.toLowerCase())
