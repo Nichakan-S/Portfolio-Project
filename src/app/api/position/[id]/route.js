@@ -17,14 +17,13 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
-    const { name, audit, evaluation, approveResearch, approveActivity, overview } = await req.json()
+    const { name, audit, employee, approveResearch, approveActivity, overview } = await req.json()
     return Response.json(await prisma.position.update({
       where: { id: Number(params.id) },
       data: {
         name,
         audit,
         employee,
-        evaluation,
         approveResearch,
         approveActivity,
         overview

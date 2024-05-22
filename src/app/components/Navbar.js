@@ -81,12 +81,12 @@ const Navbar = ({ isAdmin }) => {
             </div>
             <div className="ml-4">
               <div onClick={() => setDropdownOpen(!isDropdownOpen)} className="cursor-pointer">
-                {user.user_image ? (
+                {user.userImage ? (
                   <Space wrap size={16}>
                     <Avatar
                       size={50}
-                      src={user.user_image || '/image/none_image.png'}
-                      icon={!user.user_image && <UserOutlined />}
+                      src={user.userImage || '/image/none_image.png'}
+                      icon={!user.userImage && <UserOutlined />}
                       onError={() => true}
                     />
                   </Space>

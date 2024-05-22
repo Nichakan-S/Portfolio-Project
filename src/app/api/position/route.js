@@ -24,8 +24,8 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const { name, audit, evaluation, approveResearch, approveActivity, overview } = await request.json();
-    if (!name || typeof audit !== 'boolean' || typeof employee !== 'boolean' || typeof evaluation !== 'boolean' || typeof approveResearch !== 'boolean'|| typeof approveActivity !== 'boolean' || typeof overview !== 'boolean') {
+    const { name, audit, employee, approveResearch, approveActivity, overview } = await request.json();
+    if (!name || typeof audit !== 'boolean' || typeof employee !== 'boolean' || typeof approveResearch !== 'boolean'|| typeof approveActivity !== 'boolean' || typeof overview !== 'boolean') {
       throw new Error('All fields are required');
     }
     const Newposition = await prisma.position.create({
@@ -33,7 +33,6 @@ export async function POST(request) {
         name,
         audit,
         employee,
-        evaluation,
         approveResearch,
         approveActivity,
         overview

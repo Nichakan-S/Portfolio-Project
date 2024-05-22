@@ -13,7 +13,13 @@ import {
     BookOutlined,
     TeamOutlined,
     FileOutlined,
-    ProjectOutlined
+    ProjectOutlined,
+    UserDeleteOutlined,
+    UserAddOutlined,
+    UserSwitchOutlined,
+    PlusOutlined,
+    EditOutlined,
+    DeleteOutlined
 } from '@ant-design/icons';
 
 const Sidebar = () => {
@@ -21,6 +27,7 @@ const Sidebar = () => {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedKey, setSelectedKey] = useState('1');
+    const [openKeys, setOpenKeys] = useState([]);
 
     useEffect(() => {
         if (status === 'authenticated' && session?.user?.id) {
@@ -52,7 +59,6 @@ const Sidebar = () => {
     const userMenuItems = [
         isUser && { key: 'Home', label: (<Link href={`/users/${session.user.id}`}>หน้าแรก</Link>), icon: <HomeOutlined /> },
         isUser && { key: 'Schedule', label: (<Link href={`/users/teaching/${session.user.id}`}>บันทึกการสอน</Link>), icon: <ScheduleOutlined /> },
-
         isUser && {
             key: 'Work',
             label: 'ผลงานทั้งหมด',
@@ -69,9 +75,27 @@ const Sidebar = () => {
         isAdmin && { key: 'faculty', label: (<Link href="/admin/faculty">คณะ</Link>), icon: <TeamOutlined /> },
         isAdmin && { key: 'major', label: (<Link href="/admin/major">สาขา</Link>), icon: <BookOutlined /> },
         isAdmin && { key: 'position', label: (<Link href="/admin/position">ตำแหน่ง</Link>), icon: <UserOutlined /> },
-        isAdmin && { key: 'usersManagement', label: (<Link href="/admin/usersManagement">บัญชีผู้ใช้งาน</Link>), icon: <UserOutlined /> },
-        isAdmin && { key: 'subject', label: (<Link href="/admin/subject">วิชาทั้งหมด</Link>), icon: <BookOutlined /> },
-        isAdmin && { key: 'activity', label: (<Link href="/admin/activity">กิจกรรมทั้งหมด</Link>), icon: <ProjectOutlined /> },
+        isAdmin && {
+            key: 'usersManagement',
+            label: 'จัดการบัญชีผู้ใช้งาน',
+            icon: <UserOutlined />,
+            children: [
+                { key: 'usersCreate', label: (<Link href="/admin/usersCreate">เพิ่มบัญชีผู้ใช้งาน</Link>), icon: <UserAddOutlined /> },
+                { key: 'usersEdit', label: (<Link href="/admin/usersEdit">แก้ไขบัญชีผู้ใช้งาน</Link>), icon: <UserSwitchOutlined /> },
+                { key: 'usersDelete', label: (<Link href="/admin/usersDelete">ลบบัญชีผู้ใช้งาน</Link>), icon: <UserDeleteOutlined /> },
+            ],
+        },
+        isAdmin && {
+            key: 'subject',
+            label: 'จัดการวิชาทั้งหมด',
+            icon: <BookOutlined />,
+            children: [
+                { key: 'subjectCreate', label: (<Link href="/admin/subjectCreate">เพิ่มรายวิชา</Link>), icon: <PlusOutlined /> },
+                { key: 'subjectEdit', label: (<Link href="/admin/subjectEdit">แก้ไขรายวิชา</Link>), icon: <EditOutlined /> },
+                { key: 'subjectDelete', label: (<Link href="/admin/subjectDelete">ลบรายวิชา</Link>), icon: <DeleteOutlined /> },
+            ],
+        },
+        isAdmin && { key: 'activityHeader', label: (<Link href="/admin/activityHeader">กิจกรรมทั้งหมด</Link>), icon: <ProjectOutlined /> },
         isAdmin && {
             key: 'allwork',
             label: 'ผลงานทั้งหมด',
@@ -116,11 +140,14 @@ const Sidebar = () => {
         },
     ];
 
-
     const items = [...userMenuItems, ...adminMenuItems, ...overviewMenuItem, ...employeeMenuItems, ...approveMenuItem, ...auditMenuItem].filter(Boolean);
 
     const onClick = e => {
         setSelectedKey(e.key);
+    };
+
+    const onOpenChange = keys => {
+        setOpenKeys(keys.length ? [keys[keys.length - 1]] : []);
     };
 
     if (isLoading) {
@@ -147,8 +174,10 @@ const Sidebar = () => {
             </div>
             <Menu
                 onClick={onClick}
+                onOpenChange={onOpenChange}
                 className="bg-[#000c17] text-base"
                 selectedKeys={[selectedKey]}
+                openKeys={openKeys}
                 mode="inline"
                 items={items.map(item => ({
                     ...item,
