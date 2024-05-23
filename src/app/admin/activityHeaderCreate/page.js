@@ -1,144 +1,95 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
-import { Input, Button, DatePicker, Upload, Modal, Select, Col , Card , Row } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { SuccessAlert, WarningAlert } from '../../components/sweetalert';
+import { Input, Button, Upload, Modal, Select, Col, Card, Row, DatePicker } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import moment from 'moment';
 
-const { Option } = Select;
-
-const EditActivity = ({ params }) => {
+const CreateTeaching = () => {
+    const { data: session } = useSession();
+    const [teaching, setTeaching] = useState([]);
+    const [selectedSubjects, setSelectedSubjects] = useState('');
     const [name, setName] = useState('');
     const [type, setType] = useState('');
-    const [file, setFile] = useState('');
     const [start, setStart] = useState(null);
     const [end, setEnd] = useState(null);
     const [year, setYear] = useState('');
-    const [previewFile, setPreviewFile] = useState(null);
+    const [audit, setAudit] = useState('wait');
     const [modalVisible, setModalVisible] = useState(false);
-    const router = useRouter();
-    const { id } = params;
-    const [isLoading, setIsLoading] = useState(true);
+    const [previewFile, setPreviewFile] = useState('');
 
     useEffect(() => {
-        if (id) {
-            fetchActivity(id);
-        }
-    }, [id]);
-
-    const fetchActivity = async (id) => {
-        try {
-            const response = await fetch(`/api/activity/${id}`);
-            if (!response.ok) throw new Error('Something went wrong');
-
+        const fetchteaching = async () => {
+            const response = await fetch('/api/subject');
             const data = await response.json();
-            setName(data.name);
-            setType(data.type);
-            setStart(moment(data.start));
-            setEnd(moment(data.end));
-            setYear(data.year);
-            setFile(data.file);
-            setPreviewFile(data.file);
+            setTeaching(data);
+        };
 
-        } catch (error) {
-            console.error(error);
-            WarningAlert('ผิดพลาด!', 'ไม่สามารถดึงข้อมูลกิจกรรมได้');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        fetchteaching();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!selectedSubjects || !name || !type || !start || !end || !year || !audit) {
+            WarningAlert('ผิดพลาด!', 'กรุณากรอกข้อมูลให้ครบทุกช่อง');
+            return;
+        }
+
         try {
-            const response = await fetch(`/api/activity/${id}`, {
-                method: 'PUT',
+            const response = await fetch('/api/teaching', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, type, file, start, end, year: parseInt(year, 10) })
+                body: JSON.stringify({
+                    starttime: start.toISOString(),
+                    endtime: end.toISOString(),
+                    day: start.format('ddd').toLowerCase(),
+                    group: 'A', // Assuming group is fixed or set dynamically elsewhere
+                    term: 1, // Assuming term is fixed or set dynamically elsewhere
+                    year: parseInt(year, 10),
+                    audit,
+                    subjectsId: selectedSubjects,
+                    userId: session.user.id
+                })
             });
 
             if (!response.ok) throw new Error('Something went wrong');
 
             SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
-            router.push('/admin/activity');
-
+            window.history.back();
         } catch (error) {
             console.error(error);
             WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
         }
     };
 
-    const handleBack = () => {
-        router.push('/admin/activity');
+    const handleChange = (value) => {
+        setSelectedSubjects(value);
+    };
+
+    const teachingOptions = teaching.map(subject => ({
+        label: subject.name,
+        value: subject.id,
+    }));
+
+    const customRequest = (options) => {
+        const { file } = options;
+        setPreviewFile(URL.createObjectURL(file));
     };
 
     const beforeUpload = (file) => {
-        const isPDF = file.type === 'application/pdf';
-        const isLt30M = file.size / 1024 / 1024 < 30;
-        if (!isPDF) {
-            WarningAlert('ผิดพลาด!', 'กรุณาอัปโหลดไฟล์ PDF เท่านั้น!');
-        }
-        if (!isLt30M) {
-            WarningAlert('ผิดพลาด!', 'ไฟล์ต้องมีขนาดไม่เกิน 30 MB!');
-        }
-        return isPDF && isLt30M;
+        return file.type === 'application/pdf';
     };
 
-    const customRequest = ({ file }) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            setFile(reader.result);
-            setPreviewFile(reader.result);
-        };
-    };
-
-    const handleDelete = async () => {
-        ConfirmAlert('คุณแน่ใจที่จะลบข้อมูลนี้?', 'การดำเนินการนี้ไม่สามารถย้อนกลับได้', async () => {
-          try {
-            const response = await fetch(`/api/activity/${id}`, {
-              method: 'DELETE',
-            });
-            if (!response.ok) throw new Error('Failed to delete the activity.');
-            SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
-            router.push('/admin/activity');
-          } catch (error) {
-            console.error('Failed to delete the activity', error);
-            WarningAlert('ผิดพลาด!', 'ไม่สามารถลบข้อมูลได้');
-          }
-        });
-      };
-
-      if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-full">
-                <div className="mt-2">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                </div>
-            </div>
-        );
-    }
-<<<<<<< HEAD
-    
-=======
-
-    const onOk = (result) => {
-        console.log('onOk: ', result);
-      };
-
-
->>>>>>> 7df96e94ba522c0ee4b5dd811443a14db3398902
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-2xl font-semibold mb-6">แก้ไขกิจกรรม</h1>
+        <div className="max-w-6xl mx-auto px-4">
+            <h1 className="text-2xl font-semibold mb-6">เพิ่มการสอน</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl" >
+                <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl">
                     <Row gutter={16}>
-                        <Col span={12} >
+                        <Col span={12}>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
                                     <label htmlFor="name" className="block text-base font-medium mr-4 mb-4">
@@ -184,54 +135,47 @@ const EditActivity = ({ params }) => {
                                         <Select.Option value="">เลือกประเภท</Select.Option>
                                         <Select.Option value="culture">ศิลปะวัฒนธรรม</Select.Option>
                                         <Select.Option value="service">บริการวิชาการ</Select.Option>
+                                        <Select.Option value="other">อื่น ๆ</Select.Option>
                                     </Select>
                                 </div>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                                    <label htmlFor="start" className="block text-base font-medium mr-4 mb-4" >
+                                    <label htmlFor="start" className="block text-base font-medium mr-4 mb-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เวลาเริ่ม : </span>
                                     </label>
                                     <DatePicker
-                                        showTime
-                                        format="YYYY-MM-DD HH:mm"
-                                        onChange={(value, dateString) => setStart(dateString)}
-                                        onOk={onOk}
+                                        selected={start}
+                                        onChange={(date) => setStart(date)}
+                                        showTimeSelect
+                                        dateFormat="dd-MM-yyyy HH:mm"
+                                        timeFormat="HH:mm"
+                                        timeIntervals={15}
                                         required
-                                        className="flex-grow mr-4 mb-4 "
-                                        style={{
-                                            width: '50%',
-                                            borderColor: '#DADEE9',
-                                            fontSize: '16px',
-                                            height: '40px'
-                                        }}
+                                        calendarClassName="border rounded-lg shadow-md"
+                                        className="w-full border rounded-lg py-2 px-4 flex-grow mr-4 mb-4"
                                     />
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }} >
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                                    <label htmlFor="end" className="block text-base font-medium mr-4 mb-4" >
+                                    <label htmlFor="end" className="block text-base font-medium mr-4 mb-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> สิ้นสุดเวลา : </span>
                                     </label>
                                     <DatePicker
-                                        showTime
-                                        format="YYYY-MM-DD HH:mm"
-                                        value={end ? moment(end) : null}
-                                        onChange={(dateString) => setEnd(dateString)}
+                                        selected={end}
+                                        onChange={(date) => setEnd(date)}
+                                        showTimeSelect
+                                        dateFormat="dd-MM-yyyy HH:mm"
+                                        timeFormat="HH:mm"
+                                        timeIntervals={15}
                                         required
-                                        className="flex-grow mr-4 mb-4 "
-                                        style={{
-                                            width: '50%',
-                                            borderColor: '#DADEE9',
-                                            fontSize: '16px',
-                                            height: '40px'
-                                        }}
-                                        
+                                        calendarClassName="border rounded-lg shadow-md"
+                                        className="w-full border rounded-lg py-2 px-4 flex-grow mr-4 mb-4"
                                     />
                                 </div>
                             </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }} >
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', width: '50%' }}>
                                     <label htmlFor="year" className="block text-base font-medium mr-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ปี : </span>
@@ -261,8 +205,8 @@ const EditActivity = ({ params }) => {
                                         beforeUpload={beforeUpload}
                                         showUploadList={false}
                                     >
-                                        <Button 
-                                            icon={<UploadOutlined />} 
+                                        <Button
+                                            icon={<UploadOutlined />}
                                             className="mr-4 mb-4">เลือกไฟล์</Button>
                                     </Upload>
                                     <Button onClick={() => setModalVisible(true)} className="mr-4 mb-4">ดูตัวอย่างไฟล์ PDF</Button>
@@ -278,36 +222,16 @@ const EditActivity = ({ params }) => {
                                             <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
                                         )}
                                     </Modal>
-
                                 </div>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'flex-end', width: '102%', padding: '15px' }}>
-                                <Button
-                                    className="inline-flex justify-center mr-4 mb-4"
+                                <Button className="inline-flex justify-center mr-4 "
                                     type="primary"
                                     size="middle"
                                     onClick={handleSubmit}
-                                    style={{
-                                        color: 'white',
-                                        backgroundColor: '#02964F',
-                                        borderColor: '#02964F',
-                                    }}
+                                    style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
                                 >
                                     บันทึก
-                                </Button>
-                                <Button className="inline-flex justify-center mr-4 mb-4"
-                                    type="primary" danger
-                                    size="middle"
-                                    onClick={handleDelete}
-                                >
-                                    ลบ
-                                </Button>
-                                <Button
-                                    className="inline-flex justify-center mr-4 mb-4"
-                                    onClick={handleBack}
-                                    size="middle"
-                                >
-                                    ยกเลิก
                                 </Button>
                             </div>
                         </Col>
@@ -318,4 +242,4 @@ const EditActivity = ({ params }) => {
     );
 };
 
-export default EditActivity;
+export default CreateTeaching;

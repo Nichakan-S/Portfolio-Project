@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../../components/sweetalert';
+import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
 import { Select, Button, Modal, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 

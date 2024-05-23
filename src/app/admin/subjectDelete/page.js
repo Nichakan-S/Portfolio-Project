@@ -36,7 +36,6 @@ const SubjectList = () => {
                 });
                 if (!response.ok) throw new Error('Failed to delete the subject.');
                 SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
-                // Remove the deleted subject from the list
                 setSubjects(subjects.filter(subject => subject.id !== id));
             } catch (error) {
                 console.error('Failed to delete the subject', error);
