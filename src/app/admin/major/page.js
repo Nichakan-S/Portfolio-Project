@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button, Input, Flex , Empty } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
+import SearchInput from '/src/app/components/SearchInput';
 
 const MajorList = () => {
     const [major, setMajor] = useState([])
@@ -46,69 +47,47 @@ const MajorList = () => {
     return (
         <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6" style={{color:"#6C7AA3"}} >สาขา</h1>
-                <div className="flex items-center">
-                    <style>
-                        {`
-                        .custom-input::placeholder {
-                            color: #6C7AA3; /* กำหนดสีของ placeholder */
-                        }
-                        `}
-                    </style>
-                    <Input 
-                        className="flex-grow mr-2 p-1 text-base border rounded-xl custom-input"
-                        placeholder="ค้นหาสาขา..." 
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ borderColor: '#2D427C' , fontSize: '14px'}}
+                <h1 className="text-4xl font-bold mb-6" style={{color:"#2D427C"}} >สาขา</h1>
+                <SearchInput
+                    value={searchTerm}
+                    onChange={(value) => setSearchTerm(value)}
+                    placeholder="ค้นหาสาขา..." 
                     />
-                    <Flex align="flex-start" gap="small" vertical  >
-                        <Link href="major/create">
-                        <Button 
-                            className="text-base mr-4 w-full p-1 border rounded-xl "
-                            style={{
-                            backgroundColor: '#2D427C', 
-                            borderColor: '#2D427C', 
+                <Link href="major/create">
+                    <Button 
+                        className="text-base p-1 border rounded-xl "
+                        style={{
+                            backgroundColor: '#2D427C',
                             color: 'white',
-                            height: '35px',
+                            height: '45px',
                             borderWidth: '2px',
-                            fontSize: '18px'
+                            fontSize: '18px',
+                            borderRadius: '20px',
+                            width: '130px'
                             }}
-                            >
-                                เพิ่มสาขา
-                        </Button>
-                    </Link>
-                    </Flex>
-                </div>
+                        >
+                            เพิ่มสาขา
+                    </Button>
+                </Link>
             </div>
             <div className="shadow-xl overflow-hidden border-b border-gray-200 sm:rounded-lg">
                 <table className="min-w-full">
-                    <thead className="text-base rounded-lg border-b"
-                            style={{
-                                color: '#000000',
-                                borderColor: '#2D427C',
-                              }}  >
+                    <thead className="text-base rounded-lg border-b bg-[#e4e4e7]"
+                        style={{
+                            borderColor: '#DFE1F1',
+                        }} >
                         <tr>
-                            <th 
-                                scope="col" 
-                                className="w-1 px-6 py-3 text-left  uppercase tracking-wider"
-                                style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
+                            <th scope="col" className="w-1 px-6 text-left uppercase tracking-wider"
+                                style={{ paddingTop: '9px', paddingBottom: '9px', fontSize: '18px'}}
                                 >#</th>
-                            <th 
-                                scope="col" 
-                                className="w-1/5 px-4 py-3 text-left  uppercase tracking-wider"
-                                style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
+                            <th scope="col" className="w-1/5 px-6 text-left uppercase tracking-wider"
+                                style={{ paddingTop: '9px', paddingBottom: '9px', fontSize: '18px'}}
                                 >ชื่อสาขา</th>
-                            <th 
-                                scope="col" 
-                                className="w-1/5 px-9 py-3 text-left  uppercase tracking-wider"
-                                style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
+                            <th scope="col" className="w-1/5 px-10 text-left uppercase tracking-wider"
+                                style={{ paddingTop: '9px', paddingBottom: '9px', fontSize: '18px'}}
                                 >ชื่อคณะ</th>
-                            <th 
-                                scope="col" 
-                                className="px-6 py-3 text-right uppercase tracking-wider"
-                                style={{ paddingTop: '12px', paddingBottom: '12px' , fontSize: '18px'}}
+                            <th scope="col" className="px-6 text-right uppercase tracking-wider"
+                                style={{ paddingTop: '9px', paddingBottom: '9px', fontSize: '18px'}}
                                 >แก้ไข</th>
                         </tr>
                     </thead>
@@ -119,20 +98,24 @@ const MajorList = () => {
                             {filteredmajor.length > 0 ? (
                                 filteredmajor.map((major, index) => (
                                     <tr key={major.id}>
-                                        <td className="w-1 px-6 whitespace-nowrap" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
+                                        <td className="w-1 px-6 whitespace-nowrap" 
+                                            style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
                                             {index + 1}
                                         </td>
                                         <td className="w-1/5 px-6 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
+                                            <div className="text-sm font-medium text-gray-900" 
+                                                style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
                                                 {major.majorName}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-10 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
+                                            <div className="text-sm font-medium text-gray-900" 
+                                                style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
                                                 {major.faculty?.facultyName}
                                             </div>
                                         </td>
-                                        <td className="px-6 whitespace-nowrap text-right" style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
+                                        <td className="px-6 whitespace-nowrap text-right" 
+                                            style={{ paddingTop: '9px', paddingBottom: '9px' , fontSize: '16px' }}>
                                             <Link href={`/admin/major/${major.id}`}>
                                             <Button 
                                                 type="link"

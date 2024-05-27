@@ -1,10 +1,9 @@
 'use client'
-
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button, Input, Flex, Empty } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen , faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 import SearchInput from '/src/app/components/SearchInput';
 
 const FacultyList = () => {
@@ -43,50 +42,48 @@ const FacultyList = () => {
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl" style={{ color: "#6C7AA3" }}>คณะ</h1>
-          <SearchInput
-            value={searchTerm}
-            onChange={(value) => setSearchTerm(value)}
-            placeholder="ค้นหาคณะ..."
-          />
-          <Link href="faculty/create">
-            <Button
-              className="text-base p-1 border rounded-xl"
-              style={{
-                backgroundColor: '#2D427C',
-                borderColor: '#2D427C',
-                color: 'white',
-                height: '35px',
-                borderWidth: '2px',
-                fontSize: '18px'
-              }}
-            >
-              เพิ่มคณะ
-            </Button>
-          </Link>
-        </div>
-      </div>
-      <div className="shadow-xl overflow-hidden border-b border-gray-200 sm:rounded-lg ">
-        <table className="min-w-full">
-          <thead className="text-base rounded-lg border-b "
+    <div className="max-w-6xl mx-auto px-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-4xl font-bold" style={{ color: "#2D427C" }}>คณะ</h1>
+        <SearchInput
+          value={searchTerm}
+          onChange={(value) => setSearchTerm(value)}
+          placeholder="ค้นหาคณะ..."
+        />
+        <Link href="faculty/create">
+          <Button
+            className="text-base p-1 border rounded-xl"
             style={{
-              color: '#000000',
-              borderColor: '#2D427C',
-            }}  >
+              backgroundColor: '#2D427C',
+              color: 'white',
+              height: '45px',
+              borderWidth: '2px',
+              fontSize: '18px',
+              borderRadius: '20px',
+              width: '130px'
+            }}
+          >
+            เพิ่มคณะ
+          </Button>
+        </Link>
+      </div>
+      <div className="shadow-xl overflow-hidden border-b border-gray-200 sm:rounded-lg">
+        <table className="min-w-full">
+          <thead className="text-base rounded-lg border-b bg-[#e4e4e7]"
+            style={{
+              borderColor: '#DFE1F1',
+            }} >
             <tr>
               <th scope="col"
-                className="w-1 px-6 text-left  uppercase tracking-wider"
+                className="w-1 px-6 text-left uppercase tracking-wider"
                 style={{ paddingTop: '12px', paddingBottom: '12px', fontSize: '18px' }}
               >#</th>
               <th scope="col"
-                className="px-5 text-left  uppercase tracking-wider"
+                className="px-5 text-left uppercase tracking-wider"
                 style={{ paddingTop: '12px', paddingBottom: '12px', fontSize: '18px' }}
               >ชื่อคณะ</th>
               <th scope="col"
-                className="px-6 text-right  uppercase tracking-wider"
+                className="px-6 text-right uppercase tracking-wider"
                 style={{ paddingTop: '12px', paddingBottom: '12px', fontSize: '18px' }}
               >แก้ไข</th>
             </tr>
@@ -97,11 +94,11 @@ const FacultyList = () => {
             <tbody className="divide-y divide-gray-200 " style={{ borderColor: '#2D427C' }}>
               {filteredFaculty.length > 0 ? (
                 filteredFaculty.map((faculty, index) => (
-                  <tr key={faculty.id} >
-                    <td className="w-1 px-6  whitespace-nowrap" style={{ paddingTop: '9px', paddingBottom: '9px', fontSize: '16px' }}>
+                  <tr key={faculty.id}>
+                    <td className="w-1 px-6 whitespace-nowrap" style={{ paddingTop: '9px', paddingBottom: '9px', fontSize: '16px' }}>
                       {index + 1}
                     </td>
-                    <td className="px-6  whitespace-nowrap">
+                    <td className="px-6 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900" style={{ paddingTop: '9px', paddingBottom: '9px', fontSize: '16px' }}>
                         {faculty.facultyName}
                       </div>
@@ -118,7 +115,7 @@ const FacultyList = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="2" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                  <td colSpan="3" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                     <Empty />
                   </td>
                 </tr>
@@ -131,4 +128,4 @@ const FacultyList = () => {
   )
 }
 
-export default FacultyList
+export default FacultyList;

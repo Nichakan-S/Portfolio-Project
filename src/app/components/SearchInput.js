@@ -22,11 +22,11 @@ class SearchInput extends Component {
     return (
       <Input
         className="flex-grow mx-4 p-1 text-base border rounded-xl custom-input"
-        placeholder="ค้นหาคณะ..."
+        placeholder={this.props.placeholder || "ค้นหาคณะ..."}
         type="text"
         value={this.state.searchTerm}
         onChange={this.handleChange}
-        style={{ fontSize: '14px', flex: '1 0 auto' }} // ปรับ width ตามความต้องการ
+        style={{ fontSize: '16px', width: '50%', flex: 'none' }} // เปลี่ยนขนาดตัวอักษรและความกว้าง
         suffix={<FontAwesomeIcon icon={faMagnifyingGlass} style={{ color: "#4b70af" }} className="mr-4"/>}
       />
     );

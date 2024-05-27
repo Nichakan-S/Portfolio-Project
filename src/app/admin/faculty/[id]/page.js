@@ -86,8 +86,8 @@ const EditFaculty = ({ params }) => {
 }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold mb-6" style={{color:"#6C7AA3"}} >แก้ไขชื่อคณะ {facultyName}</h1>
+    <div className="max-w-6xl mx-auto px-4">
+      <h1 className="text-3xl font-semibold mb-6" style={{color:"#2D427C"}} >แก้ไขชื่อคณะ {facultyName}</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card
           className="max-w-6xl mx-auto px-4 py-8 shadow-xl"

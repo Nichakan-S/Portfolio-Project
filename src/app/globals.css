@@ -74,6 +74,7 @@
     width: 600px; /* ตั้งค่าความยาวเป็น 50% ของพื้นที่ที่มี */
     height: 45px; /* ตั้งค่าความสูงเพิ่มเป็น 45px */
     border-radius: 20px; /* เพิ่มความโค้งมนของขอบ */
+    border: 1px solid #4b70af;
 }
 
 .custom-input:hover {
@@ -82,4 +83,13 @@
 
 .custom-input:focus {
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+}
+
+.button-container {
+    padding-right: 16px; /* หรือปรับค่าตามความจำเป็น */
+}
+
+.button-style {
+    width: 100%; /* หรือตั้งค่าขนาดที่เหมาะสม */
+    margin-right: auto; /* หรือปรับเป็นค่าเฉพาะ */
 }
