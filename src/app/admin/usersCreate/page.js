@@ -22,7 +22,7 @@ const CreateUser = () => {
     const [position, setPosition] = useState([]);
     const [selectedFacultyId, setSelectedFacultyId] = useState('');
     const [filteredMajors, setFilteredMajors] = useState([]);
-
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -45,6 +45,8 @@ const CreateUser = () => {
                 console.log(majors)
             } catch (error) {
                 console.error('Failed to fetch data', error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -61,7 +63,7 @@ const CreateUser = () => {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            if (file.size > 2097152) { // 2MB limit
+            if (file.size > 2097152) {
                 WarningAlert('ผิดพลาด!', 'ขนาดห้ามเกิน 2MB');
                 e.target.value = '';
                 return;
@@ -131,6 +133,16 @@ const CreateUser = () => {
             WarningAlert('ผิดพลาด!', 'ไม่สามารถเพิ่มผู้ใช้ได้');
         }
     };
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-full">
+                <div className="mt-2">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                </div>
+            </div>
+        );
+    }
 
     const handleFileInputClick = () => {
         document.getElementById('hiddenFileInput').click();

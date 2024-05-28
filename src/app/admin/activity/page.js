@@ -19,7 +19,7 @@ const ActivityList = () => {
 
     const fetchactivity = async () => {
         try {
-            const response = await fetch('/api/manageActivity/')
+            const response = await fetch('/api/activity/')
             const data = await response.json()
             console.log('activity data fetched:', data);
             setActivity(data)
@@ -57,7 +57,8 @@ const ActivityList = () => {
         return activity.activity?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                activity.activity?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
                activity.activity?.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-               Status[activity.status].includes(searchTerm.toLowerCase()) ;
+               Status[activity.audit].includes(searchTerm.toLowerCase()) ||
+               Status[activity.approve].includes(searchTerm.toLowerCase());
     });
 
     return (
@@ -79,11 +80,12 @@ const ActivityList = () => {
                     <thead className="bg-gray-50 ">
                         <tr>
                             <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ผู้ใช้</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อกิจกรรม</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปี</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ผู้ใช้</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">อนุมัติ</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
                             <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
@@ -97,6 +99,11 @@ const ActivityList = () => {
                                     <tr key={activity.id}>
                                         <td className="w-1 px-6 py-4 whitespace-nowrap">
                                             {index + 1}
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {activity.user?.username}
+                                            </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
@@ -115,14 +122,15 @@ const ActivityList = () => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {Status[activity.status]}
+                                                {Status[activity.audit]}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {activity.user?.username}
+                                                {Status[activity.approve]}
                                             </div>
                                         </td>
+                                        
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <Button
                                                 onClick={() => showModal(activity.file)}
@@ -135,7 +143,7 @@ const ActivityList = () => {
                                         <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
                                             <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/users/manage_activity/edit/${activity.id}`}
+                                                href={`/admin/activity/${activity.id}`}
                                             >
                                                 แก้ไข
                                             </Link>

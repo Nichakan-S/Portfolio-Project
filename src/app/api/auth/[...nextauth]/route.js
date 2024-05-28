@@ -23,15 +23,12 @@ export const authOptions = {
           },
         })
 
-        if (
-          user &&
-          (await bcrypt.compare(credentials.password, user.password))
-        ) {
+        if (user && (await bcrypt.compare(credentials.password, user.password))) {
           return {
             id: user.id,
             email: user.email,
+            majorId: user.majorId, 
             role: user.role,
-
           }
         } else {
           throw new Error('Invalid email or password')
@@ -47,16 +44,16 @@ export const authOptions = {
     jwt: async ({ token, user }) => {
       if (user) {
         token.id = user.id;
+        token.majorId = user.majorId;
         token.role = user.role;
-
       }
       return token
     },
     session: async ({ session, token }) => {
       if (session.user) {
         session.user.id = token.id;
+        session.user.majorId = token.majorId;
         session.user.role = token.role;
-
       }
       return session
     }

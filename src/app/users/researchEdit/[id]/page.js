@@ -4,28 +4,33 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button, Input, Flex, Modal } from 'antd';
 
+const ResearchType = {
+    journalism: 'ผ่านสื่อ',
+    researchreports: 'เล่มตีพิมพ์',
+    posterpresent: 'โปสเตอร์'
+};
 const Status = {
     wait: 'รอ',
     pass: 'ผ่าน',
     fail: 'ไม่ผ่าน'
 };
 
-const ActivityList = ({ params }) => {
-    const [activity, setActivity] = useState([])
+const ResearchList = ({ params }) => {
+    const [research, setResearch] = useState([])
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
     const { id } = params;
 
-    const fetchactivity = async (id) => {
+    const fetchresearch = async (id) => {
         try {
-            const response = await fetch(`/api/userActivity/${id}`)
+            const response = await fetch(`/api/userResearch/${id}`)
             const data = await response.json()
-            console.log('activity data fetched:', data);
-            setActivity(data)
+            console.log('research data fetched:', data);
+            setResearch(data)
         } catch (error) {
-            console.error('Failed to fetch activity', error)
+            console.error('Failed to fetch research', error)
         } finally {
             setIsLoading(false);
         }
@@ -33,7 +38,7 @@ const ActivityList = ({ params }) => {
 
     useEffect(() => {
         if (id) {
-            fetchactivity(parseInt(id));
+            fetchresearch(parseInt(id));
         }
     }, [id]);
 
@@ -56,30 +61,26 @@ const ActivityList = ({ params }) => {
         );
     }
 
-    const filteredactivity = activity.filter((activity) => {
-        return activity.activity?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               activity.activity?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               activity.activity?.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-               Status[activity.status].includes(searchTerm.toLowerCase()) ;
+    const filteredresearch = research.filter((research) => {
+        return research.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            research.researchfund.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            ResearchType[research.type].includes(searchTerm.toLowerCase()) ||
+            Status[research.status].includes(searchTerm.toLowerCase()) ||
+            research.year.toString().toLowerCase().includes(searchTerm.toLowerCase());
     });
 
     return (
         <div className="max-w-6xl mx-auto px-4 mt-2">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">ผลงานกิจกรรม</h1>
+                <h1 className="text-2xl font-semibold mb-6">แก้ไขผลงานวิจัย</h1>
                 <div className="flex items-center">
                     <Input
                         type="text"
-                        placeholder="ค้นหาผลงานกิจกรรม..."
+                        placeholder="ค้นหาผลงานวิจัย..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="flex-grow mr-2"
                     />
-                    <Flex align="flex-start" gap="small" vertical  >
-                        <Link href="create">
-                            <Button type="primary" style={{ backgroundColor: '#2D427C', borderColor: '#2D427C', color: 'white' }}>เพิ่มผลงานกิจกรรม</Button>
-                        </Link>
-                    </Flex>
                 </div>
             </div>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -87,11 +88,13 @@ const ActivityList = ({ params }) => {
                     <thead className="bg-gray-50 ">
                         <tr>
                             <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อกิจกรรม</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่องานวิจัย</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ทุน</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปี</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปีที่ตีพิมพ์</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">อนุมัติ</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
                             <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
                     </thead>
@@ -99,35 +102,45 @@ const ActivityList = ({ params }) => {
                 <div className="max-h-96 overflow-y-auto">
                     <table className="min-w-full">
                         <tbody className="divide-y divide-gray-200">
-                            {filteredactivity.length > 0 ? (
-                                filteredactivity.map((activity, index) => (
-                                    <tr key={activity.id}>
+                            {filteredresearch.length > 0 ? (
+                                filteredresearch.map((research, index) => (
+                                    <tr key={research.id}>
                                         <td className="w-1 px-6 py-4 whitespace-nowrap">
                                             {index + 1}
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {activity.activity?.name}
+                                                {research.nameTH}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {activity.activity?.type === 'culture' ? 'ศิลปะวัฒนธรรม' : 'บริการวิชาการ'}
+                                                {research.researchFund}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {activity.activity?.year}
+                                                {ResearchType[research.type]}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {Status[activity.status]}
+                                                {research.year}
+                                            </div>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {Status[research.audit]}
+                                            </div>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {Status[research.approve]}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <Button
-                                                onClick={() => showModal(activity.file)}
+                                                onClick={() => showModal(research.file)}
                                                 type="link"
                                                 style={{ color: '#FFD758' }}
                                             >
@@ -137,7 +150,7 @@ const ActivityList = ({ params }) => {
                                         <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
                                             <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/users/manage_activity/edit/${activity.id}`}
+                                                href={`/users/researchEdit/edit/${research.id}`}
                                             >
                                                 แก้ไข
                                             </Link>
@@ -180,4 +193,4 @@ const ActivityList = ({ params }) => {
     )
 }
 
-export default ActivityList
+export default ResearchList

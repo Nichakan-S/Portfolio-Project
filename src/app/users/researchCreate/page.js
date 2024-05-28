@@ -1,110 +1,90 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import { SuccessAlert, WarningAlert, ConfirmAlert} from '../../../../components/sweetalert';
+import React, { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { SuccessAlert, WarningAlert } from '../../components/sweetalert';
 import { Input, Button, Upload, Modal, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
-const EditResearch = ({ params }) => {
+const CreateResearch = () => {
+    const { data: session } = useSession();
     const [nameTH, setNameTH] = useState('');
     const [nameEN, setNameEN] = useState('');
-    const [researchfund, setResearchfund] = useState('');
+    const [researchFund, setResearchFund] = useState('');
     const [type, setType] = useState('');
     const [file, setFile] = useState('');
     const [year, setYear] = useState('');
-    const [status] = useState('wait');
+    const [audit] = useState('wait');
+    const [approve] = useState('wait');
     const [previewFile, setPreviewFile] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [customFund, setCustomFund] = useState('');
-    const { id } = params;
-    const [isLoading, setIsLoading] = useState(true);
-
-    const fetchResearch = async (id) => {
-        try {
-            const response = await fetch(`/api/research/${id}`);
-            const data = await response.json();
-            if (!response.ok) throw new Error('Failed to fetch research data');
-            setNameTH(data.nameTH);
-            setNameEN(data.nameEN);
-            setResearchfund(data.researchfund);
-            setType(data.type);
-            setFile(data.file);
-            setYear(data.year);
-            setPreviewFile(data.file);
-        } catch (error) {
-            console.error('Error fetching research data:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (id) {
-            fetchResearch(parseInt(id));
-        }
-    }, [id]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const fund = researchFund === 'other' ? customFund : researchFund;
         console.log(JSON.stringify({
+            userId: session.user.id,
             nameTH,
             nameEN,
-            researchfund: researchfund === 'other' ? customFund : researchfund,
+            researchFund: fund,
             type,
-            file,
             year: parseInt(year, 10),
-            status
-        }))
+            audit,
+            approve
+        }));
+
         try {
-            const response = await fetch(`/api/research/${id}`, {
-                method: 'PUT',
+            const response = await fetch('/api/research', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    userId: session.user.id,
                     nameTH,
                     nameEN,
-                    researchfund: researchfund === 'other' ? customFund : researchfund,
+                    researchFund: fund,
                     type,
                     file,
                     year: parseInt(year, 10),
-                    status
+                    audit,
+                    approve
                 })
             });
 
             if (!response.ok) throw new Error('Something went wrong');
-
-            SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกอัปเดตแล้ว');
-            window.history.back();
+            SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
+            setNameTH('');
+            setNameEN('');
+            setResearchFund('');
+            setType('');
+            setFile('');
+            setYear('');
+            setPreviewFile(null);
+            setCustomFund('');
         } catch (error) {
             console.error(error);
-            WarningAlert('ผิดพลาด!', 'ไม่สามารถอัปเดตข้อมูลได้');
-        } finally {
-            setIsLoading(false);
+            WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
         }
     };
 
-    const handleResearchFundChange = (e) => {
+    const handleresearchFundChange = (e) => {
         const value = e.target.value;
         if (value === 'other') {
             setCustomFund('');
-            setResearchfund(value);
+            setResearchFund(value);
         } else {
-            setResearchfund(value);
+            setResearchFund(value);
             setCustomFund('');
         }
     };
-    
+
     const handleCustomFundChange = (e) => {
         const value = e.target.value;
         setCustomFund(value);
-    };
-    
-
-    const handleBack = () => {
-        window.history.back();
     };
 
     const beforeUpload = (file) => {
@@ -127,32 +107,6 @@ const EditResearch = ({ params }) => {
             setPreviewFile(reader.result);
         };
     };
-
-    const handleDelete = async () => {
-        ConfirmAlert('คุณแน่ใจที่จะลบข้อมูลนี้?', 'การดำเนินการนี้ไม่สามารถย้อนกลับได้', async () => {
-          try {
-            const response = await fetch(`/api/research/${id}`, {
-              method: 'DELETE',
-            });
-            if (!response.ok) throw new Error('Failed to delete the research.');
-            SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
-            window.history.back();
-          } catch (error) {
-            console.error('Failed to delete the research', error);
-            WarningAlert('ผิดพลาด!', 'ไม่สามารถลบข้อมูลได้');
-          }
-        });
-      };
-
-      if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-full">
-                <div className="mt-2">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="max-w-6xl mx-auto px-4">
@@ -189,10 +143,10 @@ const EditResearch = ({ params }) => {
                     />
                 </div>
                 <div>
-                    <label htmlFor="researchfund">ทุน</label>
+                    <label htmlFor="researchFund">ทุน</label>
                     <select
-                        value={researchfund !== 'other' ? researchfund : ''}
-                        onChange={handleResearchFundChange}
+                        value={researchFund !== 'other' ? researchFund : ''}
+                        onChange={handleresearchFundChange}
                         required
                     >
                         <option value="">เลือกประเภท</option>
@@ -200,7 +154,7 @@ const EditResearch = ({ params }) => {
                         <option value="ทุนภายนอก">ทุนภายนอก</option>
                         <option value="other">อื่นๆ (โปรดระบุ)</option>
                     </select>
-                    {researchfund === 'other' && (
+                    {researchFund === 'other' && (
                         <input
                             type="text"
                             value={customFund}
@@ -250,7 +204,6 @@ const EditResearch = ({ params }) => {
                             <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
                         )}
                     </Modal>
-
                 </div>
                 <div>
                     <label htmlFor="year" className="block text-base font-medium text-gray-700 mb-4">
@@ -277,22 +230,10 @@ const EditResearch = ({ params }) => {
                     >
                         บันทึก
                     </Button>
-                    <Button className="inline-flex justify-center mr-4"
-                        type="primary" danger
-                        size="middle"
-                        onClick={handleDelete}
-                    >
-                        ลบ
-                    </Button>
-                    <Button className="inline-flex justify-center mr-4"
-                        onClick={handleBack}
-                    >
-                        ยกเลิก
-                    </Button>
                 </div>
             </form>
         </div>
     );
 };
 
-export default EditResearch;
+export default CreateResearch;

@@ -8,17 +8,19 @@ import { UploadOutlined } from '@ant-design/icons';
 const { Option } = Select;
 
 const EditResearch = ({ params }) => {
+    const { id } = params;
     const [nameTH, setNameTH] = useState('');
     const [nameEN, setNameEN] = useState('');
-    const [researchfund, setResearchfund] = useState('');
+    const [researchFund, setResearchFund] = useState('');
     const [type, setType] = useState('');
     const [file, setFile] = useState('');
     const [year, setYear] = useState('');
-    const [status] = useState('wait');
+    const [audit] = useState('wait');
+    const [approve] = useState('wait');
     const [previewFile, setPreviewFile] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [customFund, setCustomFund] = useState('');
-    const { id } = params;
+
     const [isLoading, setIsLoading] = useState(true);
 
     const fetchResearch = async (id) => {
@@ -28,7 +30,7 @@ const EditResearch = ({ params }) => {
             if (!response.ok) throw new Error('Failed to fetch research data');
             setNameTH(data.nameTH);
             setNameEN(data.nameEN);
-            setResearchfund(data.researchfund);
+            setResearchFund(data.researchFund);
             setType(data.type);
             setFile(data.file);
             setYear(data.year);
@@ -51,11 +53,11 @@ const EditResearch = ({ params }) => {
         console.log(JSON.stringify({
             nameTH,
             nameEN,
-            researchfund: researchfund === 'other' ? customFund : researchfund,
+            researchFund: researchFund === 'other' ? customFund : researchFund,
             type,
-            file,
-            year,
-            status
+            year: parseInt(year, 10),
+            audit,
+            approve
         }))
         try {
             const response = await fetch(`/api/research/${id}`, {
@@ -66,11 +68,12 @@ const EditResearch = ({ params }) => {
                 body: JSON.stringify({
                     nameTH,
                     nameEN,
-                    researchfund: researchfund === 'other' ? customFund : researchfund,
+                    researchFund: researchFund === 'other' ? customFund : researchFund,
                     type,
                     file,
                     year: parseInt(year, 10),
-                    status
+                    audit,
+                    approve
                 })
             });
 
@@ -90,9 +93,9 @@ const EditResearch = ({ params }) => {
         const value = e.target.value;
         if (value === 'other') {
             setCustomFund('');
-            setResearchfund(value);
+            setResearchFund(value);
         } else {
-            setResearchfund(value);
+            setResearchFund(value);
             setCustomFund('');
         }
     };
@@ -128,22 +131,6 @@ const EditResearch = ({ params }) => {
         };
     };
 
-    const handleDelete = async () => {
-        ConfirmAlert('คุณแน่ใจที่จะลบข้อมูลนี้?', 'การดำเนินการนี้ไม่สามารถย้อนกลับได้', async () => {
-            try {
-                const response = await fetch(`/api/research/${id}`, {
-                    method: 'DELETE',
-                });
-                if (!response.ok) throw new Error('Failed to delete the research.');
-                SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
-                window.history.back();
-            } catch (error) {
-                console.error('Failed to delete the research', error);
-                WarningAlert('ผิดพลาด!', 'ไม่สามารถลบข้อมูลได้');
-            }
-        });
-    };
-
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-full">
@@ -155,7 +142,7 @@ const EditResearch = ({ params }) => {
     }
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4">
             <h1 className="text-2xl font-semibold mb-6">เพิ่มงานวิจัยใหม่</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
@@ -189,9 +176,9 @@ const EditResearch = ({ params }) => {
                     />
                 </div>
                 <div>
-                    <label htmlFor="researchfund">ทุน</label>
+                    <label htmlFor="researchFund">ทุน</label>
                     <select
-                        value={researchfund !== 'other' ? researchfund : ''}
+                        value={researchFund !== 'other' ? researchFund : ''}
                         onChange={handleResearchFundChange}
                         required
                     >
@@ -200,7 +187,7 @@ const EditResearch = ({ params }) => {
                         <option value="ทุนภายนอก">ทุนภายนอก</option>
                         <option value="other">อื่นๆ (โปรดระบุ)</option>
                     </select>
-                    {researchfund === 'other' && (
+                    {researchFund === 'other' && (
                         <input
                             type="text"
                             value={customFund}
@@ -276,13 +263,6 @@ const EditResearch = ({ params }) => {
                         style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
                     >
                         บันทึก
-                    </Button>
-                    <Button className="inline-flex justify-center mr-4"
-                        type="primary" danger
-                        size="middle"
-                        onClick={handleDelete}
-                    >
-                        ลบ
                     </Button>
                     <Button className="inline-flex justify-center mr-4"
                         onClick={handleBack}

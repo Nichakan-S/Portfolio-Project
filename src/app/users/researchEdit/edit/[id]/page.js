@@ -1,62 +1,82 @@
 'use client'
 
-import React, { useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
+import React, { useEffect, useState } from 'react';
+import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../../components/sweetalert';
 import { Input, Button, Upload, Modal, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
-const CreateResearch = () => {
-    const { data: session } = useSession();
+const EditResearch = ({ params }) => {
+    const { id } = params;
     const [nameTH, setNameTH] = useState('');
     const [nameEN, setNameEN] = useState('');
-    const [researchfund, setResearchfund] = useState('');
+    const [researchFund, setResearchFund] = useState('');
     const [type, setType] = useState('');
     const [file, setFile] = useState('');
     const [year, setYear] = useState('');
-    const [status] = useState('wait');
+    const [audit] = useState('wait');
+    const [approve] = useState('wait');
     const [previewFile, setPreviewFile] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [customFund, setCustomFund] = useState('');
 
+    const [isLoading, setIsLoading] = useState(true);
+
+    const fetchResearch = async (id) => {
+        try {
+            const response = await fetch(`/api/research/${id}`);
+            const data = await response.json();
+            if (!response.ok) throw new Error('Failed to fetch research data');
+            setNameTH(data.nameTH);
+            setNameEN(data.nameEN);
+            setResearchFund(data.researchFund);
+            setType(data.type);
+            setFile(data.file);
+            setYear(data.year);
+            setPreviewFile(data.file);
+        } catch (error) {
+            console.error('Error fetching research data:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (id) {
+            fetchResearch(parseInt(id));
+        }
+    }, [id]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(JSON.stringify({
-            userId: session.user.id,
-            nameTH,
-            nameEN,
-            researchfund: researchfund === 'other' ? customFund : researchfund,
-            type,
-            year: parseInt(year, 10),
-            status
-        }))
         try {
-            const response = await fetch('/api/research', {
-                method: 'POST',
+            const response = await fetch(`/api/research/${id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    userId: session.user.id,
                     nameTH,
                     nameEN,
-                    researchfund: researchfund === 'other' ? customFund : researchfund,
+                    researchFund: researchFund === 'other' ? customFund : researchFund,
                     type,
                     file,
                     year: parseInt(year, 10),
-                    status
+                    audit,
+                    approve
                 })
             });
 
             if (!response.ok) throw new Error('Something went wrong');
 
-            SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
+            SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกอัปเดตแล้ว');
             window.history.back();
         } catch (error) {
             console.error(error);
-            WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
+            WarningAlert('ผิดพลาด!', 'ไม่สามารถอัปเดตข้อมูลได้');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -64,18 +84,18 @@ const CreateResearch = () => {
         const value = e.target.value;
         if (value === 'other') {
             setCustomFund('');
-            setResearchfund(value);
+            setResearchFund(value);
         } else {
-            setResearchfund(value);
+            setResearchFund(value);
             setCustomFund('');
         }
     };
-    
+
     const handleCustomFundChange = (e) => {
         const value = e.target.value;
         setCustomFund(value);
     };
-    
+
 
     const handleBack = () => {
         window.history.back();
@@ -101,6 +121,16 @@ const CreateResearch = () => {
             setPreviewFile(reader.result);
         };
     };
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-full">
+                <div className="mt-2">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-6xl mx-auto px-4">
@@ -137,9 +167,9 @@ const CreateResearch = () => {
                     />
                 </div>
                 <div>
-                    <label htmlFor="researchfund">ทุน</label>
+                    <label htmlFor="researchFund">ทุน</label>
                     <select
-                        value={researchfund !== 'other' ? researchfund : ''}
+                        value={researchFund !== 'other' ? researchFund : ''}
                         onChange={handleResearchFundChange}
                         required
                     >
@@ -148,7 +178,7 @@ const CreateResearch = () => {
                         <option value="ทุนภายนอก">ทุนภายนอก</option>
                         <option value="other">อื่นๆ (โปรดระบุ)</option>
                     </select>
-                    {researchfund === 'other' && (
+                    {researchFund === 'other' && (
                         <input
                             type="text"
                             value={customFund}
@@ -198,6 +228,7 @@ const CreateResearch = () => {
                             <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
                         )}
                     </Modal>
+
                 </div>
                 <div>
                     <label htmlFor="year" className="block text-base font-medium text-gray-700 mb-4">
@@ -235,4 +266,4 @@ const CreateResearch = () => {
     );
 };
 
-export default CreateResearch;
+export default EditResearch;

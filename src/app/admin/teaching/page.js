@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Descriptions, Card, Input, Button } from 'antd';
+import { Descriptions, Card, Input, Button, Select } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-import '/src/app/globals.css'
+import '/src/app/globals.css';
 
 const DayEnum = {
     mon: 'จันทร์',
@@ -20,12 +20,14 @@ const DayEnum = {
 const TeachingList = () => {
     const [teachings, setTeachings] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [year, setYear] = useState('all');
+    const [term, setTerm] = useState('all');
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchTeachings = async () => {
             try {
-                const res = await fetch('/api/manageTeaching/');
+                const res = await fetch('/api/teaching');
                 const data = await res.json();
                 setTeachings(data);
             } catch (error) {
@@ -47,63 +49,94 @@ const TeachingList = () => {
         );
     }
 
+    const uniqueYears = [...new Set(teachings.map(teaching => teaching.year.toString()))];
+
     const filteredTeachings = teachings.filter(teaching => {
-        return teaching.subjects?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               teaching.subjects?.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               teaching.subjects?.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               DayEnum[teaching.subjects?.day]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               teaching.subjects?.starttime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               teaching.subjects?.endtime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               teaching.subjects?.year.toString().toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesYear = year === 'all' || teaching.year.toString() === year;
+        const matchesTerm = term === 'all' || teaching.term.toString() === term;
+        const searchTermLower = searchTerm.toLowerCase();
+
+        return matchesYear && matchesTerm && (
+            teaching.subjects?.nameTH.toLowerCase().includes(searchTermLower) ||
+            teaching.subjects?.code.toLowerCase().includes(searchTermLower) ||
+            teaching.group.toLowerCase().includes(searchTermLower) ||
+            DayEnum[teaching.day]?.toLowerCase().includes(searchTermLower) ||
+            teaching.starttime.toLowerCase().includes(searchTermLower) ||
+            teaching.endtime.toLowerCase().includes(searchTermLower) ||
+            `${teaching.user?.prefix} ${teaching.user?.username} ${teaching.user?.lastname}`.toLowerCase().includes(searchTermLower)
+        );
     });
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">วิชาที่สอน</h1>
+                <h1 className="text-2xl font-semibold mb-6">บันนทึกการสอน</h1>
                 <div className="flex items-center mr-4">
                     <Input
                         className="flex-grow mr-2 p-1 text-base border rounded-xl custom-input"
-                        placeholder="ค้นหาวิชาที่สอน..."
+                        placeholder="ค้นหาบันนทึกการสอน..."
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         style={{ borderColor: '#2D427C', fontSize: '14px' }}
                     />
+                    <Select
+                        placeholder="เลือกปี"
+                        value={year}
+                        onChange={value => setYear(value)}
+                        className="flex-grow mr-2 w-48"
+                    >
+                        <Select.Option value="all">ทั้งหมด</Select.Option>
+                        {uniqueYears.map(year => (
+                            <Select.Option key={year} value={year}>{year}</Select.Option>
+                        ))}
+                    </Select>
+                    <Select
+                        placeholder="เลือกเทอม"
+                        value={term}
+                        onChange={value => setTerm(value)}
+                        className="flex-grow w-48"
+                    >
+                        <Select.Option value="all">ทั้งหมด</Select.Option>
+                        <Select.Option value="1">เทอม 1</Select.Option>
+                        <Select.Option value="2">เทอม 2</Select.Option>
+                        <Select.Option value="3">เทอม 3</Select.Option>
+                    </Select>
                 </div>
             </div>
-            {filteredTeachings.length > 0 ? (
-                filteredTeachings.map((teaching, index) => (
-                    <Card
-                        key={teaching.id}
-                        className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
-                        style={{ headerHeight: '38px' }}
-                        title={`วิชาที่ ${index + 1}`}
-                    >
-                        <Descriptions layout="horizontal" size="small" className="small-descriptions">
-                            <Descriptions.Item label="ชื่อวิชา">{teaching.subjects?.name}</Descriptions.Item>
-                            <Descriptions.Item label="รหัสวิชา">{teaching.subjects?.code}</Descriptions.Item>
-                            <Descriptions.Item label="วันที่สอน">{DayEnum[teaching.subjects?.day]}</Descriptions.Item>
-                            <Descriptions.Item label="กลุ่มเรียน">{teaching.subjects?.group}</Descriptions.Item>
-                            <Descriptions.Item label="เวลาเริ่ม">{teaching.subjects?.starttime}</Descriptions.Item>
-                            <Descriptions.Item label="เวลาจบ">{teaching.subjects?.endtime}</Descriptions.Item>
-                            <Descriptions.Item label="ปี">{teaching.subjects?.year}</Descriptions.Item>
-                            <Descriptions.Item label="เทอม">{teaching.subjects?.term}</Descriptions.Item>
-                            <Descriptions.Item label="ผู้สอน">{teaching.user?.username}</Descriptions.Item>
-                        </Descriptions>
-                        <div className="text-right">
-                            <Link href={`/users/manage_teaching/edit/${teaching.id}`}>
-                                <Button
-                                    type="link"
-                                    icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}
-                                />
-                            </Link>
-                        </div>
-                    </Card>
-                ))
-            ) : (
-                <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
-            )}
+            <div style={{ maxHeight: '65vh', overflowY: 'auto' }}>
+                {filteredTeachings.length > 0 ? (
+                    filteredTeachings.map((teaching, index) => (
+                        <Card
+                            key={teaching.id}
+                            className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
+                            style={{ headerHeight: '38px' }}
+                            title={`ผู้สอน ${teaching.user?.prefix} ${teaching.user?.username} ${teaching.user?.lastname}`}
+                        >
+                            <Descriptions layout="horizontal" size="small" className="small-descriptions">
+                                <Descriptions.Item label="ชื่อวิชา">{teaching.subjects?.nameTH}</Descriptions.Item>
+                                <Descriptions.Item label="รหัสวิชา">{teaching.subjects?.code}</Descriptions.Item>
+                                <Descriptions.Item label="วันที่สอน">{DayEnum[teaching.day]}</Descriptions.Item>
+                                <Descriptions.Item label="กลุ่มเรียน">{teaching.group}</Descriptions.Item>
+                                <Descriptions.Item label="เวลาเริ่ม">{teaching.starttime}</Descriptions.Item>
+                                <Descriptions.Item label="เวลาจบ">{teaching.endtime}</Descriptions.Item>
+                                <Descriptions.Item label="ปี">{teaching.year}</Descriptions.Item>
+                                <Descriptions.Item label="เทอม">{teaching.term}</Descriptions.Item>
+                            </Descriptions>
+                            <div className="text-right">
+                                <Link href={`/admin/teaching/${teaching.id}`}>
+                                    <Button
+                                        type="link"
+                                        icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}
+                                    />
+                                </Link>
+                            </div>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
+                )}
+            </div>
         </div>
     );
 };

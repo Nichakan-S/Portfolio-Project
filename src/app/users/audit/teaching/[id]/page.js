@@ -1,22 +1,10 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Input, Select } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Input, Select } from 'antd';
+import { SuccessAlert, WarningAlert, EvaluationAlert } from '../../../../components/sweetalert';
 
-const { Option } = Select;
-
-const DayEnum = {
-    mon: 'จันทร์',
-    tue: 'อังคาร',
-    wed: 'พุธ',
-    thu: 'พฤหัสบดี',
-    fri: 'ศุกร์',
-    sat: 'เสาร์',
-    sun: 'อาทิตย์',
-};
-
-const Status = {
+const audit = {
     wait: 'รอ',
     pass: 'ผ่าน',
     fail: 'ไม่ผ่าน'
@@ -25,29 +13,63 @@ const Status = {
 const TeachingList = ({ params }) => {
     const { id } = params;
     const [teaching, setTeaching] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [year, setYear] = useState('');
-    const [term, setTerm] = useState('');
+    const [selectTerm, setSelectTerm] = useState('all');
+    const [inputTerm, setInputTerm] = useState('');
+    const [year, setYear] = useState('all');
+    const [term, setTerm] = useState('all');
     const [isLoading, setIsLoading] = useState(true);
 
+    useEffect(() => {
+        fetchteaching(Number(params.id));
+    }, [params.id]);
+
     const fetchteaching = async (id) => {
+        if (isNaN(id)) {
+            console.error('Invalid majorId:', id);
+            setIsLoading(false);
+            return;
+        }
         try {
-            const response = await fetch(`/api/userTeaching/${id}`);
-            const data = await response.json();
+            const res = await fetch(`/api/auditTeaching/${id}`);
+            if (!res.ok) {
+                const errorDetails = await res.json();
+                throw new Error(errorDetails.details || 'Unknown error occurred');
+            }
+            const data = await res.json();
             console.log('teaching data fetched:', data);
             setTeaching(data);
         } catch (error) {
-            console.error('Failed to fetch teaching', error);
+            console.error('Failed to fetch teaching:', error.message);
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
-    useEffect(() => {
-        if (id) {
-            fetchteaching(parseInt(id));
-        }
-    }, [id]);
+    const handleSubmit = async (audit, id) => {
+        EvaluationAlert('ยืนยันการประเมิน', 'คุณแน่ใจหรือไม่ที่จะทำการประเมินผลงานนี้?')
+            .then(async (result) => {
+                if (result.isConfirmed) {
+                    console.log(audit, id);
+                    try {
+                        const response = await fetch(`/api/auditTeaching/${id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ audit })
+                        });
+                        if (!response.ok) throw new Error('Something went wrong');
+                        SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกประเมินแล้ว');
+                        fetchteaching(params.id);
+                    } catch (error) {
+                        console.error(error);
+                        WarningAlert('ผิดพลาด!', 'ไม่สามารถประเมินข้อมูลได้');
+                    }
+                }
+            }).catch((error) => {
+                console.error('Promise error:', error);
+            });
+    };
 
     if (isLoading) {
         return (
@@ -59,38 +81,46 @@ const TeachingList = ({ params }) => {
         );
     }
 
-    const filteredteaching = teaching.filter((teaching) => {
+    const filteredteaching = Array.isArray(teaching) ? teaching.filter((teaching) => {
         return (
-            (!year || teaching.year.toString() === year) &&
-            (!term || teaching.term.toString() === term) &&
+            (selectTerm === 'all' || audit[teaching.audit] === selectTerm) &&
+            (year === 'all' || teaching.year.toString() === year) &&
+            (term === 'all' || teaching.term.toString() === term) &&
             (
-                teaching.subjects?.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                teaching.subjects?.nameEN.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                teaching.subjects?.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                teaching.term.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-                teaching.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                DayEnum[teaching.day].includes(searchTerm.toLowerCase()) ||
-                teaching.starttime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                teaching.endtime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                teaching.year.toString().toLowerCase().includes(searchTerm.toLowerCase())
+                teaching.subjects?.nameTH.toLowerCase().includes(inputTerm.toLowerCase()) ||
+                teaching.subjects?.nameEN.toLowerCase().includes(inputTerm.toLowerCase()) ||
+                teaching.subjects?.code.toLowerCase().includes(inputTerm.toLowerCase()) ||
+                teaching.term.toString().toLowerCase().includes(inputTerm.toLowerCase()) ||
+                teaching.group.toLowerCase().includes(inputTerm.toLowerCase()) ||
+                teaching.year.toString().toLowerCase().includes(inputTerm.toLowerCase())
             )
         );
-    });
-
+    }) : [];
 
     const uniqueYears = Array.from(new Set(teaching.map(t => t.year.toString())));
 
     return (
-        <div className="max-w-6xl mx-auto px-4">
+        <div className="max-w-6xl mx-auto px-4 mt-2">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">แก้ไขวิชาที่สอน</h1>
+                <h1 className="text-2xl font-semibold mb-6">ตรวจสอบการสอน</h1>
                 <div className="flex items-center">
                     <Input
                         type="text"
-                        placeholder="ค้นหาวิชาที่สอน..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="ค้นหาผลงานกิจกรรม..."
+                        value={inputTerm}
+                        onChange={(e) => setInputTerm(e.target.value)}
                         className="flex-grow mr-2"
+                    />
+                    <Select
+                        value={selectTerm}
+                        onChange={(value) => setSelectTerm(value)}
+                        className="flex-grow mr-2 w-48"
+                        options={[
+                            { value: 'all', label: 'ทั้งหมด' },
+                            { value: 'รอ', label: 'รอ' },
+                            { value: 'ผ่าน', label: 'ผ่าน' },
+                            { value: 'ไม่ผ่าน', label: 'ไม่ผ่าน' }
+                        ]}
                     />
                     <Select
                         placeholder="เลือกปี"
@@ -121,16 +151,13 @@ const TeachingList = ({ params }) => {
                     <thead className="bg-gray-50 ">
                         <tr>
                             <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อวิชา</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รหัสวิชา</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">กลุ่มเรียน</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วันที่สอน</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เวลาเริ่ม</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เวลาจบ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อวิชา</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เทอม</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปี</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อผู้สอน</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
-                            <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
                     </thead>
                 </table>
@@ -145,34 +172,15 @@ const TeachingList = ({ params }) => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {teaching.subjects?.nameTH}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
                                                 {teaching.subjects?.code}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {teaching.group}
+                                                {teaching.subjects?.nameTH}
                                             </div>
                                         </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {DayEnum[teaching.day]}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {teaching.starttime}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {teaching.endtime}
-                                            </div>
-                                        </td>
+                                        
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
                                                 {teaching.term}
@@ -183,24 +191,41 @@ const TeachingList = ({ params }) => {
                                                 {teaching.year}
                                             </div>
                                         </td>
+                                        
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {Status[teaching.audit]}
+                                                {teaching.user?.username}
                                             </div>
                                         </td>
-                                        <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
-                                            <Link
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/users/teachingEdit/edit/${teaching.id}`}
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {audit[teaching.audit]}
+                                            </div>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <Button
+                                                type="primary"
+                                                className="mr-2"
+                                                style={{ backgroundColor: '#02964F', borderColor: '#02964F' }}
+                                                onClick={() => handleSubmit('pass', teaching.id)}
                                             >
-                                                แก้ไข
-                                            </Link>
+                                                ผ่าน
+                                            </Button>
+                                            <Button
+                                                type="primary"
+                                                danger
+                                                className="mr-2"
+                                                style={{ backgroundColor: '#E50000', borderColor: '#E50000' }}
+                                                onClick={() => handleSubmit('fail', teaching.id)}
+                                            >
+                                                ไม่ผ่าน
+                                            </Button>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="10" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                    <td colSpan="8" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                         ไม่มีข้อมูล
                                     </td>
                                 </tr>
@@ -213,4 +238,4 @@ const TeachingList = ({ params }) => {
     )
 }
 
-export default TeachingList
+export default TeachingList;

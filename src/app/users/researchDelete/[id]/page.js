@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
 import { Button, Input, Modal } from 'antd';
 
 const ResearchType = {
@@ -15,21 +15,18 @@ const Status = {
     fail: 'ไม่ผ่าน'
 };
 
-const ResearchList = () => {
+const ResearchList = ({ params }) => {
     const [research, setResearch] = useState([])
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
+    const { id } = params;
 
-    useEffect(() => {
-        fetchresearch()
-    }, [])
-
-    const fetchresearch = async () => {
+    const fetchresearch = async (id) => {
         try {
-            const res = await fetch('/api/research')
-            const data = await res.json()
+            const response = await fetch(`/api/userResearch/${id}`)
+            const data = await response.json()
             console.log('research data fetched:', data);
             setResearch(data)
         } catch (error) {
@@ -39,6 +36,12 @@ const ResearchList = () => {
         }
     }
 
+    useEffect(() => {
+        if (id) {
+            fetchresearch(parseInt(id));
+        }
+    }, [id]);
+
     const showModal = (file) => {
         setModalContent(file);
         setIsModalVisible(true);
@@ -46,6 +49,22 @@ const ResearchList = () => {
 
     const closeModal = () => {
         setIsModalVisible(false);
+    };
+
+    const handleDelete = async (id) => {
+        ConfirmAlert('คุณแน่ใจที่จะลบข้อมูลนี้?', 'การดำเนินการนี้ไม่สามารถย้อนกลับได้', async () => {
+            try {
+                const response = await fetch(`/api/research/${id}`, {
+                    method: 'DELETE',
+                });
+                if (!response.ok) throw new Error('Failed to delete the research.');
+                SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
+                setResearch(research.filter(item => item.id !== id));
+            } catch (error) {
+                console.error('Failed to delete the research', error);
+                WarningAlert('ผิดพลาด!', 'ไม่สามารถลบข้อมูลได้');
+            }
+        });
     };
 
     if (isLoading) {
@@ -58,20 +77,18 @@ const ResearchList = () => {
         );
     }
 
-
     const filteredresearch = research.filter((research) => {
         return research.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.researchFund.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.audit.toLowerCase().includes(searchTerm.toLowerCase())||
-            research.approve.toLowerCase().includes(searchTerm.toLowerCase());
+            research.researchfund.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            ResearchType[research.type].includes(searchTerm.toLowerCase()) ||
+            Status[research.status].includes(searchTerm.toLowerCase()) ||
+            research.year.toString().toLowerCase().includes(searchTerm.toLowerCase());
     });
 
     return (
-        <div className="max-w-6xl mx-auto px-4">
+        <div className="max-w-6xl mx-auto px-4 mt-2">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">ผลงานวิจัย</h1>
+                <h1 className="text-2xl font-semibold mb-6">ลบผลงานวิจัย</h1>
                 <div className="flex items-center">
                     <Input
                         type="text"
@@ -87,7 +104,6 @@ const ResearchList = () => {
                     <thead className="bg-gray-50 ">
                         <tr>
                             <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ผู้ใช้</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่องานวิจัย</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ทุน</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
@@ -107,11 +123,6 @@ const ResearchList = () => {
                                     <tr key={research.id}>
                                         <td className="w-1 px-6 py-4 whitespace-nowrap">
                                             {index + 1}
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {research.user?.username}
-                                            </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
@@ -153,12 +164,13 @@ const ResearchList = () => {
                                             </Button>
                                         </td>
                                         <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
-                                            <Link
+                                            <Button
+                                                type="link"
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/admin/research/${research.id}`}
+                                                onClick={() => handleDelete(research.id)}
                                             >
-                                                แก้ไข
-                                            </Link>
+                                                ลบ
+                                            </Button>
                                         </td>
                                     </tr>
                                 ))

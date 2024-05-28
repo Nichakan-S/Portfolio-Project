@@ -129,7 +129,7 @@ const Sidebar = () => {
             label: 'ผลงานวิจัย',
             icon: <FileOutlined />,
             children: [
-                { key: 'RCreate', label: (<Link href="/users/researchCreate}">เพิ่มผลงานวิจัย</Link>), icon: <PlusOutlined /> },
+                { key: 'RCreate', label: (<Link href="/users/researchCreate">เพิ่มผลงานวิจัย</Link>), icon: <PlusOutlined /> },
                 { key: 'REdit', label: (<Link href={`/users/researchEdit/${session.user.id}`}>แก้ไขผลงานวิจัย</Link>), icon: <EditOutlined /> },
                 { key: 'RDelete', label: (<Link href={`/users/researchDelete/${session.user.id}`}>ลบผลงานวิจัย</Link>), icon: <DeleteOutlined /> },
             ],
@@ -150,8 +150,9 @@ const Sidebar = () => {
             label: 'ตรวจสอบผลงาน',
             icon: <UserOutlined />,
             children: [
-                isApproveResearch && isUser && { key: 'auditActivity', label: (<Link href="/users/evaluation/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
-                isApproveActivity && isUser && { key: 'auditResearch', label: (<Link href="/users/evaluation/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> }
+                isAudit && isUser && { key: 'auditTeaching', label: (<Link href={`/users/audit/teaching/${session.user.majorId}`}>บันทึกการสอน</Link>), icon: <ProjectOutlined /> },
+                isAudit && isUser && { key: 'auditActivity', label: (<Link href={`/users/audit/activity/${session.user.majorId}`}>ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
+                isAudit && isUser && { key: 'auditResearch', label: (<Link href={`/users/audit/research/${session.user.majorId}`}>ผลงานวิจัย</Link>), icon: <FileOutlined /> }
             ],
         },
     ];
@@ -162,8 +163,8 @@ const Sidebar = () => {
             label: 'อนุมัติผลงาน',
             icon: <UserOutlined />,
             children: [
-                isApproveActivity && isUser && { key: 'approveActivity', label: (<Link href="/users/evaluation/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
-                isApproveResearch && isUser && { key: 'approveResearch', label: (<Link href="/users/evaluation/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> }
+                isApproveActivity && isUser && { key: 'approveActivity', label: (<Link href="/users/approve/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
+                isApproveResearch && isUser && { key: 'approveResearch', label: (<Link href="/users/approve/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> }
             ],
         },
     ];

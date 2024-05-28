@@ -2,28 +2,45 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
+import { SuccessAlert, WarningAlert } from '../../../../components/sweetalert';
 import { Select, Button, Modal, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
-const CreateActivity = () => {
+const { Option } = Select;
+
+const EditActivity = ({ params }) => {
+    const { id } = params;
     const { data: session } = useSession();
     const [file, setFile] = useState('');
     const [activity, setActivity] = useState([]);
-    const [status] = useState('wait');
+    const [activityData, setActivityData] = useState(null);
+    const [audit] = useState('wait');
+    const [approve] = useState('wait');
+    const [activityRole, setActivityRole] = useState('joiner');
     const [previewFile, setPreviewFile] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedActivity, setSelectedActivity] = useState('');
 
     useEffect(() => {
-        const fetchactivity = async () => {
-            const response = await fetch('/api/activity');
+        const fetchActivity = async () => {
+            const response = await fetch('/api/activityHeader');
             const data = await response.json();
             setActivity(data);
         };
 
-        fetchactivity();
-    }, []);
+        const fetchActivityData = async () => {
+            const response = await fetch(`/api/activity/${id}`);
+            const data = await response.json();
+            setActivityData(data);
+            setSelectedActivity(data.activityId);
+            setActivityRole(data.activityRole);
+            setFile(data.file);
+            setPreviewFile(data.file);
+        };
+
+        fetchActivity();
+        fetchActivityData();
+    }, [id]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,28 +48,24 @@ const CreateActivity = () => {
             WarningAlert('ผิดพลาด!', 'กรุณาเลือกกิจกรรม');
             return;
         }
-        console.log(JSON.stringify({ activityId: selectedActivity, userId: session.user.id, file, status }))
+
         try {
-            const response = await fetch('/api/manageActivity', {
-                method: 'POST',
+            const response = await fetch(`/api/activity/${id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ activityId: selectedActivity, userId: session.user.id, file, status })
+                body: JSON.stringify({ activityRole, activityId: selectedActivity, userId: session.user.id, file, audit, approve })
             });
 
             if (!response.ok) throw new Error('Something went wrong');
 
             SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
-            window.history.back();
+            setFile('');
         } catch (error) {
             console.error(error);
             WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
         }
-    };
-
-    const handleBack = () => {
-        window.history.back();
     };
 
     const handleChange = (value) => {
@@ -81,28 +94,62 @@ const CreateActivity = () => {
         };
     };
 
+    const handleBack = () => {
+        window.history.back();
+    };
+
     const activityOptions = activity.map(fac => ({
         label: fac.name,
         value: fac.id,
         disabled: fac.disabled
     }));
 
+    if (!activityData) {
+        return (
+            <div className="flex justify-center items-center h-full">
+                <div className="mt-2">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <h1 className="text-2xl font-semibold mb-6">เพิ่มกิจกรรม</h1>
+            <h1 className="text-2xl font-semibold mb-6">แก้ไขกิจกรรม</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                     <label htmlFor="activity" className="block text-base font-medium text-gray-700 mr-2 mb-4">
                         เลือกกิจกรรม
                     </label>
                     <Select
-                        defaultValue="กรุณาเลือกกิจกรรม"
+                        value={selectedActivity}
                         style={{ width: '100%' }}
                         size="large"
                         onChange={handleChange}
-                        options={[{ value: '', label: 'กรุณาเลือกกิจกรรม', disabled: true }, ...activityOptions]}
+                        options={activityOptions}
                     />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                    <label htmlFor="activityRole" className="block text-base font-medium mr-4 mb-4">
+                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> หน้าที่ : </span>
+                    </label>
+                    <Select
+                        value={activityRole}
+                        size="large"
+                        onChange={(value) => setActivityRole(value)}
+                        required
+                        className="flex-grow mr-4 mb-4 custom-select"
+                        style={{
+                            width: '50%',
+                            borderColor: '#DADEE9',
+                            fontSize: '16px',
+                            height: '40px'
+                        }}
+                    >
+                        <Option value="joiner">ผู้เข้าร่วม</Option>
+                        <Option value="operator">ผู้ดำเนินงาน</Option>
+                    </Select>
                 </div>
                 <div>
                     <label htmlFor="file" className="block text-base font-medium text-gray-700 mb-4">
@@ -149,4 +196,4 @@ const CreateActivity = () => {
     );
 };
 
-export default CreateActivity;
+export default EditActivity;
