@@ -9,12 +9,16 @@ export async function GET(req, { params }) {
                 userId: Number(params.id)
             },
             include: {
-                subjects: true
+                subjects: {
+                    include: {
+                        major: true
+                    }
+                }
             }
         });
         return new Response(JSON.stringify(teaching), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
         console.error(error);
         return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
-    }    
+    }
 }

@@ -1,47 +1,46 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
+import { useSession } from 'next-auth/react';
+import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
 import { Select, Button, Modal, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
-const EditMajor = ({ params }) => {
+const { Option } = Select;
+
+const EditActivity = ({ params }) => {
     const { id } = params;
+    const { data: session } = useSession();
     const [file, setFile] = useState('');
     const [activity, setActivity] = useState([]);
-    const [selectedActivity, setSelectedActivity] = useState('');
-    const [status] = useState('wait');
+    const [activityData, setActivityData] = useState(null);
+    const [audit] = useState('wait');
+    const [approve] = useState('wait');
+    const [activityRole, setActivityRole] = useState('joiner');
     const [previewFile, setPreviewFile] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+    const [selectedActivity, setSelectedActivity] = useState('');
 
     useEffect(() => {
-        const fetchActivities = async () => {
-            const res = await fetch('/api/activity');
-            const data = await res.json();
+        const fetchActivity = async () => {
+            const response = await fetch('/api/activityHeader');
+            const data = await response.json();
             setActivity(data);
         };
 
-        const fetchActivityDetails = async (id) => {
-            const res = await fetch(`/api/manageActivity/${id}`);
-            const data = await res.json();
-            setFile(data.file);
+        const fetchActivityData = async () => {
+            const response = await fetch(`/api/activity/${id}`);
+            const data = await response.json();
+            setActivityData(data);
             setSelectedActivity(data.activityId);
-            setIsLoading(false);
+            setActivityRole(data.activityRole);
+            setFile(data.file);
+            setPreviewFile(data.file);
         };
 
-        fetchActivities();
-        if (id) {
-            fetchActivityDetails(id);
-        }
+        fetchActivity();
+        fetchActivityData();
     }, [id]);
-
-    useEffect(() => {
-        if (file) {
-            setPreviewFile(file);
-        }
-    }, [file]);
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -49,27 +48,25 @@ const EditMajor = ({ params }) => {
             WarningAlert('ผิดพลาด!', 'กรุณาเลือกกิจกรรม');
             return;
         }
-    
-        console.log(JSON.stringify({ activityId: selectedActivity, file, status }));
+
         try {
-            const response = await fetch(`/api/manageActivity/${id}`, {
+            const response = await fetch(`/api/activity/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ activityId: selectedActivity, file, status })
+                body: JSON.stringify({ activityRole, activityId: selectedActivity, userId: session.user.id, file, audit, approve })
             });
-    
+
             if (!response.ok) throw new Error('Something went wrong');
-    
-            SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกอัปเดตแล้ว');
-            window.history.back();
+
+            SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
+            setFile('');
         } catch (error) {
             console.error(error);
-            WarningAlert('ผิดพลาด!', 'ไม่สามารถอัปเดตข้อมูลได้');
+            WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
         }
     };
-    
 
     const handleChange = (value) => {
         setSelectedActivity(value);
@@ -96,7 +93,7 @@ const EditMajor = ({ params }) => {
             setPreviewFile(reader.result);
         };
     };
-    
+
     const handleBack = () => {
         window.history.back();
     };
@@ -107,23 +104,7 @@ const EditMajor = ({ params }) => {
         disabled: fac.disabled
     }));
 
-    const handleDelete = async () => {
-        ConfirmAlert('คุณแน่ใจที่จะลบข้อมูลนี้?', 'การดำเนินการนี้ไม่สามารถย้อนกลับได้', async () => {
-          try {
-            const response = await fetch(`/api/manageActivity/${id}`, {
-              method: 'DELETE',
-            });
-            if (!response.ok) throw new Error('Failed to delete the manageActivity.');
-            SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
-            window.history.back();
-          } catch (error) {
-            console.error('Failed to delete the manageActivity', error);
-            WarningAlert('ผิดพลาด!', 'ไม่สามารถลบข้อมูลได้');
-          }
-        });
-      };
-
-      if (isLoading) {
+    if (!activityData) {
         return (
             <div className="flex justify-center items-center h-full">
                 <div className="mt-2">
@@ -134,8 +115,8 @@ const EditMajor = ({ params }) => {
     }
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-2xl font-semibold mb-6">{id ? 'แก้ไขกิจกรรม' : 'เพิ่มกิจกรรม'}</h1>
+        <div className="max-w-6xl mx-auto px-4">
+            <h1 className="text-2xl font-semibold mb-6">แก้ไขกิจกรรม</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                     <label htmlFor="activity" className="block text-base font-medium text-gray-700 mr-2 mb-4">
@@ -146,8 +127,29 @@ const EditMajor = ({ params }) => {
                         style={{ width: '100%' }}
                         size="large"
                         onChange={handleChange}
-                        options={[{ value: '', label: 'กรุณาเลือกกิจกรรม', disabled: true }, ...activityOptions]}
+                        options={activityOptions}
                     />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                    <label htmlFor="activityRole" className="block text-base font-medium mr-4 mb-4">
+                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> หน้าที่ : </span>
+                    </label>
+                    <Select
+                        value={activityRole}
+                        size="large"
+                        onChange={(value) => setActivityRole(value)}
+                        required
+                        className="flex-grow mr-4 mb-4 custom-select"
+                        style={{
+                            width: '50%',
+                            borderColor: '#DADEE9',
+                            fontSize: '16px',
+                            height: '40px'
+                        }}
+                    >
+                        <Option value="joiner">ผู้เข้าร่วม</Option>
+                        <Option value="operator">ผู้ดำเนินงาน</Option>
+                    </Select>
                 </div>
                 <div>
                     <label htmlFor="file" className="block text-base font-medium text-gray-700 mb-4">
@@ -184,13 +186,6 @@ const EditMajor = ({ params }) => {
                         บันทึก
                     </Button>
                     <Button className="inline-flex justify-center mr-4"
-                        type="primary" danger
-                        size="middle"
-                        onClick={handleDelete}
-                    >
-                        ลบ
-                    </Button>
-                    <Button className="inline-flex justify-center mr-4"
                         onClick={handleBack}
                     >
                         ยกเลิก
@@ -201,4 +196,4 @@ const EditMajor = ({ params }) => {
     );
 };
 
-export default EditMajor;
+export default EditActivity;

@@ -25,7 +25,7 @@ const ResearchList = ({ params }) => {
 
     const fetchresearch = async (id) => {
         try {
-            const response = await fetch(`/api/userReseardh/${id}`)
+            const response = await fetch(`/api/userResearch/${id}`)
             const data = await response.json()
             console.log('research data fetched:', data);
             setResearch(data)
@@ -70,7 +70,8 @@ const ResearchList = ({ params }) => {
         return research.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
             research.researchfund.toLowerCase().includes(searchTerm.toLowerCase()) ||
             ResearchType[research.type].includes(searchTerm.toLowerCase()) ||
-            Status[research.status].includes(searchTerm.toLowerCase()) ||
+            Status[research.audit].includes(searchTerm.toLowerCase()) ||
+            Status[research.approve].includes(searchTerm.toLowerCase()) ||
             research.year.toString().toLowerCase().includes(searchTerm.toLowerCase());
     });
 
@@ -97,7 +98,8 @@ const ResearchList = ({ params }) => {
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ทุน</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปีที่ตีพิมพ์</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">อนุมัติ</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
                         </tr>
                     </thead>
@@ -133,7 +135,12 @@ const ResearchList = ({ params }) => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {Status[research.status]}
+                                                {Status[research.audit]}
+                                            </div>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {Status[research.approve]}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">

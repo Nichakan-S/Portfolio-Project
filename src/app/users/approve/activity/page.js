@@ -1,51 +1,56 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { Button, Input, Modal, Select } from 'antd';
 import { SuccessAlert, WarningAlert, EvaluationAlert } from '../../../components/sweetalert';
 
-const Status = {
-    wait: 'รอ',
+const approve = {
+    wait: 'รอตรวจ',
     pass: 'ผ่าน',
-    fail: 'ไม่ผ่ๅน'
+    fail: 'ไม่ผ่าน'
 };
 
 const ActivityList = () => {
-    const [activity, setActivity] = useState([])
-    const [searchTerm, setSearchTerm] = useState('รอ');
+    const [activity, setActivity] = useState([]);
+    const [selectTerm, setSelectTerm] = useState('all');
+    const [inputTerm, setInputTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
 
     useEffect(() => {
-        fetchactivity()
-    }, [])
+        fetchactivity();
+    }, []);
 
     const fetchactivity = async () => {
         try {
-            const res = await fetch('/api/manageActivity/')
-            const data = await res.json()
+            const res = await fetch('/api/approveActivity/');
+            if (!res.ok) {
+                const errorDetails = await res.json();
+                throw new Error(errorDetails.details || 'Unknown error occurred');
+            }
+            const data = await res.json();
             console.log('activity data fetched:', data);
-            setActivity(data)
+            setActivity(data);
         } catch (error) {
-            console.error('Failed to fetch activity', error)
+            console.error('Failed to fetch activity:', error.message);
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
-    const handleSubmit = async (status, id) => {
+    const handleSubmit = async (approve, id) => {
         EvaluationAlert('ยืนยันการประเมิน', 'คุณแน่ใจหรือไม่ที่จะทำการประเมินผลงานนี้?')
             .then(async (result) => {
                 if (result.isConfirmed) {
-                    console.log(status, id)
+                    console.log(approve, id);
                     try {
-                        const response = await fetch(`/api/evaluateActivity/${id}`, {
+                        const response = await fetch(`/api/approveActivity/${id}`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({ status })
+                            body: JSON.stringify({ approve })
                         });
                         if (!response.ok) throw new Error('Something went wrong');
                         SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกประเมินแล้ว');
@@ -54,7 +59,6 @@ const ActivityList = () => {
                         console.error(error);
                         WarningAlert('ผิดพลาด!', 'ไม่สามารถประเมินข้อมูลได้');
                     }
-                    
                 }
             }).catch((error) => {
                 console.error('Promise error:', error);
@@ -63,7 +67,6 @@ const ActivityList = () => {
 
     const showModal = (file, id) => {
         setModalContent({ file, id });
-        console.log(file, id);
         setIsModalVisible(true);
     };
 
@@ -81,22 +84,33 @@ const ActivityList = () => {
         );
     }
 
-    const filteredactivity = activity.filter((activity) => {
-        return activity.activity?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            activity.activity?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            activity.activity?.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-            Status[activity.status].includes(searchTerm.toLowerCase());
-    });
+    const filteredActivity = Array.isArray(activity) ? activity.filter((activity) => {
+        return (
+            (selectTerm === 'all' || approve[activity.approve] === selectTerm) &&
+            (
+                activity.activity?.name.toLowerCase().includes(inputTerm.toLowerCase()) ||
+                activity.activity?.type.toLowerCase().includes(inputTerm.toLowerCase()) ||
+                activity.activity?.year.toString().toLowerCase().includes(inputTerm.toLowerCase())
+            )
+        );
+    }) : [];
 
     return (
         <div className="max-w-6xl mx-auto px-4 mt-2">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">ผลงานกิจกรรม</h1>
+                <h1 className="text-2xl font-semibold mb-6">ตรวจสอบผลงานกิจกรรม</h1>
                 <div className="flex items-center">
+                    <Input
+                        type="text"
+                        placeholder="ค้นหาผลงานกิจกรรม..."
+                        value={inputTerm}
+                        onChange={(e) => setInputTerm(e.target.value)}
+                        className="flex-grow mr-2"
+                    />
                     <Select
-                        value={searchTerm}
-                        onChange={(value) => setSearchTerm(value)}
-                        className="flex-grow mr-4 "
+                        value={selectTerm}
+                        onChange={(value) => setSelectTerm(value)}
+                        className="flex-grow"
                         style={{
                             flexBasis: '0%',
                             flexGrow: 1,
@@ -105,18 +119,13 @@ const ActivityList = () => {
                             minWidth: '100px'
                         }}
                         options={[
+                            { value: 'all', label: 'ทั้งหมด' },
                             { value: 'รอ', label: 'รอ' },
                             { value: 'ผ่าน', label: 'ผ่าน' },
-                            { value: 'ไม่ผ่ๅน', label: 'ไม่ผ่ๅน' }
+                            { value: 'ไม่ผ่าน', label: 'ไม่ผ่าน' }
                         ]}
                     />
-                    <Input
-                        type="text"
-                        placeholder="ค้นหาผลงานกิจกรรม..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="flex-grow mr-2"
-                    />
+                    
                 </div>
             </div>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -127,17 +136,19 @@ const ActivityList = () => {
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อกิจกรรม</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปี</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ผู้ใช้</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">อนุมัติ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เจ้าของผลงาน</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
                         </tr>
                     </thead>
                 </table>
                 <div className="max-h-96 overflow-y-auto">
                     <table className="min-w-full">
                         <tbody className="divide-y divide-gray-200">
-                            {filteredactivity.length > 0 ? (
-                                filteredactivity.map((activity, index) => (
+                            {filteredActivity.length > 0 ? (
+                                filteredActivity.map((activity, index) => (
                                     <tr key={activity.id}>
                                         <td className="w-1 px-6 py-4 whitespace-nowrap">
                                             {index + 1}
@@ -159,7 +170,12 @@ const ActivityList = () => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {Status[activity.status]}
+                                                {approve[activity.audit]}
+                                            </div>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {approve[activity.approve]}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
@@ -174,6 +190,25 @@ const ActivityList = () => {
                                                 style={{ color: '#FFD758' }}
                                             >
                                                 เปิดไฟล์
+                                            </Button>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <Button
+                                                type="primary"
+                                                className="mr-2"
+                                                style={{ backgroundColor: '#02964F', borderColor: '#02964F' }}
+                                                onClick={() => handleSubmit('pass', activity.id)}
+                                            >
+                                                ผ่าน
+                                            </Button>
+                                            <Button
+                                                type="primary"
+                                                danger
+                                                className="mr-2"
+                                                style={{ backgroundColor: '#E50000', borderColor: '#E50000' }}
+                                                onClick={() => handleSubmit('fail', activity.id)}
+                                            >
+                                                ไม่ผ่าน
                                             </Button>
                                         </td>
                                     </tr>
@@ -198,23 +233,6 @@ const ActivityList = () => {
                                 ดาวน์โหลด PDF
                             </Button>
                             <div>
-                                <Button
-                                    type="primary"
-                                    className="mr-2"
-                                    style={{ backgroundColor: '#02964F', borderColor: '#02964F' }}
-                                    onClick={() => handleSubmit('pass', modalContent.id)}
-                                >
-                                    ผ่าน
-                                </Button>
-                                <Button
-                                    type="primary"
-                                    danger
-                                    className="mr-2"
-                                    style={{ backgroundColor: '#E50000', borderColor: '#E50000' }}
-                                    onClick={() => handleSubmit('fail', modalContent.id)}
-                                >
-                                    ไม่ผ่าน
-                                </Button>
                                 <Button key="cancel" onClick={closeModal}>
                                     ยกเลิก
                                 </Button>
@@ -235,4 +253,4 @@ const ActivityList = () => {
     )
 }
 
-export default ActivityList
+export default ActivityList;

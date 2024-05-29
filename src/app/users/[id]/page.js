@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { Select, Empty, Card } from 'antd';
+import { Select } from 'antd';
 
 const { Option } = Select;
 
@@ -21,9 +21,11 @@ const TeachingList = ({ params }) => {
     const [research, setResearch] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedYear, setSelectedYear] = useState(null);
+    const [selectedTerm, setSelectedTerm] = useState(null);
+    const [auditStatus, setAuditStatus] = useState('');
     const { id } = params;
 
-    const fetchactivity = async (id) => {
+    const fetchActivity = async (id) => {
         try {
             const response = await fetch(`/api/homeActivity/${id}`);
             const data = await response.json();
@@ -36,9 +38,9 @@ const TeachingList = ({ params }) => {
         }
     };
 
-    const fetchresearch = async (id) => {
+    const fetchResearch = async (id) => {
         try {
-            const response = await fetch(`/api/homeReseardh/${id}`);
+            const response = await fetch(`/api/homeResearch/${id}`);
             const data = await response.json();
             console.log('research data fetched:', data);
             setResearch(data);
@@ -49,12 +51,18 @@ const TeachingList = ({ params }) => {
         }
     };
 
-    const fetchteaching = async (id) => {
+    const fetchTeaching = async (id) => {
         try {
             const response = await fetch(`/api/userTeaching/${id}`);
             const data = await response.json();
             console.log('teaching data fetched:', data);
             setTeaching(data);
+
+            const years = [...new Set(data.map(t => t.year))];
+            const recentYear = Math.max(...years);
+            setSelectedYear(recentYear);
+
+            setSelectedTerm(1);
         } catch (error) {
             console.error('Failed to fetch teaching', error);
         } finally {
@@ -62,16 +70,45 @@ const TeachingList = ({ params }) => {
         }
     };
 
+    const updateAuditStatus = (filteredTeaching) => {
+        if (filteredTeaching.length === 0) {
+            setAuditStatus('');
+            return;
+        }
+        const audits = filteredTeaching.map(t => t.audit);
+        if (audits.every(audit => audit === 'pass')) {
+            setAuditStatus('อนุมัติ');
+        } else if (audits.every(audit => audit === 'fail')) {
+            setAuditStatus('ไม่อนุมัติ');
+        } else {
+            setAuditStatus('รอตรวจสอบ');
+        }
+    };
+
     useEffect(() => {
         if (id) {
-            fetchteaching(parseInt(id));
-            fetchactivity(parseInt(id));
-            fetchresearch(parseInt(id));
+            fetchTeaching(parseInt(id));
+            fetchActivity(parseInt(id));
+            fetchResearch(parseInt(id));
         }
     }, [id]);
 
+    useEffect(() => {
+        const filteredTeaching = teaching.filter(t => 
+            (selectedYear ? t.year === selectedYear : true) &&
+            (selectedTerm ? t.term === selectedTerm : true)
+        );
+        updateAuditStatus(filteredTeaching);
+    }, [selectedYear, selectedTerm, teaching]);
+
     if (isLoading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+        return (
+            <div className="flex justify-center items-center h-full">
+                <div className="mt-2">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                </div>
+            </div>
+        );
     }
 
     const calculateTimeSlots = (startTime, endTime) => {
@@ -99,8 +136,8 @@ const TeachingList = ({ params }) => {
 
     const calculateTotalTeachingHours = (teaching) => {
         return teaching.reduce((total, session) => {
-            const startTime = session.subjects.starttime.split(':');
-            const endTime = session.subjects.endtime.split(':');
+            const startTime = session.starttime.split(':');
+            const endTime = session.endtime.split(':');
             const startMinutes = parseInt(startTime[0]) * 60 + parseInt(startTime[1]);
             const endMinutes = parseInt(endTime[0]) * 60 + parseInt(endTime[1]);
             const sessionHours = (endMinutes - startMinutes) / 60;
@@ -110,23 +147,52 @@ const TeachingList = ({ params }) => {
 
     const totalTeachingHours = calculateTotalTeachingHours(teaching);
 
-    const filteredTeaching = selectedYear ? teaching.filter(t => t.subjects.year === selectedYear) : teaching;
+    const filteredTeaching = teaching.filter(t => 
+        (selectedYear ? t.year === selectedYear : true) &&
+        (selectedTerm ? t.term === selectedTerm : true)
+    );
 
-    const years = [...new Set(teaching.map(t => t.subjects.year))];
+    const years = [...new Set(teaching.map(t => t.year))];
+
+    const getAuditStatusClass = (status) => {
+        switch(status) {
+            case 'อนุมัติ':
+                return 'text-green-600 bg-green-100 rounded-md px-2';
+            case 'ไม่อนุมัติ':
+                return 'text-red-600 bg-red-100 rounded-md px-2';
+            case 'รอตรวจสอบ':
+                return 'text-blue-600 bg-blue-100 rounded-md px-2';
+            default:
+                return '';
+        }
+    };
 
     return (
         <div className="px-4">
             <div className="flex items-center mb-6">
                 <h1 className="text-2xl font-semibold mr-4">กราฟผลงานทั้งหมด</h1>
                 <Select
-                placeholder="เลือกปี"
-                onChange={value => setSelectedYear(value)}
-                style={{ width: 200}}
-            >
-                {years.map(year => (
-                    <Option key={year} value={year}>{year}</Option>
-                ))}
-            </Select>
+                    placeholder="เลือกปี"
+                    onChange={value => setSelectedYear(value)}
+                    value={selectedYear}
+                    style={{ width: 200 }}
+                >
+                    {years.map(year => (
+                        <Option key={year} value={year}>{year}</Option>
+                    ))}
+                </Select>
+                <Select
+                    placeholder="เลือกเทอม"
+                    onChange={value => setSelectedTerm(value)}
+                    value={selectedTerm}
+                    style={{ width: 200, marginLeft: 10 }}
+                >
+                    <Option value={1}>1</Option>
+                    <Option value={2}>2</Option>
+                    <Option value={3}>3</Option>
+                </Select>
+                <div className="flex-grow"></div>
+                {auditStatus && <span className={`text-lg font-semibold ${getAuditStatusClass(auditStatus)}`}>{auditStatus}</span>}
             </div>
             <div className="mx-auto shadow-md">
                 <table className="w-full rounded-lg border-collapse overflow-hidden">
@@ -146,16 +212,16 @@ const TeachingList = ({ params }) => {
                                     const timeRange = time.split('-');
                                     const timeStart = timeRange[0];
                                     const timeEnd = timeRange[1];
-                                    const session = filteredTeaching.find(s => s.subjects.day === day.toLowerCase() && checkTimeOverlap(s.subjects.starttime, s.subjects.endtime, timeStart, timeEnd));
+                                    const session = filteredTeaching.find(s => s.day === day.toLowerCase() && checkTimeOverlap(s.starttime, s.endtime, timeStart, timeEnd));
 
                                     if (session && !renderedSessions.has(`${day}-${index}`)) {
-                                        const colspan = calculateTimeSlots(session.subjects.starttime, session.subjects.endtime);
+                                        const colspan = calculateTimeSlots(session.starttime, session.endtime);
                                         for (let i = 0; i < colspan; i++) {
                                             renderedSessions.set(`${day}-${index + i}`, true);
                                         }
                                         return (
-                                            <td key={time} colSpan={colspan} title={`เวลาเริ่ม: ${session.subjects.starttime}, เวลาจบ: ${session.subjects.endtime}`} className="p-2 bg-blue-200 text-center border-x-2 h-10">
-                                                {`${session.subjects.name}, ${session.subjects.group}`}
+                                            <td key={time} colSpan={colspan} title={`เวลาเริ่ม: ${session.starttime}, เวลาจบ: ${session.endtime}`} className="p-2 bg-blue-200 text-center border-x-2 h-10">
+                                                {`${session.subjects.nameTH}, ${session.group}`}
                                             </td>
                                         );
                                     }

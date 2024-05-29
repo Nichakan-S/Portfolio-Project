@@ -9,48 +9,52 @@ const ResearchType = {
     researchreports: 'เล่มตีพิมพ์',
     posterpresent: 'โปสเตอร์'
 };
-const Status = {
-    wait: 'รอ',
+const approve = {
+    wait: 'รอตรวจ',
     pass: 'ผ่าน',
     fail: 'ไม่ผ่าน'
 };
 
 const ResearchList = () => {
     const [research, setResearch] = useState([])
-    const [searchTerm, setSearchTerm] = useState('รอ');
+    const [selectTerm, setSelectTerm] = useState('all');
+    const [inputTerm, setInputTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
 
     useEffect(() => {
-        fetchresearch()
-    }, [])
+        fetchresearch();
+    }, []);
 
     const fetchresearch = async () => {
         try {
-            const res = await fetch('/api/research')
-            const data = await res.json()
+            const res = await fetch('/api/approveResearch/');
+            if (!res.ok) {
+                const errorDetails = await res.json();
+                throw new Error(errorDetails.details || 'Unknown error occurred');
+            }
+            const data = await res.json();
             console.log('research data fetched:', data);
-            setResearch(data)
+            setResearch(data);
         } catch (error) {
-            console.error('Failed to fetch research', error)
+            console.error('Failed to fetch research:', error.message);
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
-    const handleSubmit = async (status, id) => {
+    const handleSubmit = async (approve, id) => {
         EvaluationAlert('ยืนยันการประเมิน', 'คุณแน่ใจหรือไม่ที่จะทำการประเมินผลงานนี้?')
             .then(async (result) => {
                 if (result.isConfirmed) {
-                    console.log(status, id)
                     try {
-                        const response = await fetch(`/api/evaluateReseardh/${id}`, {
+                        const response = await fetch(`/api/approveResearch/${id}`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({ status })
+                            body: JSON.stringify({ approve })
                         });
                         if (!response.ok) throw new Error('Something went wrong');
                         SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกประเมินแล้ว');
@@ -85,23 +89,34 @@ const ResearchList = () => {
         );
     }
 
-    const filteredresearch = research.filter((research) => {
-        return research.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.researchfund.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-            Status[research.status].includes(searchTerm.toLowerCase());
-    });
+    const filteredResearch = Array.isArray(research) ? research.filter((research) => {
+        return (
+            (selectTerm === 'all' || approve[research.approve] === selectTerm) &&
+            (
+                research.nameTH.toLowerCase().includes(inputTerm.toLowerCase()) ||
+                research.researchFund.toLowerCase().includes(inputTerm.toLowerCase()) ||
+                research.type.toLowerCase().includes(inputTerm.toLowerCase()) ||
+                research.year.toString().toLowerCase().includes(inputTerm.toLowerCase())
+            )
+        );
+    }) : [];
 
     return (
         <div className="max-w-6xl mx-auto px-4 mt-2">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">ผลงานวิจัย</h1>
+                <h1 className="text-2xl font-semibold mb-6">ตรวจสอบผลงานวิจัย</h1>
                 <div className="flex items-center">
+                    <Input
+                        type="text"
+                        placeholder="ค้นหาผลงานกิจกรรม..."
+                        value={inputTerm}
+                        onChange={(e) => setInputTerm(e.target.value)}
+                        className="flex-grow mr-2"
+                    />
                     <Select
-                        value={searchTerm}
-                        onChange={(value) => setSearchTerm(value)}
-                        className="flex-grow mr-4 "
+                        value={selectTerm}
+                        onChange={(value) => setSelectTerm(value)}
+                        className="flex-grow"
                         style={{
                             flexBasis: '0%',
                             flexGrow: 1,
@@ -110,18 +125,13 @@ const ResearchList = () => {
                             minWidth: '100px'
                         }}
                         options={[
+                            { value: 'all', label: 'ทั้งหมด' },
                             { value: 'รอ', label: 'รอ' },
                             { value: 'ผ่าน', label: 'ผ่าน' },
                             { value: 'ไม่ผ่าน', label: 'ไม่ผ่าน' }
                         ]}
                     />
-                    <Input
-                        type="text"
-                        placeholder="ค้นหาผลงานวิจัย..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="flex-grow mr-2"
-                    />
+                    
                 </div>
             </div>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -133,17 +143,19 @@ const ResearchList = () => {
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ทุน</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปีที่ตีพิมพ์</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">อนุมัติ</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ผู้ใช้</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
                         </tr>
                     </thead>
                 </table>
                 <div className="max-h-96 overflow-y-auto">
                     <table className="min-w-full">
                         <tbody className="divide-y divide-gray-200">
-                            {filteredresearch.length > 0 ? (
-                                filteredresearch.map((research, index) => (
+                            {filteredResearch.length > 0 ? (
+                                filteredResearch.map((research, index) => (
                                     <tr key={research.id}>
                                         <td className="w-1 px-6 py-4 whitespace-nowrap">
                                             {index + 1}
@@ -155,7 +167,7 @@ const ResearchList = () => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {research.researchfund}
+                                                {research.researchFund}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
@@ -170,7 +182,12 @@ const ResearchList = () => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {Status[research.status]}
+                                                {approve[research.audit]}
+                                            </div>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {approve[research.approve]}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
@@ -185,6 +202,25 @@ const ResearchList = () => {
                                                 style={{ color: '#FFD758' }}
                                             >
                                                 เปิดไฟล์
+                                            </Button>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <Button
+                                                type="primary"
+                                                className="mr-2"
+                                                style={{ backgroundColor: '#02964F', borderColor: '#02964F' }}
+                                                onClick={() => handleSubmit('pass', research.id)}
+                                            >
+                                                ผ่าน
+                                            </Button>
+                                            <Button
+                                                type="primary"
+                                                danger
+                                                className="mr-2"
+                                                style={{ backgroundColor: '#E50000', borderColor: '#E50000' }}
+                                                onClick={() => handleSubmit('fail', research.id)}
+                                            >
+                                                ไม่ผ่าน
                                             </Button>
                                         </td>
                                     </tr>

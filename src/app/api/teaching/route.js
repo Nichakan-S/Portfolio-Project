@@ -9,7 +9,9 @@ export async function GET() {
         subjects: true,
         user: {
           select: {
-            username: true
+            prefix: true,
+            username: true,
+            lastname: true
           }
         }
       }

@@ -18,7 +18,9 @@ import {
     EditOutlined,
     DeleteOutlined,
     BarChartOutlined,
-    SearchOutlined
+    SearchOutlined,
+    PieChartOutlined,
+    LineChartOutlined
 } from '@ant-design/icons';
 
 const Sidebar = () => {
@@ -129,7 +131,7 @@ const Sidebar = () => {
             label: 'ผลงานวิจัย',
             icon: <FileOutlined />,
             children: [
-                { key: 'RCreate', label: (<Link href="/users/researchCreate}">เพิ่มผลงานวิจัย</Link>), icon: <PlusOutlined /> },
+                { key: 'RCreate', label: (<Link href="/users/researchCreate">เพิ่มผลงานวิจัย</Link>), icon: <PlusOutlined /> },
                 { key: 'REdit', label: (<Link href={`/users/researchEdit/${session.user.id}`}>แก้ไขผลงานวิจัย</Link>), icon: <EditOutlined /> },
                 { key: 'RDelete', label: (<Link href={`/users/researchDelete/${session.user.id}`}>ลบผลงานวิจัย</Link>), icon: <DeleteOutlined /> },
             ],
@@ -141,7 +143,15 @@ const Sidebar = () => {
     ];
 
     const overviewMenuItem = [
-        isOverview && isUser && { key: 'overview', label: (<Link href="/users/overview">ภาพรวมบุคลากร</Link>), icon: <BarChartOutlined /> },
+        isOverview && isUser && {
+            key: 'overview',
+            label: 'กราฟภาพรวม',
+            icon: <BarChartOutlined />,
+            children: [
+                isOverview && isUser && { key: 'workArchive', label: (<Link href="/users/overview/workArchive">กราฟผลงาน</Link>), icon: <LineChartOutlined /> },
+                isOverview && isUser && { key: 'activityArchive', label: (<Link href="/users/overview/activityArchive">กราฟกิจกรรม</Link>), icon: <PieChartOutlined /> }
+            ],
+        },
     ];
 
     const auditMenuItem = [
@@ -150,8 +160,9 @@ const Sidebar = () => {
             label: 'ตรวจสอบผลงาน',
             icon: <UserOutlined />,
             children: [
-                isApproveResearch && isUser && { key: 'auditActivity', label: (<Link href="/users/evaluation/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
-                isApproveActivity && isUser && { key: 'auditResearch', label: (<Link href="/users/evaluation/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> }
+                isAudit && isUser && { key: 'auditTeaching', label: (<Link href={`/users/audit/teaching/${session.user.majorId}`}>บันทึกการสอน</Link>), icon: <ProjectOutlined /> },
+                isAudit && isUser && { key: 'auditActivity', label: (<Link href={`/users/audit/activity/${session.user.majorId}`}>ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
+                isAudit && isUser && { key: 'auditResearch', label: (<Link href={`/users/audit/research/${session.user.majorId}`}>ผลงานวิจัย</Link>), icon: <FileOutlined /> }
             ],
         },
     ];
@@ -162,8 +173,8 @@ const Sidebar = () => {
             label: 'อนุมัติผลงาน',
             icon: <UserOutlined />,
             children: [
-                isApproveActivity && isUser && { key: 'approveActivity', label: (<Link href="/users/evaluation/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
-                isApproveResearch && isUser && { key: 'approveResearch', label: (<Link href="/users/evaluation/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> }
+                isApproveActivity && isUser && { key: 'approveActivity', label: (<Link href="/users/approve/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
+                isApproveResearch && isUser && { key: 'approveResearch', label: (<Link href="/users/approve/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> }
             ],
         },
     ];

@@ -61,14 +61,15 @@ const ResearchList = () => {
 
     const filteredresearch = research.filter((research) => {
         return research.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.researchfund.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            research.researchFund.toLowerCase().includes(searchTerm.toLowerCase()) ||
             research.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
             research.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-            research.status.toLowerCase().includes(searchTerm.toLowerCase());
+            research.audit.toLowerCase().includes(searchTerm.toLowerCase())||
+            research.approve.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold mb-6">ผลงานวิจัย</h1>
                 <div className="flex items-center">
@@ -86,12 +87,13 @@ const ResearchList = () => {
                     <thead className="bg-gray-50 ">
                         <tr>
                             <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ผู้ใช้</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่องานวิจัย</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ทุน</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปีที่ตีพิมพ์</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ผู้ใช้</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">อนุมัติ</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
                             <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
@@ -108,12 +110,17 @@ const ResearchList = () => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
+                                                {research.user?.username}
+                                            </div>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
                                                 {research.nameTH}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {research.researchfund}
+                                                {research.researchFund}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
@@ -128,12 +135,12 @@ const ResearchList = () => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {Status[research.status]}
+                                                {Status[research.audit]}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {research.user?.username}
+                                                {Status[research.approve]}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
@@ -148,7 +155,7 @@ const ResearchList = () => {
                                         <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
                                             <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/users/manage_research/edit/${research.id}`}
+                                                href={`/admin/research/${research.id}`}
                                             >
                                                 แก้ไข
                                             </Link>

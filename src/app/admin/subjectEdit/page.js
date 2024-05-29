@@ -41,13 +41,14 @@ const SubjectList = () => {
 
     const filteredSubjects = subjects.filter(subject => {
         return subject.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.nameEN.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.major.majorName.toLowerCase().includes(searchTerm.toLowerCase());
+            subject.nameEN.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subject.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subject.major.majorName.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
     return (
         <div className="max-w-6xl mx-auto px-4">
+
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold mb-6" style={{ color: "#2D427C" }}>วิชา</h1>
                 <SearchInput
@@ -56,6 +57,7 @@ const SubjectList = () => {
                     placeholder="ค้นหาวิชา..."
                     />
             </div>
+<<<<<<< HEAD
             {filteredSubjects.length > 0 ? (
                 filteredSubjects.map((subject) => (
                     <Card
@@ -90,6 +92,36 @@ const SubjectList = () => {
             ) : (
                 <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
             )}
+=======
+            <div style={{ maxHeight: '65vh', overflowY: 'auto' }}>
+                {filteredSubjects.length > 0 ? (
+                    filteredSubjects.map((subject) => (
+                        <Card
+                            key={subject.id}
+                            className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
+                            style={{ headerHeight: '38px' }}
+                            title={`วิชา ${subject.nameTH}`}
+                        >
+                            <Descriptions layout="horizontal" size="small" className="small-descriptions">
+                                <Descriptions.Item label="ชื่อวิชาอังกฤษ">{subject.nameEN}</Descriptions.Item>
+                                <Descriptions.Item label="รหัสวิชา">{subject.code}</Descriptions.Item>
+                                <Descriptions.Item label="สาขา">{subject.major.majorName}</Descriptions.Item>
+                            </Descriptions>
+                            <div className="text-right">
+                                <Link href={`/admin/subjectEdit/${subject.id}`}>
+                                    <Button
+                                        type="link"
+                                        icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}
+                                    />
+                                </Link>
+                            </div>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
+                )}
+            </div>
+>>>>>>> refs/remotes/origin/main
         </div>
     );
 };

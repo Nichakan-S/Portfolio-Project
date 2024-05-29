@@ -91,7 +91,7 @@ const Navbar = ({ isAdmin }) => {
                 {user.userImage ? (
                   <Space wrap size={16}>
                     <Avatar
-                      size={50}
+                      size={45}
                       src={user.userImage || '/image/none_image.png'}
                       icon={!user.userImage && <UserOutlined />}
                       onError={() => true}
@@ -101,8 +101,8 @@ const Navbar = ({ isAdmin }) => {
                   <Image
                     src="/image/none_image.png"
                     alt="Default profile image"
-                    width={40}
-                    height={40}
+                    width={45}
+                    height={45}
                     className="rounded-full"
                   />
                 )}

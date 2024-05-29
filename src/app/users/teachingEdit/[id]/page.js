@@ -2,7 +2,9 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Button, Input, Flex } from 'antd';
+import { Input, Select } from 'antd';
+
+const { Option } = Select;
 
 const DayEnum = {
     mon: 'จันทร์',
@@ -14,20 +16,28 @@ const DayEnum = {
     sun: 'อาทิตย์',
 };
 
+const Status = {
+    wait: 'รอตรวจ',
+    pass: 'ผ่าน',
+    fail: 'ไม่ผ่าน'
+};
+
 const TeachingList = ({ params }) => {
-    const [teaching, setTeaching] = useState([])
-    const [searchTerm, setSearchTerm] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
     const { id } = params;
+    const [teaching, setTeaching] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [year, setYear] = useState('');
+    const [term, setTerm] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     const fetchteaching = async (id) => {
         try {
-            const response = await fetch(`/api/userTeaching/${id}`)
-            const data = await response.json()
+            const response = await fetch(`/api/userTeaching/${id}`);
+            const data = await response.json();
             console.log('teaching data fetched:', data);
-            setTeaching(data)
+            setTeaching(data);
         } catch (error) {
-            console.error('Failed to fetch teaching', error)
+            console.error('Failed to fetch teaching', error);
         } finally {
             setIsLoading(false);
         }
@@ -50,19 +60,30 @@ const TeachingList = ({ params }) => {
     }
 
     const filteredteaching = teaching.filter((teaching) => {
-        return teaching.subjects?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            teaching.subjects?.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            teaching.subjects?.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            DayEnum[teaching.subjects?.day].includes(searchTerm.toLowerCase()) ||
-            teaching.subjects?.starttime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            teaching.subjects?.endtime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            teaching.subjects?.year.toString().toLowerCase().includes(searchTerm.toLowerCase());
+        return (
+            (!year || teaching.year.toString() === year) &&
+            (!term || teaching.term.toString() === term) &&
+            (
+                teaching.subjects?.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                teaching.subjects?.nameEN.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                teaching.subjects?.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                teaching.term.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+                teaching.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                DayEnum[teaching.day].includes(searchTerm.toLowerCase()) ||
+                teaching.starttime.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                teaching.endtime.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                teaching.year.toString().toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        );
     });
 
+
+    const uniqueYears = Array.from(new Set(teaching.map(t => t.year.toString())));
+
     return (
-        <div className="max-w-6xl mx-auto px-4 mt-2">
+        <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">วิชาที่สอน</h1>
+                <h1 className="text-2xl font-semibold mb-6">แก้ไขวิชาที่สอน</h1>
                 <div className="flex items-center">
                     <Input
                         type="text"
@@ -71,11 +92,28 @@ const TeachingList = ({ params }) => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="flex-grow mr-2"
                     />
-                    <Flex align="flex-start" gap="small" vertical  >
-                        <Link href="create">
-                            <Button type="primary" style={{ backgroundColor: '#2D427C', borderColor: '#2D427C', color: 'white' }}>เพิ่มวิชาที่สอน</Button>
-                        </Link>
-                    </Flex>
+                    <Select
+                        placeholder="เลือกปี"
+                        value={year}
+                        onChange={value => setYear(value)}
+                        className="flex-grow mr-2 w-48"
+                    >
+                        <Select.Option value="all">ทั้งหมด</Select.Option>
+                        {uniqueYears.map(year => (
+                            <Select.Option key={year} value={year}>{year}</Select.Option>
+                        ))}
+                    </Select>
+                    <Select
+                        placeholder="เลือกเทอม"
+                        value={term}
+                        onChange={value => setTerm(value)}
+                        className="flex-grow w-48"
+                    >
+                        <Select.Option value="all">ทั้งหมด</Select.Option>
+                        <Select.Option value="1">เทอม 1</Select.Option>
+                        <Select.Option value="2">เทอม 2</Select.Option>
+                        <Select.Option value="3">เทอม 3</Select.Option>
+                    </Select>
                 </div>
             </div>
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -89,8 +127,9 @@ const TeachingList = ({ params }) => {
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วันที่สอน</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เวลาเริ่ม</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เวลาจบ</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปี</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เทอม</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปี</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
                             <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
                         </tr>
                     </thead>
@@ -106,7 +145,7 @@ const TeachingList = ({ params }) => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {teaching.subjects?.name}
+                                                {teaching.subjects?.nameTH}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
@@ -116,38 +155,43 @@ const TeachingList = ({ params }) => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {teaching.subjects?.group}
+                                                {teaching.group}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {DayEnum[teaching.subjects?.day]}
+                                                {DayEnum[teaching.day]}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {teaching.subjects?.starttime}
+                                                {teaching.starttime}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {teaching.subjects?.endtime}
+                                                {teaching.endtime}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {teaching.subjects?.year}
+                                                {teaching.term}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {teaching.subjects?.term}
+                                                {teaching.year}
+                                            </div>
+                                        </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {Status[teaching.audit]}
                                             </div>
                                         </td>
                                         <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
                                             <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/users/manage_teaching/edit/${teaching.id}`}
+                                                href={`/users/teachingEdit/edit/${teaching.id}`}
                                             >
                                                 แก้ไข
                                             </Link>
@@ -156,7 +200,7 @@ const TeachingList = ({ params }) => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="2" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                    <td colSpan="10" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                         ไม่มีข้อมูล
                                     </td>
                                 </tr>

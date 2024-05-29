@@ -1,21 +1,20 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
+import React, { useState } from 'react';
 import { SuccessAlert, WarningAlert } from '../../components/sweetalert';
 import { Button, Input, Select, Card, Row, Col, DatePicker, Modal, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import moment from 'moment';
 
-const CreateTeaching = () => {
-    const { data: session } = useSession();
-    const [teaching, setTeaching] = useState([]);
-    const [selectedSubjects, setSelectedSubjects] = useState('');
+const CreateActivityHeader = () => {
     const [name, setName] = useState('');
     const [type, setType] = useState('');
+    const [file, setFile] = useState('');
     const [start, setStart] = useState(null);
     const [end, setEnd] = useState(null);
     const [year, setYear] = useState('');
-    const [audit, setAudit] = useState('wait');
     const [modalVisible, setModalVisible] = useState(false);
     const [previewFile, setPreviewFile] = useState('');
 
@@ -34,25 +33,31 @@ const CreateTeaching = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!selectedSubjects || !name || !type || !start || !end || !year || !audit) {
-            WarningAlert('ผิดพลาด!', 'กรุณากรอกข้อมูลให้ครบทุกช่อง');
+
+        if (!start || !end) {
+            WarningAlert('ผิดพลาด!', 'กรุณาเลือกเวลาเริ่มและเวลาสิ้นสุด!');
+            return;
+        }
+
+        if (moment(end).isBefore(moment(start))) {
+            WarningAlert('ผิดพลาด!', 'เวลาเริ่มต้องไม่เกินเวลาสิ้นสุด!');
             return;
         }
 
         try {
-            const response = await fetch('/api/teaching', {
+            const formattedStart = moment(start).format('YYYY-MM-DD HH:mm');
+            const formattedEnd = moment(end).format('YYYY-MM-DD HH:mm');
+            
+            const response = await fetch('/api/activityHeader', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    starttime: start.toISOString(),
-                    endtime: end.toISOString(),
-                    day: start.format('ddd').toLowerCase(),
-                    group: 'A', // Assuming group is fixed or set dynamically elsewhere
-                    term: 1, // Assuming term is fixed or set dynamically elsewhere
-                    year: parseInt(year, 10),
-                    audit,
-                    subjectsId: selectedSubjects,
-                    userId: session.user.id
+                    name,
+                    type,
+                    file,
+                    start: formattedStart,
+                    end: formattedEnd,
+                    year: parseInt(year, 10)
                 })
             });
 
@@ -163,7 +168,7 @@ const CreateTeaching = () => {
                                         showTime
                                         format="DD-MM-YYYY HH:mm"
                                         required
-                                        style={{
+                                        style={{ห
                                             width: '85%',
                                             borderColor: '#DADEE9',
                                             fontSize: '16px',
@@ -261,4 +266,4 @@ const CreateTeaching = () => {
     );
 };
 
-export default CreateTeaching;
+export default CreateActivityHeader;

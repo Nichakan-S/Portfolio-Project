@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { SuccessAlert, WarningAlert } from '../../components/sweetalert';
 import { Input, Button, Select, Col, Card, Row, TimePicker } from 'antd';
+import moment from 'moment';
 
 const { Option } = Select;
 
@@ -18,12 +19,14 @@ const CreateTeaching = () => {
     const [group, setGroup] = useState('');
     const [term, setTerm] = useState('');
     const [day, setDay] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchteaching = async () => {
             const response = await fetch('/api/subject');
             const data = await response.json();
             setTeaching(data);
+            setIsLoading(false);
         };
 
         fetchteaching();
@@ -35,9 +38,13 @@ const CreateTeaching = () => {
             WarningAlert('ผิดพลาด!', 'กรุณากรอกข้อมูลให้ครบทุกช่อง');
             return;
         }
+
+        const starttime = start.format('HH:mm');
+        const endtime = end.format('HH:mm');
+
         console.log(JSON.stringify({
-            starttime: start,
-            endtime: end,
+            starttime: starttime,
+            endtime: endtime,
             day,
             group,
             term: parseInt(term, 10),
@@ -53,8 +60,8 @@ const CreateTeaching = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    starttime: start.toISOString(),
-                    endtime: end.toISOString(),
+                    starttime: starttime,
+                    endtime: endtime,
                     day,
                     group,
                     term: parseInt(term, 10),
@@ -68,7 +75,14 @@ const CreateTeaching = () => {
             if (!response.ok) throw new Error('Something went wrong');
 
             SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
-            window.history.back();
+            
+            setSelectedSubjects('');
+            setStart(null);
+            setEnd(null);
+            setYear('');
+            setGroup('');
+            setTerm('');
+            setDay('');
         } catch (error) {
             console.error(error);
             WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
@@ -78,6 +92,16 @@ const CreateTeaching = () => {
     const handleChange = (value) => {
         setSelectedSubjects(value);
     };
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-full">
+                <div className="mt-2">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-6xl mx-auto px-4">
