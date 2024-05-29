@@ -1,82 +1,79 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
+import React, { useState } from 'react';
 import { SuccessAlert, WarningAlert } from '../../components/sweetalert';
-import { Input, Button, Upload, Modal, Select, Col, Card, Row, DatePicker } from 'antd';
+import { Input, Button, Upload, Modal, Select, Col, Card, Row } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import moment from 'moment';
 
-const CreateTeaching = () => {
-    const { data: session } = useSession();
-    const [teaching, setTeaching] = useState([]);
-    const [selectedSubjects, setSelectedSubjects] = useState('');
+const CreateActivityHeader = () => {
     const [name, setName] = useState('');
     const [type, setType] = useState('');
+    const [file, setFile] = useState('');
     const [start, setStart] = useState(null);
     const [end, setEnd] = useState(null);
     const [year, setYear] = useState('');
-    const [audit, setAudit] = useState('wait');
     const [modalVisible, setModalVisible] = useState(false);
     const [previewFile, setPreviewFile] = useState('');
 
-    useEffect(() => {
-        const fetchteaching = async () => {
-            const response = await fetch('/api/subject');
-            const data = await response.json();
-            setTeaching(data);
-        };
-
-        fetchteaching();
-    }, []);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!selectedSubjects || !name || !type || !start || !end || !year || !audit) {
-            WarningAlert('ผิดพลาด!', 'กรุณากรอกข้อมูลให้ครบทุกช่อง');
+
+        if (!start || !end) {
+            WarningAlert('ผิดพลาด!', 'กรุณาเลือกเวลาเริ่มและเวลาสิ้นสุด!');
+            return;
+        }
+
+        if (moment(end).isBefore(moment(start))) {
+            WarningAlert('ผิดพลาด!', 'เวลาเริ่มต้องไม่เกินเวลาสิ้นสุด!');
             return;
         }
 
         try {
-            const response = await fetch('/api/teaching', {
+            const formattedStart = moment(start).format('YYYY-MM-DD HH:mm');
+            const formattedEnd = moment(end).format('YYYY-MM-DD HH:mm');
+            
+            const response = await fetch('/api/activityHeader', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    starttime: start.toISOString(),
-                    endtime: end.toISOString(),
-                    day: start.format('ddd').toLowerCase(),
-                    group: 'A', // Assuming group is fixed or set dynamically elsewhere
-                    term: 1, // Assuming term is fixed or set dynamically elsewhere
-                    year: parseInt(year, 10),
-                    audit,
-                    subjectsId: selectedSubjects,
-                    userId: session.user.id
+                    name,
+                    type,
+                    file,
+                    start: formattedStart,
+                    end: formattedEnd,
+                    year: parseInt(year, 10)
                 })
             });
 
             if (!response.ok) throw new Error('Something went wrong');
 
             SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
-            window.history.back();
+
+            setName('');
+            setType('');
+            setFile('');
+            setStart(null);
+            setEnd(null);
+            setYear('');
+            setPreviewFile('');
         } catch (error) {
             console.error(error);
             WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
         }
     };
 
-    const handleChange = (value) => {
-        setSelectedSubjects(value);
-    };
-
-    const teachingOptions = teaching.map(subject => ({
-        label: subject.name,
-        value: subject.id,
-    }));
-
-    const customRequest = (options) => {
-        const { file } = options;
-        setPreviewFile(URL.createObjectURL(file));
+    const customRequest = ({ file }) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            setFile(reader.result);
+            setPreviewFile(reader.result);
+        };
     };
 
     const beforeUpload = (file) => {
@@ -85,7 +82,7 @@ const CreateTeaching = () => {
 
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <h1 className="text-2xl font-semibold mb-6">เพิ่มการสอน</h1>
+            <h1 className="text-2xl font-semibold mb-6">เพิ่มกิจกรรม</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl">
                     <Row gutter={16}>
@@ -225,10 +222,11 @@ const CreateTeaching = () => {
                                 </div>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'flex-end', width: '102%', padding: '15px' }}>
-                                <Button className="inline-flex justify-center mr-4 "
+                                <Button
+                                    className="inline-flex justify-center mr-4"
                                     type="primary"
                                     size="middle"
-                                    onClick={handleSubmit}
+                                    htmlType="submit"
                                     style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
                                 >
                                     บันทึก
@@ -242,4 +240,4 @@ const CreateTeaching = () => {
     );
 };
 
-export default CreateTeaching;
+export default CreateActivityHeader;

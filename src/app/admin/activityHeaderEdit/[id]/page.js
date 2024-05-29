@@ -104,7 +104,7 @@ const EditActivity = ({ params }) => {
         reader.readAsDataURL(file);
         reader.onload = () => {
             setFile(reader.result);
-            setModalContent(reader.result); // Ensure modal content is also set
+            setModalContent(reader.result);
         };
     };
 
