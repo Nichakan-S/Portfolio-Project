@@ -129,7 +129,7 @@ const EditPosition = ({ params }) => {
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-2xl font-semibold mb-6">เพิ่มตำแหน่งใหม่</h1>
+            <h1 className="text-2xl font-semibold mb-6">แก้ตำแหน่งใหม่</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl" >
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -148,7 +148,7 @@ const EditPosition = ({ params }) => {
                                 onChange={(e) => setName(e.target.value)}
                                 className="flex-grow mr-4"
                                 showCount
-                                maxLength={100}
+                                maxLength={50}
                                 style={{
                                     flexGrow: 1,
                                     flexShrink: 1,

@@ -129,7 +129,7 @@ const EditSubject = ({ params }) => {
                                 onChange={(e) => setNameTH(e.target.value)}
                                 className="flex-grow mr-4 mb-4"
                                 showCount
-                                maxLength={100}
+                                maxLength={60}
                                 style={{
                                     flexGrow: 1,
                                     flexShrink: 1,
@@ -154,7 +154,7 @@ const EditSubject = ({ params }) => {
                                 onChange={(e) => setNameEN(e.target.value)}
                                 className="flex-grow mr-4 mb-4"
                                 showCount
-                                maxLength={100}
+                                maxLength={60}
                                 style={{
                                     flexGrow: 1,
                                     flexShrink: 1,
@@ -178,7 +178,7 @@ const EditSubject = ({ params }) => {
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
                                 showCount
-                                maxLength={20}
+                                maxLength={8}
                                 className="flex-grow mr-4 mb-4"
                                 style={{
                                     flexGrow: 1,

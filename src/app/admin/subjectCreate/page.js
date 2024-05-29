@@ -65,7 +65,7 @@ const CreateSubject = () => {
 
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <h1 className="text-2xl font-semibold mb-6">เพิ่มวิชาใหม่</h1>
+            <h1 className="text-3xl font-bold mb-6" style={{ color: "#2D427C" }}>เพิ่มวิชาใหม่</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl">
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -84,8 +84,7 @@ const CreateSubject = () => {
                                     borderColor: '#DADEE9',
                                     fontSize: '16px',
                                     height: '40px'
-                                }}
-                            >
+                                }}>
                                 <Select.Option value="">กรุณาเลือกสาขา</Select.Option>
                                 {major.map((major) => (
                                     <Select.Option key={major.id} value={major.id}>
@@ -108,7 +107,7 @@ const CreateSubject = () => {
                                 onChange={(e) => setNameTH(e.target.value)}
                                 className="flex-grow mr-4 mb-4"
                                 showCount
-                                maxLength={100}
+                                maxLength={60}
                                 style={{
                                     flexGrow: 1,
                                     flexShrink: 1,
@@ -133,7 +132,7 @@ const CreateSubject = () => {
                                 onChange={(e) => setNameEN(e.target.value)}
                                 className="flex-grow mr-4 mb-4"
                                 showCount
-                                maxLength={100}
+                                maxLength={60}
                                 style={{
                                     flexGrow: 1,
                                     flexShrink: 1,
@@ -157,7 +156,7 @@ const CreateSubject = () => {
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
                                 showCount
-                                maxLength={20}
+                                maxLength={8}
                                 className="flex-grow mr-4 mb-4"
                                 style={{
                                     flexGrow: 1,

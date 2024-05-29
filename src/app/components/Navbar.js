@@ -81,12 +81,12 @@ const Navbar = ({ isAdmin }) => {
               <div className="text-xl text-black font-bold">Professor Portfolio - แฟ้มรวมผลงานอาจารย์</div>
             </div>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center relative">
             <div>
               <div className="text-black">{`${user.position.name} ${user.prefix} ${user.username} ${user.lastname}`}</div>
               <div className="text-right text-black">{user.email}</div>
             </div>
-            <div className="ml-4">
+            <div className="ml-4 relative">
               <div onClick={() => setDropdownOpen(!isDropdownOpen)} className="cursor-pointer">
                 {user.userImage ? (
                   <Space wrap size={16}>
@@ -108,7 +108,7 @@ const Navbar = ({ isAdmin }) => {
                 )}
               </div>
               {isDropdownOpen && (
-                <div className="absolute right-6 w-48 bg-[#000c17] rounded-md shadow-xl">
+                <div className="absolute right-0 w-48 bg-[#000c17] rounded-md shadow-xl z-10">
                   <button
                     onClick={handleSettingsClick}
                     className="block w-full text-left px-4 py-2 text-sm text-white hover:text-yellow-400"

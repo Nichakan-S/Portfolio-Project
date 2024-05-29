@@ -138,7 +138,7 @@ const CreateUser = () => {
 
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <h1 className="text-2xl font-semibold mb-6">เพิ่มผู้ใช้ใหม่</h1>
+            <h1 className="text-3xl font-bold mb-6" style={{ color: "#2D427C" }}>เพิ่มผู้ใช้ใหม่</h1>
             <div style={{ maxHeight: '80vh', overflowY: 'auto' }}>
                 <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data" >
                     <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl" style={{ maxHeight: '65vh', overflowY: 'auto' }}>

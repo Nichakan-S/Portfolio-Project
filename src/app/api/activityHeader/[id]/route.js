@@ -17,10 +17,10 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
     try {
-        const { type, name, start, end, year, file   } = await req.json()
+        const { type, name, start, end, year, file } = await req.json()
         return Response.json(await prisma.activityHeader.update({
             where: { id: Number(params.id) },
-            data: { type, name, start, end, year, file   },
+            data: { type, name, start, end, year, file },
         }))
     } catch (error) {
         console.error(error);

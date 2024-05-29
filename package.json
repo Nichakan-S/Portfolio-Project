@@ -27,8 +27,8 @@
     "pdfjs-dist": "^3.11.174",
     "react": "^18",
     "react-chartjs-2": "^5.2.0",
+    "react-datepicker": "^6.9.0",
     "react-dom": "^18",
-    "styled-components": "^6.1.8",
     "sweetalert2": "^11.10.8",
     "xlsx": "^0.18.5"
   },

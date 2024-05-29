@@ -14,12 +14,11 @@ import {
     TeamOutlined,
     FileOutlined,
     ProjectOutlined,
-    UserDeleteOutlined,
-    UserAddOutlined,
-    UserSwitchOutlined,
     PlusOutlined,
     EditOutlined,
-    DeleteOutlined
+    DeleteOutlined,
+    BarChartOutlined,
+    SearchOutlined
 } from '@ant-design/icons';
 
 const Sidebar = () => {
@@ -56,20 +55,6 @@ const Sidebar = () => {
     const isApproveActivity = user?.position?.approveActivity;
     const isOverview = user?.position?.overview;
 
-    const userMenuItems = [
-        isUser && { key: 'Home', label: (<Link href={`/users/${session.user.id}`}>หน้าแรก</Link>), icon: <HomeOutlined /> },
-        isUser && { key: 'Schedule', label: (<Link href={`/users/teaching/${session.user.id}`}>บันทึกการสอน</Link>), icon: <ScheduleOutlined /> },
-        isUser && {
-            key: 'Work',
-            label: 'ผลงานทั้งหมด',
-            icon: <AppstoreOutlined />,
-            children: [
-                { key: 'Activity', label: (<Link href={`/users/activity/${session.user.id}`}>ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
-                { key: 'Research', label: (<Link href={`/users/research/${session.user.id}`}>ผลงานวิจัย</Link>), icon: <FileOutlined /> },
-            ],
-        },
-    ];
-
     const adminMenuItems = [
         isAdmin && { key: 'home', label: (<Link href={`/admin/${session.user.id}`}>หน้าแรก</Link>), icon: <HomeOutlined /> },
         isAdmin && { key: 'faculty', label: (<Link href="/admin/faculty">คณะ</Link>), icon: <TeamOutlined /> },
@@ -80,9 +65,9 @@ const Sidebar = () => {
             label: 'จัดการบัญชีผู้ใช้งาน',
             icon: <UserOutlined />,
             children: [
-                { key: 'usersCreate', label: (<Link href="/admin/usersCreate">เพิ่มบัญชีผู้ใช้งาน</Link>), icon: <UserAddOutlined /> },
-                { key: 'usersEdit', label: (<Link href="/admin/usersEdit">แก้ไขบัญชีผู้ใช้งาน</Link>), icon: <UserSwitchOutlined /> },
-                { key: 'usersDelete', label: (<Link href="/admin/usersDelete">ลบบัญชีผู้ใช้งาน</Link>), icon: <UserDeleteOutlined /> },
+                { key: 'usersCreate', label: (<Link href="/admin/usersCreate">เพิ่มบัญชีผู้ใช้งาน</Link>), icon: <PlusOutlined /> },
+                { key: 'usersEdit', label: (<Link href="/admin/usersEdit">แก้ไขบัญชีผู้ใช้งาน</Link>), icon: <EditOutlined /> },
+                { key: 'usersDelete', label: (<Link href="/admin/usersDelete">ลบบัญชีผู้ใช้งาน</Link>), icon: <DeleteOutlined /> },
             ],
         },
         isAdmin && {
@@ -95,7 +80,16 @@ const Sidebar = () => {
                 { key: 'subjectDelete', label: (<Link href="/admin/subjectDelete">ลบรายวิชา</Link>), icon: <DeleteOutlined /> },
             ],
         },
-        isAdmin && { key: 'activityHeader', label: (<Link href="/admin/activityHeader">กิจกรรมทั้งหมด</Link>), icon: <ProjectOutlined /> },
+        isAdmin && {
+            key: 'activityHeader',
+            label: 'กิจกรรมทั้งหมด',
+            icon: <ProjectOutlined />,
+            children: [
+                { key: 'activityHeaderCreate', label: (<Link href="/admin/activityHeaderCreate">เพิ่มกิจกรรม</Link>), icon: <PlusOutlined /> },
+                { key: 'activityHeaderEdit', label: (<Link href="/admin/activityHeaderEdit">แก้ไขกิจกรรม</Link>), icon: <EditOutlined /> },
+                { key: 'activityHeaderDelete', label: (<Link href="/admin/activityHeaderDelete">ลบกิจกรรม</Link>), icon: <DeleteOutlined /> },
+            ],
+        },
         isAdmin && {
             key: 'allwork',
             label: 'ผลงานทั้งหมด',
@@ -108,12 +102,58 @@ const Sidebar = () => {
         },
     ];
 
+    const userMenuItems = [
+        isUser && { key: 'Home', label: (<Link href={`/users/${session.user.id}`}>หน้าแรก</Link>), icon: <HomeOutlined /> },
+        isUser && {
+            key: 'Schedule',
+            label: 'บันทึกการสอน',
+            icon: <ScheduleOutlined />,
+            children: [
+                { key: 'TCreate', label: (<Link href="/users/teachingCreate">เพิ่มวิชาสอน</Link>), icon: <PlusOutlined /> },
+                { key: 'TEdit', label: (<Link href={`/users/teachingEdit/${session.user.id}`}>แก้ไขวิชาสอน</Link>), icon: <EditOutlined /> },
+                { key: 'TDelete', label: (<Link href={`/users/teachingDelete/${session.user.id}`}>ลบวิชาสอน</Link>), icon: <DeleteOutlined /> },
+            ],
+        },
+        isUser && {
+            key: 'Activity',
+            label: 'ผลงานกิจกรรม',
+            icon: <ProjectOutlined />,
+            children: [
+                { key: 'ACreate', label: (<Link href="/users/activityCreate">เพิ่มผลงานกิจกรรม</Link>), icon: <PlusOutlined /> },
+                { key: 'AEdit', label: (<Link href={`/users/activityEdit/${session.user.id}`}>แก้ไขผลงานกิจกรรม</Link>), icon: <EditOutlined /> },
+                { key: 'ADelete', label: (<Link href={`/users/activityDelete/${session.user.id}`}>ลบผลงานกิจกรรม</Link>), icon: <DeleteOutlined /> },
+            ],
+        },
+        isUser && {
+            key: 'Research',
+            label: 'ผลงานวิจัย',
+            icon: <FileOutlined />,
+            children: [
+                { key: 'RCreate', label: (<Link href="/users/researchCreate}">เพิ่มผลงานวิจัย</Link>), icon: <PlusOutlined /> },
+                { key: 'REdit', label: (<Link href={`/users/researchEdit/${session.user.id}`}>แก้ไขผลงานวิจัย</Link>), icon: <EditOutlined /> },
+                { key: 'RDelete', label: (<Link href={`/users/researchDelete/${session.user.id}`}>ลบผลงานวิจัย</Link>), icon: <DeleteOutlined /> },
+            ],
+        },
+    ];
+
     const employeeMenuItems = [
-        isEmployee && isUser && { key: 'employee', label: (<Link href="/users/employee">สำรวจบุคลากร</Link>), icon: <TeamOutlined /> },
+        isEmployee && isUser && { key: 'employee', label: (<Link href="/users/employee">สำรวจบุคลากร</Link>), icon: <SearchOutlined /> },
     ];
 
     const overviewMenuItem = [
-        isOverview && isUser && { key: 'overview', label: (<Link href="/users/overview">ภาพรวมบุคลากร</Link>), icon: <TeamOutlined /> },
+        isOverview && isUser && { key: 'overview', label: (<Link href="/users/overview">ภาพรวมบุคลากร</Link>), icon: <BarChartOutlined /> },
+    ];
+
+    const auditMenuItem = [
+        isAudit && isUser && {
+            key: 'audit',
+            label: 'ตรวจสอบผลงาน',
+            icon: <UserOutlined />,
+            children: [
+                isApproveResearch && isUser && { key: 'auditActivity', label: (<Link href="/users/evaluation/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
+                isApproveActivity && isUser && { key: 'auditResearch', label: (<Link href="/users/evaluation/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> }
+            ],
+        },
     ];
 
     const approveMenuItem = [
@@ -122,20 +162,8 @@ const Sidebar = () => {
             label: 'อนุมัติผลงาน',
             icon: <UserOutlined />,
             children: [
-                isApproveResearch && isUser && { key: 'evaluationA', label: (<Link href="/users/evaluation/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
-                isApproveActivity && isUser && { key: 'evaluationR', label: (<Link href="/users/evaluation/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> }
-            ],
-        },
-    ];
-
-    const auditMenuItem = [
-        isAudit && isUser && {
-            key: 'approve',
-            label: 'ตรวจสอบผลงาน',
-            icon: <UserOutlined />,
-            children: [
-                isApproveResearch && isUser && { key: 'evaluationA', label: (<Link href="/users/evaluation/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
-                isApproveActivity && isUser && { key: 'evaluationR', label: (<Link href="/users/evaluation/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> }
+                isApproveActivity && isUser && { key: 'approveActivity', label: (<Link href="/users/evaluation/activity">ผลงานกิจกรรม</Link>), icon: <ProjectOutlined /> },
+                isApproveResearch && isUser && { key: 'approveResearch', label: (<Link href="/users/evaluation/research">ผลงานวิจัย</Link>), icon: <FileOutlined /> }
             ],
         },
     ];

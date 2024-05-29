@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { Descriptions, Card, Input, Button, Modal } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilePdf, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faFilePdf, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../components/sweetalert';
 import '/src/app/globals.css';
 import moment from 'moment';
 
@@ -18,7 +18,7 @@ const ActivityList = () => {
     useEffect(() => {
         const fetchActivities = async () => {
             try {
-                const res = await fetch('/api/activity');
+                const res = await fetch('/api/activityHeader');
                 const data = await res.json();
                 setActivities(data);
             } catch (error) {
@@ -37,6 +37,22 @@ const ActivityList = () => {
 
     const closeModal = () => {
         setIsModalVisible(false);
+    };
+
+    const handleDelete = async (id) => {
+        ConfirmAlert('คุณแน่ใจที่จะลบข้อมูลนี้?', 'การดำเนินการนี้ไม่สามารถย้อนกลับได้', async () => {
+            try {
+                const response = await fetch(`/api/activityHeader/${id}`, {
+                    method: 'DELETE',
+                });
+                if (!response.ok) throw new Error('Failed to delete the activity.');
+                SuccessAlert('ลบสำเร็จ!', 'ข้อมูลถูกลบแล้ว');
+                setActivities(activities.filter(activity => activity.id !== id));
+            } catch (error) {
+                console.error('Failed to delete the activity', error);
+                WarningAlert('ผิดพลาด!', 'ไม่สามารถลบข้อมูลได้');
+            }
+        });
     };
 
     if (isLoading) {
@@ -69,18 +85,6 @@ const ActivityList = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         style={{ borderColor: '#2D427C', fontSize: '14px' }}
                     />
-                    <Link href="activity/create">
-                        <Button
-                            className="text-base w-full p-1 border rounded-xl"
-                            style={{
-                                backgroundColor: '#2D427C',
-                                borderColor: '#2D427C',
-                                color: 'white',
-                            }}
-                        >
-                            เพิ่มกิจกรรม
-                        </Button>
-                    </Link>
                 </div>
             </div>
             {filteredActivities.length > 0 ? (
@@ -88,10 +92,9 @@ const ActivityList = () => {
                     <Card
                         key={activity.id}
                         className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
-                        title={`กิจกรรม ${index + 1}`}
+                        title={`${activity.name}`}
                     >
                         <Descriptions layout="horizontal" size="small" className="small-descriptions">
-                            <Descriptions.Item label="ชื่อกิจกรรม">{activity.name}</Descriptions.Item>
                             <Descriptions.Item label="ประเภท">{activity.type === 'culture' ? 'ศิลปะวัฒนธรรม' : 'บริการวิชาการ'}</Descriptions.Item>
                             <Descriptions.Item label="เวลาเริ่ม">{moment(activity.start).format('DD-MM-YYYY HH:mm')}</Descriptions.Item>
                             <Descriptions.Item label="เวลาจบ">{moment(activity.end).format('DD-MM-YYYY HH:mm')}</Descriptions.Item>
@@ -108,12 +111,11 @@ const ActivityList = () => {
                             </Descriptions.Item>
                         </Descriptions>
                         <div className="text-right">
-                            <Link href={`/admin/activity/${activity.id}`}>
-                                <Button 
-                                    type="link"
-                                    icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}
-                                />
-                            </Link>
+                            <Button
+                                type="button"
+                                onClick={() => handleDelete(activity.id)}
+                                icon={<FontAwesomeIcon icon={faTrash} style={{ fontSize: '16px', color: '#FF0000' }} />}
+                            />
                         </div>
                     </Card>
                 ))
@@ -133,6 +135,7 @@ const ActivityList = () => {
                     </Button>
                 ]}
                 style={{ top: 20 }}
+                width="70%"
             >
                 {modalContent ? (
                     <iframe src={modalContent} loading="lazy" style={{ width: '100%', height: '75vh' }}></iframe>

@@ -109,7 +109,7 @@ const EditFaculty = ({ params }) => {
               onChange={(e) => setFacultyName(e.target.value)}
               className=" mb-4 "
               showCount 
-              maxLength={100}
+              maxLength={30}
               style={{ 
                 flexGrow: 1, 
                 flexShrink: 1, 

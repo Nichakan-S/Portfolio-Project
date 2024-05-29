@@ -93,7 +93,7 @@ const CreatePosition = () => {
                                 onChange={(e) => setName(e.target.value)}
                                 className="flex-grow mr-4"
                                 showCount
-                                maxLength={100}
+                                maxLength={50}
                                 style={{
                                     flexGrow: 1,
                                     flexShrink: 1,

@@ -154,7 +154,7 @@ const EditMajor = ({ params }) => {
                                 onChange={(e) => setMajorName(e.target.value)}
                                 className="flex-grow mr-4 mb-4"
                                 showCount
-                                maxLength={250}
+                                maxLength={50}
                                 style={{
                                     flexGrow: 1,
                                     flexShrink: 1,

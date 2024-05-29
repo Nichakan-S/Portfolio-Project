@@ -60,7 +60,7 @@ const CreateFaculty = () => {
                             onChange={(e) => setFacultyName(e.target.value)}
                             className="flex-grow mr-8 mb-4 "
                             showCount 
-                            maxLength={100} 
+                            maxLength={30} 
                             style={{ 
                                 flexGrow: 1, 
                                 flexShrink: 1, 
