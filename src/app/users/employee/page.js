@@ -38,9 +38,9 @@ const UserList = () => {
 
     const filtereduser = user.filter((user) => {
         return user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.faculty?.facultyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.major?.faculty?.facultyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.major?.majorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.rank?.rankname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.position?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.lastname.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.role.toLowerCase().includes(searchTerm.toLowerCase());
@@ -88,7 +88,7 @@ const UserList = () => {
                                         </td>
                                         <td className="w-1/7 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {user.faculty?.facultyName}
+                                                {user.major?.faculty?.facultyName}
                                             </div>
                                         </td>
                                         <td className="w-1/7 px-6 py-4 whitespace-nowrap">
@@ -98,7 +98,7 @@ const UserList = () => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {user.rank?.rankname}
+                                                {user.position?.name}
                                             </div>
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
@@ -113,12 +113,12 @@ const UserList = () => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="cursor-pointer">
-                                                {user.user_image ? (
+                                                {user.userImage ? (
                                                     <Space wrap size={16}>
                                                         <Avatar
                                                             size={40}
-                                                            src={user.user_image || '/image/none_image.png'}
-                                                            icon={!user.user_image && <UserOutlined />}
+                                                            src={user.userImage || '/image/none_image.png'}
+                                                            icon={!user.userImage && <UserOutlined />}
                                                             onError={() => {
                                                                 return true;
                                                             }}

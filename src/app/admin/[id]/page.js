@@ -78,7 +78,7 @@ const AdminView = () => {
 
     const fetchOverview = async () => {
         try {
-            const res = await fetch('/api/userOverview');
+            const res = await fetch('/api/userWorkArchive');
             const data = await res.json();
             setOverview(data);
         } catch (error) {

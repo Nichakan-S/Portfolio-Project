@@ -10,7 +10,7 @@ const ResearchType = {
     posterpresent: 'โปสเตอร์'
 };
 const audit = {
-    wait: 'รอ',
+    wait: 'รอตรวจ',
     pass: 'ผ่าน',
     fail: 'ไม่ผ่าน'
 };

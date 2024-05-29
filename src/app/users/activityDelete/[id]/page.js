@@ -5,7 +5,7 @@ import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sw
 import { Button, Input, Modal } from 'antd';
 
 const Status = {
-    wait: 'รอ',
+    wait: 'รอตรวจ',
     pass: 'ผ่าน',
     fail: 'ไม่ผ่าน'
 };

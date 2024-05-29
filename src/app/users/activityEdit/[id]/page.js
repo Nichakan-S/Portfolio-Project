@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Button, Input, Flex, Modal } from 'antd';
 
 const Status = {
-    wait: 'รอ',
+    wait: 'รอตรวจ',
     pass: 'ผ่าน',
     fail: 'ไม่ผ่าน'
 };

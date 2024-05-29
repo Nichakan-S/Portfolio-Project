@@ -65,7 +65,8 @@ const ActivityList = ({ params }) => {
         return activity.activity?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             activity.activity?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
             activity.activity?.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-            Status[activity.status].includes(searchTerm.toLowerCase());
+            Status[activity.audit].includes(searchTerm.toLowerCase())||
+            Status[activity.approve].includes(searchTerm.toLowerCase());
     });
 
     return (
@@ -90,8 +91,9 @@ const ActivityList = ({ params }) => {
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อกิจกรรม</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปี</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
+                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">อนุมัติ</th>
                             <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สถานะ</th>
                         </tr>
                     </thead>
                 </table>
@@ -121,9 +123,15 @@ const ActivityList = ({ params }) => {
                                         </td>
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
-                                                {Status[activity.status]}
+                                                {Status[activity.audit]}
                                             </div>
                                         </td>
+                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                {Status[activity.approve]}
+                                            </div>
+                                        </td>
+
                                         <td className="w-1/5 px-6 py-4 whitespace-nowrap">
                                             <Button
                                                 onClick={() => showModal(activity.file)}

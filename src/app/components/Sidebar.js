@@ -18,7 +18,9 @@ import {
     EditOutlined,
     DeleteOutlined,
     BarChartOutlined,
-    SearchOutlined
+    SearchOutlined,
+    PieChartOutlined,
+    LineChartOutlined
 } from '@ant-design/icons';
 
 const Sidebar = () => {
@@ -141,7 +143,15 @@ const Sidebar = () => {
     ];
 
     const overviewMenuItem = [
-        isOverview && isUser && { key: 'overview', label: (<Link href="/users/overview">ภาพรวมบุคลากร</Link>), icon: <BarChartOutlined /> },
+        isOverview && isUser && {
+            key: 'overview',
+            label: 'กราฟภาพรวม',
+            icon: <BarChartOutlined />,
+            children: [
+                isOverview && isUser && { key: 'workArchive', label: (<Link href="/users/overview/workArchive">กราฟผลงาน</Link>), icon: <LineChartOutlined /> },
+                isOverview && isUser && { key: 'activityArchive', label: (<Link href="/users/overview/activityArchive">กราฟกิจกรรม</Link>), icon: <PieChartOutlined /> }
+            ],
+        },
     ];
 
     const auditMenuItem = [

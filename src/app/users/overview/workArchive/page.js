@@ -6,7 +6,7 @@ import 'chart.js/auto';
 
 const { Option } = Select;
 
-const Overview = () => {
+const WorkArchive = () => {
     const [overview, setOverview] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedYears, setSelectedYears] = useState([]);
@@ -33,7 +33,7 @@ const Overview = () => {
 
     const fetchOverview = async () => {
         try {
-            const res = await fetch('/api/userOverview');
+            const res = await fetch('/api/userWorkArchive');
             const data = await res.json();
             setOverview(data);
         } catch (error) {
@@ -118,4 +118,4 @@ const Overview = () => {
     );
 };
 
-export default Overview;
+export default WorkArchive;
