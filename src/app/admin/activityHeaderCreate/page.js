@@ -1,74 +1,78 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { SuccessAlert, WarningAlert } from '../../components/sweetalert';
-import { Button, Input, Select, Card, Row, Col, DatePicker, Modal, Upload } from 'antd';
+import { Input, Button, Upload, Modal, Select, Col, Card, Row, DatePicker } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
-import moment from 'moment';
 
-const CreateActivityHeader = () => {
+const CreateTeaching = () => {
+    const { data: session } = useSession();
+    const [teaching, setTeaching] = useState([]);
+    const [selectedSubjects, setSelectedSubjects] = useState('');
     const [name, setName] = useState('');
     const [type, setType] = useState('');
-    const [file, setFile] = useState('');
     const [start, setStart] = useState(null);
     const [end, setEnd] = useState(null);
     const [year, setYear] = useState('');
+    const [audit, setAudit] = useState('wait');
     const [modalVisible, setModalVisible] = useState(false);
     const [previewFile, setPreviewFile] = useState('');
 
     useEffect(() => {
-        const fetchTeaching = async () => {
-            try {
-                const response = await fetch('/api/subject');
-                const data = await response.json();
-                setTeaching(data);
-            } catch (error) {
-                console.error('Failed to fetch subjects', error);
-            }
+        const fetchteaching = async () => {
+            const response = await fetch('/api/subject');
+            const data = await response.json();
+            setTeaching(data);
         };
-        fetchTeaching();
+
+        fetchteaching();
     }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!start || !end) {
-            WarningAlert('ผิดพลาด!', 'กรุณาเลือกเวลาเริ่มและเวลาสิ้นสุด!');
-            return;
-        }
-
-        if (moment(end).isBefore(moment(start))) {
-            WarningAlert('ผิดพลาด!', 'เวลาเริ่มต้องไม่เกินเวลาสิ้นสุด!');
+        if (!selectedSubjects || !name || !type || !start || !end || !year || !audit) {
+            WarningAlert('ผิดพลาด!', 'กรุณากรอกข้อมูลให้ครบทุกช่อง');
             return;
         }
 
         try {
-            const formattedStart = moment(start).format('YYYY-MM-DD HH:mm');
-            const formattedEnd = moment(end).format('YYYY-MM-DD HH:mm');
-            
-            const response = await fetch('/api/activityHeader', {
+            const response = await fetch('/api/teaching', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({
-                    name,
-                    type,
-                    file,
-                    start: formattedStart,
-                    end: formattedEnd,
-                    year: parseInt(year, 10)
+                    starttime: start.toISOString(),
+                    endtime: end.toISOString(),
+                    day: start.format('ddd').toLowerCase(),
+                    group: 'A', // Assuming group is fixed or set dynamically elsewhere
+                    term: 1, // Assuming term is fixed or set dynamically elsewhere
+                    year: parseInt(year, 10),
+                    audit,
+                    subjectsId: selectedSubjects,
+                    userId: session.user.id
                 })
             });
 
             if (!response.ok) throw new Error('Something went wrong');
 
             SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
+            window.history.back();
         } catch (error) {
             console.error(error);
             WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
         }
     };
+
+    const handleChange = (value) => {
+        setSelectedSubjects(value);
+    };
+
+    const teachingOptions = teaching.map(subject => ({
+        label: subject.name,
+        value: subject.id,
+    }));
 
     const customRequest = (options) => {
         const { file } = options;
@@ -79,20 +83,16 @@ const CreateActivityHeader = () => {
         return file.type === 'application/pdf';
     };
 
-    const handleFileInputClick = () => {
-        document.getElementById('hiddenFileInput').click();
-    };
-
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <h1 className="text-3xl font-bold mb-6" style={{ color: "#2D427C" }}>เพิ่มการสอน</h1>
+            <h1 className="text-2xl font-semibold mb-6">เพิ่มการสอน</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl">
                     <Row gutter={16}>
-                        <Col span={24}>
-                            <div style={{ marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <label htmlFor="name" className="block text-base font-medium mr-4" style={{ width: '15%' }}>
+                        <Col span={12}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                    <label htmlFor="name" className="block text-base font-medium mr-4 mb-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ชื่อกิจกรรม : </span>
                                     </label>
                                     <Input
@@ -103,28 +103,30 @@ const CreateActivityHeader = () => {
                                         required
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="flex-grow"
+                                        className="flex-grow mr-4 mb-4"
                                         style={{
-                                            width: '85%',
-                                            borderColor: '#DADEE9',
-                                            fontSize: '16px',
-                                            height: '40px'
+                                            flexGrow: 1,
+                                            flexShrink: 1,
+                                            flexBasis: '50%',
+                                            padding: '8px',
+                                            minWidth: '300px'
                                         }}
                                     />
                                 </div>
                             </div>
-                            <div style={{ marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <label htmlFor="type" className="block text-base font-medium mr-4" style={{ width: '15%' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                    <label htmlFor="type" className="block text-base font-medium mr-4 mb-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ประเภท : </span>
                                     </label>
                                     <Select
-                                        id="type"
                                         value={type}
+                                        size="large"
                                         onChange={(value) => setType(value)}
                                         required
+                                        className="flex-grow mr-4 mb-4 custom-select"
                                         style={{
-                                            width: '85%',
+                                            width: '50%',
                                             borderColor: '#DADEE9',
                                             fontSize: '16px',
                                             height: '40px'
@@ -137,53 +139,49 @@ const CreateActivityHeader = () => {
                                     </Select>
                                 </div>
                             </div>
-                            <div style={{ marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <label htmlFor="start" className="block text-base font-medium mr-4" style={{ width: '15%' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                    <label htmlFor="start" className="block text-base font-medium mr-4 mb-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เวลาเริ่ม : </span>
                                     </label>
                                     <DatePicker
-                                        value={start}
+                                        selected={start}
                                         onChange={(date) => setStart(date)}
-                                        showTime
-                                        format="DD-MM-YYYY HH:mm"
+                                        showTimeSelect
+                                        dateFormat="dd-MM-yyyy HH:mm"
+                                        timeFormat="HH:mm"
+                                        timeIntervals={15}
                                         required
-                                        style={{
-                                            width: '85%',
-                                            borderColor: '#DADEE9',
-                                            fontSize: '16px',
-                                            height: '40px'
-                                        }}
+                                        calendarClassName="border rounded-lg shadow-md"
+                                        className="w-full border rounded-lg py-2 px-4 flex-grow mr-4 mb-4"
                                     />
                                 </div>
                             </div>
-                            <div style={{ marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <label htmlFor="end" className="block text-base font-medium mr-4" style={{ width: '15%' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                    <label htmlFor="end" className="block text-base font-medium mr-4 mb-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> สิ้นสุดเวลา : </span>
                                     </label>
                                     <DatePicker
-                                        value={end}
+                                        selected={end}
                                         onChange={(date) => setEnd(date)}
-                                        showTime
-                                        format="DD-MM-YYYY HH:mm"
+                                        showTimeSelect
+                                        dateFormat="dd-MM-yyyy HH:mm"
+                                        timeFormat="HH:mm"
+                                        timeIntervals={15}
                                         required
-                                        style={{ห
-                                            width: '85%',
-                                            borderColor: '#DADEE9',
-                                            fontSize: '16px',
-                                            height: '40px'
-                                        }}
+                                        calendarClassName="border rounded-lg shadow-md"
+                                        className="w-full border rounded-lg py-2 px-4 flex-grow mr-4 mb-4"
                                     />
                                 </div>
                             </div>
-                            <div style={{ marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <label htmlFor="year" className="block text-base font-medium mr-4" style={{ width: '15%' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '50%' }}>
+                                    <label htmlFor="year" className="block text-base font-medium mr-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ปี : </span>
                                     </label>
                                     <Input
-                                        placeholder="ปี"
+                                        placeholder="เลือกปี"
                                         size="large"
                                         type="number"
                                         name="year"
@@ -191,79 +189,57 @@ const CreateActivityHeader = () => {
                                         required
                                         value={year}
                                         onChange={(e) => setYear(e.target.value)}
-                                        style={{
-                                            width: '85%',
-                                            borderColor: '#DADEE9',
-                                            fontSize: '16px',
-                                            height: '40px'
-                                        }}
+                                        style={{ width: 200 }}
                                     />
                                 </div>
                             </div>
-                            <div style={{ marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <label htmlFor="file" className="block text-base font-medium mr-4" style={{ width: '15%' }}>
+                        </Col>
+                        <Col span={12}>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                    <label htmlFor="file" className="block text-base font-medium mr-4 mb-4">
                                         <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ไฟล์ PDF : </span>
                                     </label>
-                                    <div style={{ width: '85%', display: 'flex', alignItems: 'center' }}>
+                                    <Upload
+                                        customRequest={customRequest}
+                                        beforeUpload={beforeUpload}
+                                        showUploadList={false}
+                                    >
                                         <Button
-                                            type="primary"
                                             icon={<UploadOutlined />}
-                                            onClick={handleFileInputClick}
-                                            style={{ backgroundColor: "white", color: "black", borderColor: "gray" }}
-                                            className="shadow-xl"
-                                        >
-                                            Upload PDF
-                                        </Button>
-                                        <input
-                                            type="file"
-                                            id="hiddenFileInput"
-                                            style={{ display: 'none' }}
-                                            accept=".pdf"
-                                            onChange={(e) => {
-                                                const file = e.target.files[0];
-                                                if (beforeUpload(file)) {
-                                                    customRequest({ file });
-                                                }
-                                            }}
-                                        />
-                                        <Button onClick={() => setModalVisible(true)} style={{ marginLeft: 10 }}>
-                                            ดูตัวอย่างไฟล์ PDF
-                                        </Button>
-                                        <Modal
-                                            title="ตัวอย่างไฟล์ PDF"
-                                            open={modalVisible}
-                                            onCancel={() => setModalVisible(false)}
-                                            footer={[]}
-                                            width="70%"
-                                            style={{ top: 20 }}
-                                        >
-                                            {previewFile && (
-                                                <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
-                                            )}
-                                        </Modal>
-                                    </div>
+                                            className="mr-4 mb-4">เลือกไฟล์</Button>
+                                    </Upload>
+                                    <Button onClick={() => setModalVisible(true)} className="mr-4 mb-4">ดูตัวอย่างไฟล์ PDF</Button>
+                                    <Modal
+                                        title="ตัวอย่างไฟล์ PDF"
+                                        open={modalVisible}
+                                        onCancel={() => setModalVisible(false)}
+                                        footer={[]}
+                                        width="70%"
+                                        style={{ top: 20 }}
+                                    >
+                                        {previewFile && (
+                                            <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
+                                        )}
+                                    </Modal>
                                 </div>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', width: '102%', padding: '15px' }}>
+                                <Button className="inline-flex justify-center mr-4 "
+                                    type="primary"
+                                    size="middle"
+                                    onClick={handleSubmit}
+                                    style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
+                                >
+                                    บันทึก
+                                </Button>
                             </div>
                         </Col>
                     </Row>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '15px' }}>
-                        <Button
-                            type="primary"
-                            size="middle"
-                            onClick={handleSubmit}
-                            style={{
-                                backgroundColor: '#02964F',
-                                borderColor: '#02964F'
-                            }}
-                        >
-                            บันทึก
-                        </Button>
-                    </div>
                 </Card>
             </form>
         </div>
     );
 };
 
-export default CreateActivityHeader;
+export default CreateTeaching;
