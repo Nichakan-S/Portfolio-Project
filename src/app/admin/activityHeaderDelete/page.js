@@ -7,6 +7,7 @@ import { faFilePdf, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../components/sweetalert';
 import '/src/app/globals.css';
 import moment from 'moment';
+import SearchInput from '/src/app/components/SearchInput';
 
 const ActivityList = () => {
     const [activities, setActivities] = useState([]);
@@ -75,17 +76,12 @@ const ActivityList = () => {
     return (
         <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">กิจกรรม</h1>
-                <div className="flex items-center">
-                    <Input
-                        className="flex-grow mr-2 p-1 text-base border rounded-xl custom-input"
-                        placeholder="ค้นหากิจกรรม..."
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ borderColor: '#2D427C', fontSize: '14px' }}
-                    />
-                </div>
+                <h1 className="text-3xl font-semibold" style={{ color: '#2D427C' }}>กิจกรรม</h1>
+                <SearchInput
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="ค้นหากิจกรรม..."
+                />
             </div>
             {filteredActivities.length > 0 ? (
                 filteredActivities.map((activity, index) => (

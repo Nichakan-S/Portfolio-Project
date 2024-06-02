@@ -134,7 +134,7 @@ const AdminView = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold ml-4">ผลงานบุคลากรทั้งหมด</h1>
             </div>
-            <Card className="max-w-6xl mx-4 px-2 shadow-2xl">
+            <Card className="max-w-6xl mx-4 px-2 shadow-md">
                 {chartData ? (
                     <div className=" h-60 w-full flex">
                         <Line data={chartData} options={{ maintainAspectRatio: false }} />
@@ -159,19 +159,19 @@ const AdminView = () => {
             </Card>
             <div className="px-4">
                 <div className="flex mt-8 w-full h-32">
-                    <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1 flex flex-col justify-between">
+                    <div className="p-4 mr-4 bg-white rounded-lg shadow-md flex-1 flex flex-col justify-between">
                         <div className="text-gray-500 text-sm">ผลงานทั้งหมด</div>
                         <div className="text-2xl font-bold text-right">{activity.length + research.length}</div>
                     </div>
-                    <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1 flex flex-col justify-between">
+                    <div className="p-4 mr-4 bg-white rounded-lg shadow-md flex-1 flex flex-col justify-between">
                         <div className="text-gray-500 text-sm">ผลงานวิจัย</div>
                         <div className="text-2xl font-bold text-right">{research.length}</div>
                     </div>
-                    <div className="p-4 mr-4 bg-white rounded-lg shadow-xl flex-1 flex flex-col justify-between">
+                    <div className="p-4 mr-4 bg-white rounded-lg shadow-md flex-1 flex flex-col justify-between">
                         <div className="text-gray-500 text-sm">ผลงานกิจกรรม</div>
                         <div className="text-2xl font-bold text-right">{activity.length}</div>
                     </div>
-                    <div className="p-4 bg-white rounded-lg shadow-xl flex-1 flex flex-col justify-between">
+                    <div className="p-4 bg-white rounded-lg shadow-md flex-1 flex flex-col justify-between">
                         <div className="text-gray-500 text-sm">วิชาทั้งหมด</div>
                         <div className="text-2xl font-bold text-right">{teaching.length}</div>
                     </div>

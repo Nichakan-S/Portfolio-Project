@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button, Card, Descriptions, Empty , Tag} from 'antd';
-import { EditOutlined } from '@ant-design/icons';
 import SearchInput from '/src/app/components/SearchInput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';

@@ -191,7 +191,7 @@ const Sidebar = () => {
 
     if (isLoading) {
         return (
-            <div className="h-screen w-64 bg-[#000c17] p-4">
+            <div className="h-screen w-64 bg-[#091847] p-4">
                 <div className="flex items-center mb-2">
                     <div className="rounded-full bg-gray-400 w-12 h-12 animate-pulse"></div>
                     <div className="ml-4 bg-gray-400 w-32 h-6 rounded py-4 animate-pulse"></div>
@@ -206,15 +206,15 @@ const Sidebar = () => {
     }
 
     return (
-        <div className="h-screen w-64 bg-[#000c17] p-4">
+        <div className="h-screen w-64 bg-[#091847] py-4 pl-4">
             <div className="flex items-center mb-2">
                 <Image src="/image/Newchandralogo1.png" alt="Description" width={40} height={40} />
-                <h1 className="text-xl font-bold ml-2 text-gray-300">Chandra</h1>
+                <h1 className="text-xl font-bold ml-2 text-[#eab308]">CHANDRA-CRU</h1>
             </div>
             <Menu
                 onClick={onClick}
                 onOpenChange={onOpenChange}
-                className="bg-[#000c17] text-base"
+                className="bg-[#091847] text-base text-[#eab308]"
                 selectedKeys={[selectedKey]}
                 openKeys={openKeys}
                 mode="inline"
@@ -224,7 +224,7 @@ const Sidebar = () => {
                         fontWeight: item.key === selectedKey ? 800 : 300,
                     }
                 }))}
-                theme="dark"
+                theme="theme"
             />
         </div>
     );

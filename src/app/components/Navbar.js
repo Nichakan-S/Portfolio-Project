@@ -75,16 +75,16 @@ const Navbar = ({ isAdmin }) => {
   return (
     <div className="w-full">
       <nav className="p-6">
-        <div className="bg-yellow-400 shadow-xl w-full p-3 flex items-center justify-between rounded-lg">
+        <div className="bg-[#eab308] shadow-xl w-full p-3 flex items-center justify-between rounded-lg">
           <div className="flex items-center">
             <div className="ml-3">
-              <div className="text-xl text-black font-bold">Professor Portfolio - แฟ้มรวมผลงานอาจารย์</div>
+              <div className="text-xl text-[#091847] font-bold">Professor Portfolio - แฟ้มรวมผลงานอาจารย์</div>
             </div>
           </div>
           <div className="flex items-center relative">
             <div>
-              <div className="text-black">{`${user.position.name} ${user.prefix} ${user.username} ${user.lastname}`}</div>
-              <div className="text-right text-black">{user.email}</div>
+              <div className="text-[#091847]">{`${user.position.name} ${user.prefix} ${user.username} ${user.lastname}`}</div>
+              <div className="text-right text-[#091847]">{user.email}</div>
             </div>
             <div className="ml-4 relative">
               <div onClick={() => setDropdownOpen(!isDropdownOpen)} className="cursor-pointer">
@@ -111,13 +111,13 @@ const Navbar = ({ isAdmin }) => {
                 <div className="absolute right-0 w-48 bg-[#000c17] rounded-md shadow-xl z-10">
                   <button
                     onClick={handleSettingsClick}
-                    className="block w-full text-left px-4 py-2 text-sm text-white hover:text-yellow-400"
+                    className="block w-full text-left px-4 py-2 text-sm text-white hover:text-[#eab308]"
                   >
                     ตั้งค่าโปรไฟล์
                   </button>
                   <button
                     onClick={handleLogoutClick}
-                    className="block w-full text-left px-4 py-2 text-sm text-white hover:text-yellow-400"
+                    className="block w-full text-left px-4 py-2 text-sm text-white hover:text-[#eab308]"
                   >
                     ออกจากระบบ
                   </button>

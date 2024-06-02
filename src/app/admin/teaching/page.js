@@ -6,6 +6,8 @@ import { Descriptions, Card, Input, Button, Select } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import '/src/app/globals.css';
+import SearchInput from '/src/app/components/SearchInputAll.jsx';
+
 
 const DayEnum = {
     mon: 'จันทร์',
@@ -70,21 +72,22 @@ const TeachingList = () => {
     return (
         <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">บันนทึกการสอน</h1>
+                <h1 className="text-3xl font-bold mb-6" style={{ color: '#2D427C' }} >บันทึกการสอน</h1>
                 <div className="flex items-center mr-4">
-                    <Input
-                        className="flex-grow mr-2 p-1 text-base border rounded-xl custom-input"
-                        placeholder="ค้นหาบันนทึกการสอน..."
-                        type="text"
+                    <SearchInput
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ borderColor: '#2D427C', fontSize: '14px' }}
-                    />
+                        placeholder="ค้นหาบันทึกการสอน..."
+                        />
                     <Select
                         placeholder="เลือกปี"
                         value={year}
                         onChange={value => setYear(value)}
-                        className="flex-grow mr-2 w-48"
+                        className="select-custom flex-grow mr-2 w-48"
+                        style={{
+                            borderColor: '#4b70af',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                        }}
                     >
                         <Select.Option value="all">ทั้งหมด</Select.Option>
                         {uniqueYears.map(year => (
@@ -95,13 +98,26 @@ const TeachingList = () => {
                         placeholder="เลือกเทอม"
                         value={term}
                         onChange={value => setTerm(value)}
-                        className="flex-grow w-48"
+                        className="select-custom flex-grow w-48"
+                        style={{
+                            borderColor: '#4b70af',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                        }}
                     >
                         <Select.Option value="all">ทั้งหมด</Select.Option>
                         <Select.Option value="1">เทอม 1</Select.Option>
                         <Select.Option value="2">เทอม 2</Select.Option>
                         <Select.Option value="3">เทอม 3</Select.Option>
                     </Select>
+                    <style jsx>{`
+                        .select-custom .ant-select-selector {
+                            border-radius: 10px !important;
+                            border-color: #4b70af !important;
+                        }
+                        .select-custom .ant-select-arrow {
+                            color: #4b70af;
+                        }
+                    `}</style>
                 </div>
             </div>
             <div style={{ maxHeight: '65vh', overflowY: 'auto' }}>
