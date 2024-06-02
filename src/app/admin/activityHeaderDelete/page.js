@@ -68,56 +68,58 @@ const ActivityList = () => {
 
     const filteredActivities = activities.filter(activity => {
         return activity.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               activity.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               activity.start.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               activity.year.toLowerCase().includes(searchTerm.toLowerCase());
+            activity.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            activity.start.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            activity.year.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
     return (
         <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-semibold" style={{ color: '#2D427C' }}>กิจกรรม</h1>
+                <h1 className="text-3xl font-bold mb-6" style={{ color: "#2D427C" }}>ลบกิจกรรม</h1>
                 <SearchInput
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="ค้นหากิจกรรม..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="ค้นหากิจกรรม..."
                 />
             </div>
-            {filteredActivities.length > 0 ? (
-                filteredActivities.map((activity, index) => (
-                    <Card
-                        key={activity.id}
-                        className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
-                        title={`${activity.name}`}
-                    >
-                        <Descriptions layout="horizontal" size="small" className="small-descriptions">
-                            <Descriptions.Item label="ประเภท">{activity.type === 'culture' ? 'ศิลปะวัฒนธรรม' : 'บริการวิชาการ'}</Descriptions.Item>
-                            <Descriptions.Item label="เวลาเริ่ม">{moment(activity.start).format('DD-MM-YYYY HH:mm')}</Descriptions.Item>
-                            <Descriptions.Item label="เวลาจบ">{moment(activity.end).format('DD-MM-YYYY HH:mm')}</Descriptions.Item>
-                            <Descriptions.Item label="ปี">{activity.year}</Descriptions.Item>
-                            <Descriptions.Item label="ไฟล์">
-                                <Button 
-                                    onClick={() => showModal(activity.file)}
-                                    type="link"
-                                    style={{ border: 'none', padding: 0, color: '#FFD758' }}
-                                >
-                                    เปิดไฟล์
-                                    <FontAwesomeIcon icon={faFilePdf} style={{ fontSize: '16px', marginLeft: '8px' }} />
-                                </Button>
-                            </Descriptions.Item>
-                        </Descriptions>
-                        <div className="text-right">
-                            <Button
-                                type="button"
-                                onClick={() => handleDelete(activity.id)}
-                                icon={<FontAwesomeIcon icon={faTrash} style={{ fontSize: '16px', color: '#FF0000' }} />}
-                            />
-                        </div>
-                    </Card>
-                ))
-            ) : (
-                <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
-            )}
+            <div style={{ maxHeight: '65vh', overflowY: 'auto' }}>
+                {filteredActivities.length > 0 ? (
+                    filteredActivities.map((activity, index) => (
+                        <Card
+                            key={activity.id}
+                            className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
+                            title={`${activity.name}`}
+                        >
+                            <Descriptions layout="horizontal" size="small" className="small-descriptions">
+                                <Descriptions.Item label="ประเภท">{activity.type === 'culture' ? 'ศิลปะวัฒนธรรม' : 'บริการวิชาการ'}</Descriptions.Item>
+                                <Descriptions.Item label="เวลาเริ่ม">{moment(activity.start).format('DD-MM-YYYY HH:mm')}</Descriptions.Item>
+                                <Descriptions.Item label="เวลาจบ">{moment(activity.end).format('DD-MM-YYYY HH:mm')}</Descriptions.Item>
+                                <Descriptions.Item label="ปี">{activity.year}</Descriptions.Item>
+                                <Descriptions.Item label="ไฟล์">
+                                    <Button
+                                        onClick={() => showModal(activity.file)}
+                                        type="link"
+                                        style={{ border: 'none', padding: 0, color: '#FFD758' }}
+                                    >
+                                        เปิดไฟล์
+                                        <FontAwesomeIcon icon={faFilePdf} style={{ fontSize: '16px', marginLeft: '8px' }} />
+                                    </Button>
+                                </Descriptions.Item>
+                            </Descriptions>
+                            <div className="text-right">
+                                <Button
+                                    type="button"
+                                    onClick={() => handleDelete(activity.id)}
+                                    icon={<FontAwesomeIcon icon={faTrash} style={{ fontSize: '16px', color: '#FF0000' }} />}
+                                />
+                            </div>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
+                )}
+            </div>
             <Modal
                 title="Preview File"
                 open={isModalVisible}

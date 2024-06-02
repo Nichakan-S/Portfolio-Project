@@ -133,7 +133,7 @@ const EditActivity = ({ params }) => {
 
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <h1 className="text-2xl font-semibold mb-6">เพิ่มกิจกรรม</h1>
+            <h1 className="text-3xl font-bold mb-6" style={{ color: "#2D427C" }}>แก้ไขกิจกรรม</h1>
             <div style={{ maxHeight: '80vh', overflowY: 'auto' }}>
                 <form onSubmit={handleSubmit} className="space-y-6" style={{ maxHeight: '65vh', overflowY: 'auto' }}>
                     <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl">
@@ -225,9 +225,9 @@ const EditActivity = ({ params }) => {
                                     </div>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', width: '50%' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                         <label htmlFor="year" className="block text-base font-medium mr-4">
-                                            <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ปี : </span>
+                                            <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ปี พ.ศ. : </span>
                                         </label>
                                         <Input
                                             placeholder="เลือกปี"

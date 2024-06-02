@@ -14,7 +14,7 @@ const ResearchType = {
 };
 
 const Status = {
-    wait: 'รอ',
+    wait: 'รอตรวจ',
     pass: 'ผ่าน',
     fail: 'ไม่ผ่าน'
 };
@@ -50,9 +50,18 @@ const ResearchList = () => {
         );
     }
 
-    const statusTag = (value) => (
-        <Tag color={value ? 'green' : 'volcano'}>{value ? 'ผ่าน' : 'ไม่ผ่าน'}</Tag>
-    );
+    const statusTag = (value) => {
+        switch (value) {
+            case 'pass':
+                return <Tag color="green">{Status.pass}</Tag>;
+            case 'fail':
+                return <Tag color="volcano">{Status.fail}</Tag>;
+            case 'wait':
+                return <Tag color="geekblue">{Status.wait}</Tag>;
+            default:
+                return <Tag color="default">ไม่ทราบสถานะ</Tag>;
+        }
+    };
 
     const filteredResearch = research.filter((item) =>
         item.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -69,7 +78,7 @@ const ResearchList = () => {
                 <h1 className="text-3xl font-semibold" style={{ color: '#2D427C' }}>ผลงานวิจัย</h1>
                 <SearchInput
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)} // ตอนนี้ e คือ event ทั้งหมดที่มาจาก SearchInput
+                onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="ค้นหาผลงานวิจัย..."
                 />
 

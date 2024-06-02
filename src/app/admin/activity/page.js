@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Card, Descriptions, Input, Button, Modal } from 'antd';
+import { Card, Descriptions, Tag, Button, Modal } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -10,9 +10,15 @@ import SearchInput from '/src/app/components/SearchInputAll.jsx';
 import '/src/app/globals.css';
 
 const Status = {
-    wait: 'รอ',
+    wait: 'รอตรวจ',
     pass: 'ผ่าน',
     fail: 'ไม่ผ่าน'
+};
+
+const Type = {
+    culture: 'วัฒนธรรม',
+    service: 'บริการวิชาการ',
+    other: 'อื่นๆ'
 };
 
 const ActivityList = () => {
@@ -45,6 +51,19 @@ const ActivityList = () => {
 
     const closeModal = () => {
         setIsModalVisible(false);
+    };
+
+    const statusTag = (value) => {
+        switch (value) {
+            case 'pass':
+                return <Tag color="green">{Status.pass}</Tag>;
+            case 'fail':
+                return <Tag color="volcano">{Status.fail}</Tag>;
+            case 'wait':
+                return <Tag color="geekblue">{Status.wait}</Tag>;
+            default:
+                return <Tag color="default">ไม่ทราบสถานะ</Tag>;
+        }
     };
 
     if (isLoading) {
@@ -89,10 +108,10 @@ const ActivityList = () => {
                         >
                             <Descriptions layout="horizontal" size="small" className="small-descriptions">
                                 <Descriptions.Item label="ผู้ใช้">{activity.user?.username}</Descriptions.Item>
-                                <Descriptions.Item label="ประเภท">{activity.activity?.type}</Descriptions.Item>
+                                <Descriptions.Item label="ประเภท">{Type[activity.activity?.type]}</Descriptions.Item>
                                 <Descriptions.Item label="ปี">{activity.activity?.year}</Descriptions.Item>
-                                <Descriptions.Item label="ตรวจสอบ">{Status[activity.audit]}</Descriptions.Item>
-                                <Descriptions.Item label="อนุมัติ">{Status[activity.approve]}</Descriptions.Item>
+                                <Descriptions.Item label="ตรวจสอบ">{statusTag(activity.audit)}</Descriptions.Item>
+                                <Descriptions.Item label="อนุมัติ">{statusTag(activity.approve)}</Descriptions.Item>
                                 <Descriptions.Item label="ไฟล์">
                                     <Button onClick={() => showModal(activity.file)} type="link" icon={<FontAwesomeIcon icon={faFileAlt} />}>เปิดไฟล์</Button>
                                 </Descriptions.Item>
