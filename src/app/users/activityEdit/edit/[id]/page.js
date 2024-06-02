@@ -61,7 +61,7 @@ const EditActivity = ({ params }) => {
             if (!response.ok) throw new Error('Something went wrong');
 
             SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
-            setFile('');
+            window.history.back();
         } catch (error) {
             console.error(error);
             WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
@@ -160,7 +160,9 @@ const EditActivity = ({ params }) => {
                         beforeUpload={beforeUpload}
                         showUploadList={false}
                     >
-                        <Button icon={<UploadOutlined />}>เลือกไฟล์</Button>
+                        <Button
+                            icon={<UploadOutlined />}
+                            className="mr-4">เลือกไฟล์</Button>
                     </Upload>
                     <Button onClick={() => setModalVisible(true)}>ดูตัวอย่างไฟล์ PDF</Button>
                     <Modal

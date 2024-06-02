@@ -51,7 +51,7 @@ const EditPassUser = ({ params }) => {
     };
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4">
             <h1 className="text-2xl font-semibold mb-6">แก้ไขข้อมูลผู้ใช้</h1>
             <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
                 <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl" >

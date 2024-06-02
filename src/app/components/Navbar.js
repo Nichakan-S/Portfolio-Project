@@ -40,35 +40,29 @@ const Navbar = ({ isAdmin }) => {
   };
 
   const handleSettingsClick = () => {
-    router.push(`/users/setting/${session.user.id}`);
+    router.push(`/setting/${session.user.id}`);
   };
 
   if (isLoading) {
     return (
       <div className="w-full">
-      <nav className="p-6">
-        <div className="bg-yellow-400 shadow-xl w-full p-3 flex items-center justify-between rounded-lg">
-          <div className="flex items-center">
-            <div className="ml-3">
-              <div className="text-xl text-black font-bold">
-                <Skeleton.Input active={active} size={'default'} style={{ width: '400px' }} />
+        <nav className="p-6">
+          <div className="bg-yellow-400 shadow-xl w-full p-3 flex items-center justify-between rounded-lg">
+            <div className="flex items-center">
+              <div className="ml-3 bg-white bg-opacity-50 p-2 rounded h-6 w-52 animate-pulse"></div>
+            </div>
+            <div className="flex items-center ml-auto">
+              <div className="flex flex-col items-end">
+                <div className="bg-white bg-opacity-50 p-2 rounded h-6 w-60 animate-pulse"></div>
+                <div className="bg-white bg-opacity-50 p-2 rounded h-6 w-40 animate-pulse"></div>
+              </div>
+              <div className="ml-4">
+                <div className="rounded-full bg-white bg-opacity-50 w-12 h-12 animate-pulse"></div>
               </div>
             </div>
           </div>
-          <div className="flex items-center">
-            <div>
-              <div className="text-black"><Skeleton.Input active={active} size={'default'} /></div>
-              <div className="text-right text-black"><Skeleton.Input active={active} size={'default'} /></div>
-            </div>
-            <div className="ml-4">
-              <div >
-               <Skeleton.Avatar active={active} size={'large'} shape={avatarShape} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
+        </nav>
+      </div>
     );
   }
 

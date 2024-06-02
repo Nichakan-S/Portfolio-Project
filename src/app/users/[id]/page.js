@@ -135,17 +135,22 @@ const TeachingList = ({ params }) => {
     const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
     const calculateTotalTeachingHours = (teaching) => {
-        return teaching.reduce((total, session) => {
+        const totalMinutes = teaching.reduce((total, session) => {
             const startTime = session.starttime.split(':');
             const endTime = session.endtime.split(':');
             const startMinutes = parseInt(startTime[0]) * 60 + parseInt(startTime[1]);
             const endMinutes = parseInt(endTime[0]) * 60 + parseInt(endTime[1]);
-            const sessionHours = (endMinutes - startMinutes) / 60;
-            return total + sessionHours;
+            return total + (endMinutes - startMinutes);
         }, 0);
+    
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        return `${hours} ชั่วโมง ${minutes} นาที`;
     };
-
-    const totalTeachingHours = calculateTotalTeachingHours(teaching);
+    
+    const totalTeachingHours = calculateTotalTeachingHours(teaching); 
+    
+    
 
     const filteredTeaching = teaching.filter(t => 
         (selectedYear ? t.year === selectedYear : true) &&
@@ -170,7 +175,7 @@ const TeachingList = ({ params }) => {
     return (
         <div className="px-4">
             <div className="flex items-center mb-6">
-                <h1 className="text-2xl font-semibold mr-4">กราฟผลงานทั้งหมด</h1>
+                <h1 className="text-2xl font-semibold mr-4">ผลงานทั้งหมด</h1>
                 <Select
                     placeholder="เลือกปี"
                     onChange={value => setSelectedYear(value)}

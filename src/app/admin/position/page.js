@@ -76,7 +76,7 @@ const PositionList = () => {
             </Descriptions>
             <div className="text-right">
                 <Link
-                    href={`/admin/position/${position.id}`} style={{ color: '#FFD700'}} >
+                    href={`/admin/position/${pos.id}`} style={{ color: '#FFD700'}} >
                         แก้ไข
                     <Button
                         type="link"

@@ -57,9 +57,9 @@ const SubjectList = () => {
 
     const filteredSubjects = subjects.filter(subject => {
         return subject.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.nameEN.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               subject.major.majorName.toLowerCase().includes(searchTerm.toLowerCase());
+            subject.nameEN.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subject.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            subject.major.majorName.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
     return (
@@ -70,32 +70,34 @@ const SubjectList = () => {
                     value={searchTerm}
                     onChange={(value) => setSearchTerm(value)}
                     placeholder="ค้นหาวิชา..."
-                    />
+                />
             </div>
-            {filteredSubjects.length > 0 ? (
-                filteredSubjects.map((subject) => (
-                    <Card
-                        key={subject.id}
-                        className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
-                    >
-                        <Descriptions layout="horizontal" size="small" className="small-descriptions" column={2}>
-                        <Descriptions.Item label="ชื่อวิชาไทย">{subject.nameTH}</Descriptions.Item>
-                            <Descriptions.Item label="ชื่อวิชาอังกฤษ">{subject.nameEN}</Descriptions.Item>
-                            <Descriptions.Item label="รหัสวิชา">{subject.code}</Descriptions.Item>
-                            <Descriptions.Item label="สาขา">{subject.major.majorName}</Descriptions.Item>
-                        </Descriptions>
-                        <div className="text-right">
-                            <Button
-                                type="button"
-                                onClick={() => handleDelete(subject.id)}
-                                icon={<FontAwesomeIcon icon={faTrash} style={{ fontSize: '16px', color: '#FF0000' }} />}
-                            />
-                        </div>
-                    </Card>
-                ))
-            ) : (
-                <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
-            )}
+            <div style={{ maxHeight: '65vh', overflowY: 'auto' }}>
+                {filteredSubjects.length > 0 ? (
+                    filteredSubjects.map((subject) => (
+                        <Card
+                            key={subject.id}
+                            className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
+                        >
+                            <Descriptions layout="horizontal" size="small" className="small-descriptions" column={2}>
+                                <Descriptions.Item label="ชื่อวิชาไทย">{subject.nameTH}</Descriptions.Item>
+                                <Descriptions.Item label="ชื่อวิชาอังกฤษ">{subject.nameEN}</Descriptions.Item>
+                                <Descriptions.Item label="รหัสวิชา">{subject.code}</Descriptions.Item>
+                                <Descriptions.Item label="สาขา">{subject.major.majorName}</Descriptions.Item>
+                            </Descriptions>
+                            <div className="text-right">
+                                <Button
+                                    type="button"
+                                    onClick={() => handleDelete(subject.id)}
+                                    icon={<FontAwesomeIcon icon={faTrash} style={{ fontSize: '16px', color: '#FF0000' }} />}
+                                />
+                            </div>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
+                )}
+            </div>
         </div>
     );
 };

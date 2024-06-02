@@ -49,7 +49,7 @@ const CreateActivity = () => {
             SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
             setFile('');
             setSelectedActivity('');
-            setActivityRole('joiner');
+            setModalVisible('');
         } catch (error) {
             console.error(error);
             WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');

@@ -116,7 +116,7 @@ const EditActivity = ({ params }) => {
 
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <h1 className="text-2xl font-semibold mb-6">แก้ไขกิจกรรม</h1>
+            <h1 className="text-3xl font-bold mb-6" style={{ color: "#2D427C" }}>แก้ไขผลงานกิจกรรม</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                     <label htmlFor="activity" className="block text-base font-medium text-gray-700 mr-2 mb-4">
