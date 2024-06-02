@@ -49,6 +49,7 @@ const CreateActivity = () => {
 
             SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
             setFile('');
+            setModalVisible('');
         } catch (error) {
             console.error(error);
             WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
@@ -124,7 +125,7 @@ const CreateActivity = () => {
                     >
                         <Option value="joiner">ผู้เข้าร่วม</Option>
                         <Option value="operator">ผู้ดำเนินงาน</Option>
-                        
+
                     </Select>
                 </div>
                 <div>
@@ -136,7 +137,9 @@ const CreateActivity = () => {
                         beforeUpload={beforeUpload}
                         showUploadList={false}
                     >
-                        <Button icon={<UploadOutlined />}>เลือกไฟล์</Button>
+                        <Button
+                            icon={<UploadOutlined />}
+                            className="mr-4">เลือกไฟล์</Button>
                     </Upload>
                     <Button onClick={() => setModalVisible(true)}>ดูตัวอย่างไฟล์ PDF</Button>
                     <Modal

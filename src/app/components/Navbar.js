@@ -40,7 +40,7 @@ const Navbar = ({ isAdmin }) => {
   };
 
   const handleSettingsClick = () => {
-    router.push(`/users/setting/${session.user.id}`);
+    router.push(`/setting/${session.user.id}`);
   };
 
   if (isLoading) {

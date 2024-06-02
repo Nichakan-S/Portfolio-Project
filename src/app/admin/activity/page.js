@@ -117,7 +117,7 @@ const ActivityList = () => {
                                 </Descriptions.Item>
                             </Descriptions>
                             <div className="text-right">
-                                    <Link href={`/admin/teaching/${activity.id}`}>
+                                    <Link href={`/admin/activity/${activity.id}`}>
                                         <Button
                                             type="link"
                                             icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}

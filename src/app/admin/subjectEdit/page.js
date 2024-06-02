@@ -55,42 +55,44 @@ const SubjectList = () => {
                     value={searchTerm}
                     onChange={(value) => setSearchTerm(value)}
                     placeholder="ค้นหาวิชา..."
-                    />
+                />
             </div>
-            {filteredSubjects.length > 0 ? (
-                filteredSubjects.map((subject) => (
-                    <Card
-                        key={subject.id}
-                        className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
-                    >
-                        <Descriptions layout="horizontal" size="small" className="small-descriptions" column={2}>
-                            <Descriptions.Item label="ชื่อวิชาไทย">
-                                {subject.nameTH}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="ชื่อวิชาอังกฤษ">
-                                {subject.nameEN}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="รหัสวิชา">
-                                {subject.code}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="สาขา" >
-                                {subject.major.majorName}
-                            </Descriptions.Item>
+            <div style={{ maxHeight: '65vh', overflowY: 'auto' }}>
+                {filteredSubjects.length > 0 ? (
+                    filteredSubjects.map((subject) => (
+                        <Card
+                            key={subject.id}
+                            className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
+                        >
+                            <Descriptions layout="horizontal" size="small" className="small-descriptions" column={2}>
+                                <Descriptions.Item label="ชื่อวิชาไทย">
+                                    {subject.nameTH}
+                                </Descriptions.Item>
+                                <Descriptions.Item label="ชื่อวิชาอังกฤษ">
+                                    {subject.nameEN}
+                                </Descriptions.Item>
+                                <Descriptions.Item label="รหัสวิชา">
+                                    {subject.code}
+                                </Descriptions.Item>
+                                <Descriptions.Item label="สาขา" >
+                                    {subject.major.majorName}
+                                </Descriptions.Item>
 
-                        </Descriptions>
-                        <div className="text-right">
-                            <Link href={`/admin/subjectEdit/${subject.id}`} className="text-right">
-                                <Button
-                                    type="link"
-                                    icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}
-                                />
-                            </Link>
-                        </div>
-                    </Card>
-                ))
-            ) : (
-                <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
-            )}
+                            </Descriptions>
+                            <div className="text-right">
+                                <Link href={`/admin/subjectEdit/${subject.id}`} className="text-right">
+                                    <Button
+                                        type="link"
+                                        icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}
+                                    />
+                                </Link>
+                            </div>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
+                )}
+            </div>
         </div>
     );
 };

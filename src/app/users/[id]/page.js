@@ -175,7 +175,7 @@ const TeachingList = ({ params }) => {
     return (
         <div className="px-4">
             <div className="flex items-center mb-6">
-                <h1 className="text-2xl font-semibold mr-4">กราฟผลงานทั้งหมด</h1>
+                <h1 className="text-2xl font-semibold mr-4">ผลงานทั้งหมด</h1>
                 <Select
                     placeholder="เลือกปี"
                     onChange={value => setSelectedYear(value)}

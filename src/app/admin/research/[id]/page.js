@@ -143,7 +143,7 @@ const EditResearch = ({ params }) => {
 
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <h1 className="text-2xl font-semibold mb-6">เพิ่มงานวิจัยใหม่</h1>
+            <h1 className="text-2xl font-semibold mb-6">แก้ไขผลงานวิจัย</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                     <label htmlFor="nameTH" className="block text-base font-medium text-gray-700 mb-4">
