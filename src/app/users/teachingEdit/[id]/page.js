@@ -1,8 +1,12 @@
-'use client'
+'use client';
 
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Input, Select } from 'antd';
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Descriptions, Card, Input, Button, Select, Tag } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import '/src/app/globals.css';
+import SearchInput from '/src/app/components/SearchInputAll.jsx';
 
 const { Option } = Select;
 
@@ -22,12 +26,18 @@ const Status = {
     fail: 'ไม่ผ่าน'
 };
 
+const StatusColors = {
+    wait: 'geekblue',  // เปลี่ยนเป็นสีฟ้า
+    pass: 'green',
+    fail: 'red'
+};
+
 const TeachingList = ({ params }) => {
     const { id } = params;
     const [teaching, setTeaching] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [year, setYear] = useState('');
-    const [term, setTerm] = useState('');
+    const [year, setYear] = useState('all');
+    const [term, setTerm] = useState('all');
     const [isLoading, setIsLoading] = useState(true);
 
     const fetchteaching = async (id) => {
@@ -59,44 +69,43 @@ const TeachingList = ({ params }) => {
         );
     }
 
-    const filteredteaching = teaching.filter((teaching) => {
-        return (
-            (!year || teaching.year.toString() === year) &&
-            (!term || teaching.term.toString() === term) &&
-            (
-                teaching.subjects?.nameTH.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                teaching.subjects?.nameEN.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                teaching.subjects?.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                teaching.term.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-                teaching.group.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                DayEnum[teaching.day].includes(searchTerm.toLowerCase()) ||
-                teaching.starttime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                teaching.endtime.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                teaching.year.toString().toLowerCase().includes(searchTerm.toLowerCase())
-            )
+    const uniqueYears = [...new Set(teaching.map(teaching => teaching.year.toString()))];
+
+    const filteredteaching = teaching.filter(teaching => {
+        const matchesYear = year === 'all' || teaching.year.toString() === year;
+        const matchesTerm = term === 'all' || teaching.term.toString() === term;
+        const searchTermLower = searchTerm.toLowerCase();
+
+        return matchesYear && matchesTerm && (
+            teaching.subjects?.nameTH.toLowerCase().includes(searchTermLower) ||
+            teaching.subjects?.code.toLowerCase().includes(searchTermLower) ||
+            teaching.group.toLowerCase().includes(searchTermLower) ||
+            DayEnum[teaching.day]?.toLowerCase().includes(searchTermLower) ||
+            teaching.starttime.toLowerCase().includes(searchTermLower) ||
+            teaching.endtime.toLowerCase().includes(searchTermLower) ||
+            `${teaching.user?.prefix} ${teaching.user?.username} ${teaching.user?.lastname}`.toLowerCase().includes(searchTermLower)
         );
     });
-
-
-    const uniqueYears = Array.from(new Set(teaching.map(t => t.year.toString())));
 
     return (
         <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">แก้ไขวิชาที่สอน</h1>
-                <div className="flex items-center">
-                    <Input
-                        type="text"
-                        placeholder="ค้นหาวิชาที่สอน..."
+                <h1 className="text-3xl font-bold mb-6" style={{ color: '#2D427C' }}>บันทึกการสอน</h1>
+                <div className="flex items-center mr-4">
+                    <SearchInput
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="flex-grow mr-2"
+                        placeholder="ค้นหาบันทึกการสอน..."
                     />
                     <Select
                         placeholder="เลือกปี"
                         value={year}
                         onChange={value => setYear(value)}
-                        className="flex-grow mr-2 w-48"
+                        className="select-custom flex-grow mr-2 w-48"
+                        style={{
+                            borderColor: '#4b70af',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                        }}
                     >
                         <Select.Option value="all">ทั้งหมด</Select.Option>
                         {uniqueYears.map(year => (
@@ -107,110 +116,66 @@ const TeachingList = ({ params }) => {
                         placeholder="เลือกเทอม"
                         value={term}
                         onChange={value => setTerm(value)}
-                        className="flex-grow w-48"
+                        className="select-custom flex-grow w-48"
+                        style={{
+                            borderColor: '#4b70af',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                        }}
                     >
                         <Select.Option value="all">ทั้งหมด</Select.Option>
                         <Select.Option value="1">เทอม 1</Select.Option>
                         <Select.Option value="2">เทอม 2</Select.Option>
                         <Select.Option value="3">เทอม 3</Select.Option>
                     </Select>
+                    <style jsx>{`
+                        .select-custom .ant-select-selector {
+                            border-radius: 10px !important;
+                            border-color: #4b70af !important;
+                        }
+                        .select-custom .ant-select-arrow {
+                            color: #4b70af;
+                        }
+                    `}</style>
                 </div>
             </div>
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table className="min-w-full">
-                    <thead className="bg-gray-50 ">
-                        <tr>
-                            <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อวิชา</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รหัสวิชา</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">กลุ่มเรียน</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วันที่สอน</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เวลาเริ่ม</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เวลาจบ</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">เทอม</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปี</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
-                            <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
-                        </tr>
-                    </thead>
-                </table>
-                <div className="max-h-96 overflow-y-auto">
-                    <table className="min-w-full">
-                        <tbody className="divide-y divide-gray-200">
-                            {filteredteaching.length > 0 ? (
-                                filteredteaching.map((teaching, index) => (
-                                    <tr key={teaching.id}>
-                                        <td className="w-1 px-6 py-4 whitespace-nowrap">
-                                            {index + 1}
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {teaching.subjects?.nameTH}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {teaching.subjects?.code}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {teaching.group}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {DayEnum[teaching.day]}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {teaching.starttime}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {teaching.endtime}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {teaching.term}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {teaching.year}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {Status[teaching.audit]}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
-                                            <Link
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/users/teachingEdit/edit/${teaching.id}`}
-                                            >
-                                                แก้ไข
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="10" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        ไม่มีข้อมูล
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+            <div style={{ maxHeight: '65vh', overflowY: 'auto' }}>
+                {filteredteaching.length > 0 ? (
+                    filteredteaching.map((teaching, index) => (
+                        <Card
+                            key={teaching.id}
+                            className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
+                            style={{ headerHeight: '38px' }}
+                            title={`ผู้สอน ${teaching.user?.prefix} ${teaching.user?.username} ${teaching.user?.lastname}`}
+                        >
+                            <Descriptions layout="horizontal" size="small" className="small-descriptions">
+                                <Descriptions.Item label="ชื่อวิชา">{teaching.subjects?.nameTH}</Descriptions.Item>
+                                <Descriptions.Item label="รหัสวิชา">{teaching.subjects?.code}</Descriptions.Item>
+                                <Descriptions.Item label="วันที่สอน">{DayEnum[teaching.day]}</Descriptions.Item>
+                                <Descriptions.Item label="กลุ่มเรียน">{teaching.group}</Descriptions.Item>
+                                <Descriptions.Item label="เวลาเริ่ม">{teaching.starttime}</Descriptions.Item>
+                                <Descriptions.Item label="เวลาจบ">{teaching.endtime}</Descriptions.Item>
+                                <Descriptions.Item label="ปี">{teaching.year}</Descriptions.Item>
+                                <Descriptions.Item label="เทอม">{teaching.term}</Descriptions.Item>
+                                <Descriptions.Item label="ตรวจสอบ">
+                                    <Tag color={StatusColors[teaching.audit]}>{Status[teaching.audit]}</Tag>
+                                </Descriptions.Item>
+                            </Descriptions>
+                            <div className="text-right">
+                                <Link href={`/users/teachingEdit/edit/${teaching.id}`}>
+                                    <Button
+                                        type="link"
+                                        icon={<FontAwesomeIcon icon={faPen} style={{ fontSize: '16px', color: '#FFD758' }} />}
+                                    />
+                                </Link>
+                            </div>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
+                )}
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default TeachingList
+export default TeachingList;

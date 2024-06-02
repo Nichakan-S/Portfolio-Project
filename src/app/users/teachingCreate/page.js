@@ -105,8 +105,7 @@ const CreateTeaching = () => {
 
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <h1 className="text-2xl font-semibold mb-6">เพิ่มการสอน</h1>
-            <div style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+            <h1 className="text-3xl font-bold mb-6" style={{ color: "#2D427C" }} >เพิ่มการสอน</h1>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl" style={{ maxHeight: '65vh', overflowY: 'auto' }}>
                         <Row gutter={16}>
@@ -152,7 +151,7 @@ const CreateTeaching = () => {
 
                                 <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
                                     <label htmlFor="group" className="block text-base font-medium mr-4">
-                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> กลุ่ม : </span>
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span>กลุ่ม :</span>
                                     </label>
                                     <Input
                                         placeholder="กลุ่ม"
@@ -162,12 +161,18 @@ const CreateTeaching = () => {
                                         required
                                         value={group}
                                         onChange={(e) => setGroup(e.target.value)}
-                                        className="flex-grow mr-4 mb-4"
+                                        className="flex-grow mr-8 mb-4"style={{ 
+                                            flexGrow: 1, 
+                                            flexShrink: 1, 
+                                            flexBasis: '50%', 
+                                            padding: '8px', 
+                                            minWidth: '300px' 
+                                        }}
                                     />
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
                                     <label htmlFor="year" className="block text-base font-medium mr-4">
-                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ปี : </span>
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ปี พ.ศ. : </span>
                                     </label>
                                     <Input
                                         placeholder="เลือกปี"
@@ -179,6 +184,13 @@ const CreateTeaching = () => {
                                         value={year}
                                         onChange={(e) => setYear(e.target.value)}
                                         className="flex-grow mr-4 mb-4"
+                                        style={{ 
+                                            flexGrow: 1, 
+                                            flexShrink: 1, 
+                                            flexBasis: '50%', 
+                                            padding: '8px', 
+                                            minWidth: '300px' 
+                                        }}
                                     />
                                 </div>
                                 
@@ -245,7 +257,7 @@ const CreateTeaching = () => {
                                         <Option value="3">3</Option>
                                     </Select>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'left', width: '50%', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', width: '102%', padding: '15px' }}>
                                     <Button className="inline-flex justify-center mr-4"
                                         type="primary"
                                         size="middle"
@@ -259,7 +271,6 @@ const CreateTeaching = () => {
                         </Row>
                     </Card>
                 </form>
-            </div>
         </div>
     );
 };
