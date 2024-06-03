@@ -126,7 +126,7 @@ const TeachingList = ({ params }) => {
     return (
         <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold mb-6" style={{ color: '#2D427C' }}>บันทึกการสอน</h1>
+                <h1 className="text-3xl font-bold mb-6" style={{ color: '#2D427C' }}>ลบบันทึกการสอน</h1>
                 <div className="flex items-center mr-4">
                     <SearchInput
                         value={searchTerm}

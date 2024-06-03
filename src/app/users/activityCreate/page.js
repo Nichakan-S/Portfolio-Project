@@ -147,32 +147,35 @@ const CreateActivity = () => {
                             </div>
                         </Col>
                         <Col span={12}>
-                            <div>
-                                <label htmlFor="file" className="block text-base font-medium text-gray-700 mb-4">
-                                    <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ไฟล์ pdf : </span>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <label htmlFor="file" className="block text-base font-medium mr-4 mb-4" >
+                                    <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ไฟล์ PDF : </span>
                                 </label>
                                 <Upload
                                     customRequest={customRequest}
                                     beforeUpload={beforeUpload}
                                     showUploadList={false}
                                 >
-                                    <Button icon={<UploadOutlined />}>เลือกไฟล์</Button>
+                                    <Button
+                                        icon={<UploadOutlined />}
+                                        className="mr-4">เลือกไฟล์</Button>
                                 </Upload>
                                 <Button onClick={() => setModalVisible(true)}>ดูตัวอย่างไฟล์ PDF</Button>
-                                <Modal
-                                    title="ตัวอย่างไฟล์ PDF"
-                                    open={modalVisible}
-                                    onCancel={() => setModalVisible(false)}
-                                    footer={[]}
-                                    width="70%"
-                                    style={{ top: 20 }}
-                                >
-                                    {previewFile && (
-                                        <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
-                                    )}
-                                </Modal>
                             </div>
+                            <Modal
+                                title="ตัวอย่างไฟล์ PDF"
+                                open={modalVisible}
+                                onCancel={() => setModalVisible(false)}
+                                footer={[]}
+                                width="70%"
+                                style={{ top: 20 }}
+                            >
+                                {previewFile && (
+                                    <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
+                                )}
+                            </Modal>
                         </Col>
+
                     </Row>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', width: '102%', padding: '15px' }}>
                         <Button className="inline-flex justify-center text-right mr-4"

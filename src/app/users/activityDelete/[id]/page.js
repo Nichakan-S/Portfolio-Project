@@ -1,8 +1,14 @@
-'use client'
+'use client';
 
-import React, { useEffect, useState } from 'react'
-import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
-import { Button, Input, Modal } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Card, Input, Modal, Descriptions, Tag, Select } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { SuccessAlert, WarningAlert, ConfirmAlert } from '/src/app/components/sweetalert';
+import '/src/app/globals.css';
+import SearchInput from '/src/app/components/SearchInputAll.jsx';
+
+const { Option } = Select;
 
 const Status = {
     wait: 'รอตรวจ',
@@ -10,41 +16,38 @@ const Status = {
     fail: 'ไม่ผ่าน'
 };
 
+const StatusColors = {
+    wait: 'geekblue',
+    pass: 'green',
+    fail: 'red'
+};
+
 const ActivityList = ({ params }) => {
-    const [activity, setActivity] = useState([])
+    const { id } = params;
+    const [activity, setActivity] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
-    const { id } = params;
+    const [year, setYear] = useState('all');  // ย้าย useState มาอยู่ตรงนี้
 
-    const fetchactivity = async (id) => {
+    const fetchActivity = async () => {
         try {
-            const response = await fetch(`/api/userActivity/${id}`)
-            const data = await response.json()
-            console.log('activity data fetched:', data);
-            setActivity(data)
+            const response = await fetch(`/api/userActivity/${id}`);
+            const data = await response.json();
+            setActivity(data);
         } catch (error) {
-            console.error('Failed to fetch activity', error)
+            console.error('Failed to fetch activity', error);
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
         if (id) {
-            fetchactivity(parseInt(id));
+            fetchActivity();
         }
     }, [id]);
-
-    const showModal = (file) => {
-        setModalContent(file);
-        setIsModalVisible(true);
-    };
-
-    const closeModal = () => {
-        setIsModalVisible(false);
-    };
 
     const handleDelete = async (id) => {
         ConfirmAlert('คุณแน่ใจที่จะลบข้อมูลนี้?', 'การดำเนินการนี้ไม่สามารถย้อนกลับได้', async () => {
@@ -62,6 +65,14 @@ const ActivityList = ({ params }) => {
         });
     };
 
+    const showModal = (file) => {
+        setModalContent(file);
+        setIsModalVisible(true);
+    };
+
+    const closeModal = () => {
+        setIsModalVisible(false);
+    };
 
     if (isLoading) {
         return (
@@ -73,131 +84,89 @@ const ActivityList = ({ params }) => {
         );
     }
 
-    const filteredactivity = activity.filter((activity) => {
-        return activity.activity?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            activity.activity?.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            activity.activity?.year.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-            Status[activity.status].includes(searchTerm.toLowerCase());
+    const filteredActivity = activity.filter(activity => {
+        const matchesYear = year === 'all' || activity.activity?.year.toString() === year;
+        const searchTermLower = searchTerm.toLowerCase();
+
+        return matchesYear && (
+            activity.activity?.name.toLowerCase().includes(searchTermLower) ||
+            activity.activity?.type.toLowerCase().includes(searchTermLower) ||
+            Status[activity.audit].toLowerCase().includes(searchTermLower) ||
+            Status[activity.approve].toLowerCase().includes(searchTermLower)
+        );
     });
 
     return (
-        <div className="max-w-6xl mx-auto px-4 mt-2">
+        <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">ผลงานกิจกรรม</h1>
-                <div className="flex items-center">
-                    <Input
-                        type="text"
-                        placeholder="ค้นหาผลงานกิจกรรม..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="flex-grow mr-2"
-                    />
-                </div>
+                <h1 className="text-3xl font-bold mb-6" style={{ color: '#2D427C' }}>ลบผลงานกิจกรรม</h1>
+                <SearchInput
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="ค้นหาผลงานกิจกรรม..."
+                />
             </div>
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table className="min-w-full">
-                    <thead className="bg-gray-50 ">
-                        <tr>
-                            <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อกิจกรรม</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภท</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ปี</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตรวจสอบ</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">อนุมัติ</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ไฟล์</th>
-                            <th scope="col" className="w-1/3 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">แก้ไข</th>
-                        </tr>
-                    </thead>
-                </table>
-                <div className="max-h-96 overflow-y-auto">
-                    <table className="min-w-full">
-                        <tbody className="divide-y divide-gray-200">
-                            {filteredactivity.length > 0 ? (
-                                filteredactivity.map((activity, index) => (
-                                    <tr key={activity.id}>
-                                        <td className="w-1 px-6 py-4 whitespace-nowrap">
-                                            {index + 1}
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {activity.activity?.name}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {activity.activity?.type === 'culture' ? 'ศิลปะวัฒนธรรม' : 'บริการวิชาการ'}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {activity.activity?.year}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {Status[activity.audit]}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {Status[activity.approve]}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <Button
-                                                onClick={() => showModal(activity.file)}
-                                                type="link"
-                                                style={{ color: '#FFD758' }}
-                                            >
-                                                เปิดไฟล์
-                                            </Button>
-                                        </td>
-                                        <td className="w-1/3 px-6 py-4 text-right whitespace-nowrap">
-                                            <Button
-                                                type="link"
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                                onClick={() => handleDelete(activity.id)}
-                                            >
-                                                ลบ
-                                            </Button>
-                                        </td>
+            <div style={{ maxHeight: '65vh', overflowY: 'auto' }}>
+                {filteredActivity.length > 0 ? (
+                    filteredActivity.map((activity, index) => (
+                        <Card
+                            key={activity.id}
+                            className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
+                            style={{ marginBottom: 20 }}
+                            title={`กิจกรรม: ${activity.activity?.name}`}
+                        >
+                            <Descriptions layout="horizontal" size="small" className="small-descriptions">
+                                <Descriptions.Item label="ประเภท">{activity.activity?.type === 'culture' ? 'ศิลปะวัฒนธรรม' : 'บริการวิชาการ'}</Descriptions.Item>
+                                <Descriptions.Item label="ปี">{activity.activity?.year}</Descriptions.Item>
+                                <Descriptions.Item label="ตรวจสอบ"><Tag color={StatusColors[activity.audit]}>{Status[activity.audit]}</Tag></Descriptions.Item>
+                                <Descriptions.Item label="อนุมัติ"><Tag color={StatusColors[activity.approve]}>{Status[activity.approve]}</Tag></Descriptions.Item>
+                                <Descriptions.Item label="ไฟล์">
+                                    <Button
+                                        type="link"
+                                        onClick={() => showModal(activity.file)}
+                                        style={{ color: '#FFD758' }}
+                                    >
+                                        เปิดไฟล์
+                                    </Button>
+                                </Descriptions.Item>
+                            </Descriptions>
+                            <div className="text-right">
+                                <Button
+                                    type="link"
+                                    onClick={() => handleDelete(activity.id)}
+                                    icon={<FontAwesomeIcon icon={faTrash} style={{ fontSize: '16px', color: 'red' }} />}
+                                />
+                            </div>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
+                )}
+            </div>
+            <Modal
+                title="Preview File"
+                open={isModalVisible}
+                onCancel={closeModal}
+                footer={[
+                    <Button key="download" type="primary" href={modalContent} target="_blank" download>
+                        ดาวน์โหลด PDF
+                    </Button>,
+                    <Button key="cancel" onClick={closeModal}>
+                        ยกเลิก
+                    </Button>
+                ]}
+                width="70%"
+                style={{ top: 20 }}
+            >
+                {modalContent ? (
+                    <iframe src={modalContent} loading="lazy" style={{ width: '100%', height: '75vh' }}></iframe>
+                ) : (
+                    <p>Error displaying the document. Please try again.</p>
+                )}
+            </Modal>
 
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="2" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        ไม่มีข้อมูล
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-                <Modal
-                    title="Preview File"
-                    open={isModalVisible}
-                    onCancel={closeModal}
-                    footer={[
-                        <Button key="download" type="primary" href={modalContent} target="_blank" download>
-                            ดาวน์โหลด PDF
-                        </Button>,
-                        <Button key="cancel" onClick={closeModal}>
-                            ยกเลิก
-                        </Button>
-                    ]}
-                    width="70%"
-                    style={{ top: 20 }}
-                >
-                    {modalContent ? (
-                        <iframe src={`${modalContent}`} loading="lazy" style={{ width: '100%', height: '75vh' }}></iframe>
-                    ) : (
-                        <p>Error displaying the document. Please try again.</p>
-                    )}
-                </Modal>
-            </div>
         </div>
-    )
-}
+    );
+};
 
-export default ActivityList
+export default ActivityList;

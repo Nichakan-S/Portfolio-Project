@@ -2,30 +2,33 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Avatar, Space } from 'antd';
+import { Descriptions, Card, Button, Avatar, Row, Col } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 import Image from 'next/image';
+import '/src/app/globals.css'
+import SearchInput from '/src/app/components/SearchInputAll.jsx';
 
 const UserList = () => {
-    const [user, setUser] = useState([])
+    const [users, setUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetchuser()
-    }, [])
+        const fetchUsers = async () => {
+            try {
+                const res = await fetch('/api/user');
+                const data = await res.json();
+                setUsers(data);
+            } catch (error) {
+                console.error('การเรียกข้อมูลผู้ใช้ล้มเหลว', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchUsers();
+    }, []);
 
-    const fetchuser = async () => {
-        try {
-            const res = await fetch('/api/user')
-            const data = await res.json()
-            setUser(data)
-        } catch (error) {
-            console.error('Failed to fetch user', error)
-        } finally {
-            setIsLoading(false);
-        }
-    }
-    
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-full">
@@ -36,7 +39,7 @@ const UserList = () => {
         );
     }
 
-    const filtereduser = user.filter((user) => {
+    const filteredUsers = users.filter(user => {
         return user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.major?.faculty?.facultyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.major?.majorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -46,126 +49,72 @@ const UserList = () => {
             user.role.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
-
     return (
         <div className="max-w-6xl mx-auto px-4">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-semibold mb-6">บุคลากร</h1>
-                <div className="flex items-center">
-                    <input
-                        type="text"
-                        placeholder="ค้นหาบุคลากร..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="mt-4 inline-flex items-center px-4 py-2 border rounded-lg shadow-sm text-sm font-medium mr-4"
-                    />
-                </div>
+                <h1 className="text-3xl font-bold mb-6" style={{ color: "#2D427C" }}>บุคลากร</h1>
+                <SearchInput
+                    value={searchTerm}
+                    onChange={(value) => setSearchTerm(value)}
+                    placeholder="ค้นหาบุคลากร..."
+                />
             </div>
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table className="min-w-full">
-                    <thead className="bg-gray-50 ">
-                        <tr>
-                            <th scope="col" className="w-1 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                            <th scope="col" className="w-1/7 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">คณะ</th>
-                            <th scope="col" className="w-1/7 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สาขา</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ตำแหน่ง</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อ</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">นามสกุล</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รูปโปรไฟล์</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">ดูกิจกรรม</th>
-                            <th scope="col" className="w-1/5 px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">ดูวิจัย</th>
-                        </tr>
-                    </thead>
-                </table>
-                <div className="max-h-96 overflow-y-auto">
-                    <table className="min-w-full">
-                        <tbody className="divide-y divide-gray-200">
-                            {filtereduser.length > 0 ? (
-                                filtereduser.map((user, index) => (
-                                    <tr key={user.id}>
-                                        <td className="w-1 px-6 py-4 whitespace-nowrap">
-                                            {index + 1}
-                                        </td>
-                                        <td className="w-1/7 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.major?.faculty?.facultyName}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/7 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.major?.majorName}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.position?.name}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.username}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">
-                                                {user.lastname}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <div className="cursor-pointer">
-                                                {user.userImage ? (
-                                                    <Space wrap size={16}>
-                                                        <Avatar
-                                                            size={40}
-                                                            src={user.userImage || '/image/none_image.png'}
-                                                            icon={!user.userImage && <UserOutlined />}
-                                                            onError={() => {
-                                                                return true;
-                                                            }}
-                                                        />
-                                                    </Space>
-                                                ) : (
-                                                    <Image
-                                                        src="/image/none_image.png"
-                                                        alt="Default profile image"
-                                                        width={40}
-                                                        height={40}
-                                                        className="rounded-full"
-                                                    />
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <Link
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/users/employee/activity/${user.id}`}
-                                            >
-                                                ดู
-                                            </Link>
-                                        </td>
-                                        <td className="w-1/5 px-6 py-4 whitespace-nowrap">
-                                            <Link
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/users/employee/research/${user.id}`}
-                                            >
-                                                ดู
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="2" className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                        ไม่มีข้อมูล
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+            <div style={{ maxHeight: '65vh', overflowY: 'auto' }}>
+                {filteredUsers.length > 0 ? (
+                    filteredUsers.map((user, index) => (
+                        <Card
+                            key={user.id}
+                            className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
+                            style={{ headerHeight: '38px' }}
+                        >
+                            <Row gutter={16}>
+                                <Col span={6} style={{ display: 'flex', justifyContent: 'center',  }}>
+                                    <div className="cursor-pointer text-center">
+                                        {user.userImage ? (
+                                            <Avatar
+                                                size={100}
+                                                src={user.userImage || '/image/none_image.png'}
+                                                onError={() => {
+                                                    return true;
+                                                }}
+                                            />
+                                        ) : (
+                                            <Image
+                                                src="/image/none_image.png"
+                                                alt="Default profile image"
+                                                width={100}
+                                                height={100}
+                                                className="rounded-full"
+                                            />
+                                        )}
+                                    </div>
+                                </Col>
+                                <Col span={18}>
+                                    <Descriptions layout="vertical" size="small" className="small-descriptions">
+                                        <Descriptions.Item label="ชื่อ">{user.position?.name} {user.username} {user.lastname}</Descriptions.Item>
+                                        <Descriptions.Item label="คณะ">{user.major?.faculty?.facultyName}</Descriptions.Item>
+                                        <Descriptions.Item label="สาขา">{user.major?.majorName}</Descriptions.Item>
+                                        <Descriptions.Item label="อีเมล">{user.email}</Descriptions.Item>
+                                        <Descriptions.Item label="บทบาท">{user.role}</Descriptions.Item>
+                                    </Descriptions>
+                                    <div className="text-right mt-4">
+                                        <Link href={`/users/employee/activity/${user.id}`} className="text-indigo-600 hover:text-indigo-900">
+                                            ดูกิจกรรม
+                                        </Link>
+                                        <Link href={`/users/employee/research/${user.id}`} className="text-indigo-600 hover:text-indigo-900 ml-4">
+                                            ดูวิจัย
+                                        </Link>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </Card>
+                    ))
+                ) : (
+                    <div className="text-center text-sm font-medium">ไม่มีข้อมูล</div>
+                )}
             </div>
-        </div >
-    )
-}
+        </div>
+    );
+};
 
-export default UserList
+export default UserList;

@@ -145,7 +145,7 @@ const TeachingList = ({ params }) => {
                             key={teaching.id}
                             className="max-w-6xl mx-auto px-4 py-6 shadow-xl small-card"
                             style={{ headerHeight: '38px' }}
-                            title={`ผู้สอน ${teaching.user?.prefix} ${teaching.user?.username} ${teaching.user?.lastname}`}
+                            
                         >
                             <Descriptions layout="horizontal" size="small" className="small-descriptions">
                                 <Descriptions.Item label="ชื่อวิชา">{teaching.subjects?.nameTH}</Descriptions.Item>
