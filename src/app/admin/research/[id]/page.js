@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { SuccessAlert, WarningAlert, ConfirmAlert } from '../../../components/sweetalert';
-import { Input, Button, Upload, Modal, Select } from 'antd';
+import { SuccessAlert, WarningAlert } from '../../../components/sweetalert';
+import { Input, Button, Upload, Modal, Select, Card } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
@@ -20,7 +20,6 @@ const EditResearch = ({ params }) => {
     const [previewFile, setPreviewFile] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [customFund, setCustomFund] = useState('');
-
     const [isLoading, setIsLoading] = useState(true);
 
     const fetchResearch = async (id) => {
@@ -89,8 +88,7 @@ const EditResearch = ({ params }) => {
         }
     };
 
-    const handleResearchFundChange = (e) => {
-        const value = e.target.value;
+    const handleResearchFundChange = (value) => {
         if (value === 'other') {
             setCustomFund('');
             setResearchFund(value);
@@ -104,7 +102,6 @@ const EditResearch = ({ params }) => {
         const value = e.target.value;
         setCustomFund(value);
     };
-
 
     const handleBack = () => {
         window.history.back();
@@ -143,133 +140,169 @@ const EditResearch = ({ params }) => {
 
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <h1 className="text-2xl font-semibold mb-6">แก้ไขผลงานวิจัย</h1>
+            <h1 className="text-3xl font-bold mb-6" style={{ color: "#2D427C" }}>แก้ไขผลงานวิจัย</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label htmlFor="nameTH" className="block text-base font-medium text-gray-700 mb-4">
-                        ชื่องานวิจัย (ไทย)
-                    </label>
-                    <Input
-                        placeholder="ชื่องานวิจัย (ไทย)"
-                        size="large"
-                        type="text"
-                        name="nameTH"
-                        id="nameTH"
-                        required
-                        value={nameTH}
-                        onChange={(e) => setNameTH(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="nameEN" className="block text-base font-medium text-gray-700 mb-4">
-                        ชื่องานวิจัย (อังกฤษ)
-                    </label>
-                    <Input
-                        placeholder="ชื่องานวิจัย (อังกฤษ)"
-                        size="large"
-                        type="text"
-                        name="nameEN"
-                        id="nameEN"
-                        required
-                        value={nameEN}
-                        onChange={(e) => setNameEN(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="researchFund">ทุน</label>
-                    <select
-                        value={researchFund !== 'other' ? researchFund : ''}
-                        onChange={handleResearchFundChange}
-                        required
-                    >
-                        <option value="">เลือกประเภท</option>
-                        <option value="ทุนภายใน">ทุนภายใน</option>
-                        <option value="ทุนภายนอก">ทุนภายนอก</option>
-                        <option value="other">อื่นๆ (โปรดระบุ)</option>
-                    </select>
-                    {researchFund === 'other' && (
-                        <input
+                <Card className="shadow-xl" style={{ padding: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <label htmlFor="nameTH" className="block text-base font-medium mr-4 mb-4">
+                            <span style={{ color: 'red' }}>*</span> ชื่องานวิจัย (ไทย) :
+                        </label>
+                        <Input
+                            placeholder="ชื่องานวิจัย (ไทย)"
+                            size="large"
                             type="text"
-                            value={customFund}
-                            onChange={handleCustomFundChange}
-                            placeholder="ระบุทุน"
+                            name="nameTH"
+                            id="nameTH"
                             required
+                            value={nameTH}
+                            onChange={(e) => setNameTH(e.target.value)}
+                            style={{
+                                width: '80%',
+                                borderColor: '#DADEE9',
+                                fontSize: '16px',
+                                height: '40px'
+                            }}
+                            className="mr-4 mb-4 "
                         />
-                    )}
-                </div>
-                <div>
-                    <label htmlFor="type" className="block text-base font-medium text-gray-700 mb-4">
-                        ประเภท
-                    </label>
-                    <select
-                        className="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        value={type}
-                        onChange={(e) => setType(e.target.value)}
-                        required
-                    >
-                        <option value="">เลือกประเภท</option>
-                        <option value="journalism">สื่อสารมวลชน</option>
-                        <option value="researchreports">รายงานการวิจัย</option>
-                        <option value="posterpresent">โปสเตอร์ปัจจุบัน</option>
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="file" className="block text-base font-medium text-gray-700 mb-4">
-                        ไฟล์ PDF
-                    </label>
-                    <Upload
-                        customRequest={customRequest}
-                        beforeUpload={beforeUpload}
-                        showUploadList={false}
-                    >
-                        <Button icon={<UploadOutlined />}>เลือกไฟล์</Button>
-                    </Upload>
-                    <Button onClick={() => setModalVisible(true)}>ดูตัวอย่างไฟล์ PDF</Button>
-                    <Modal
-                        title="ตัวอย่างไฟล์ PDF"
-                        open={modalVisible}
-                        onCancel={() => setModalVisible(false)}
-                        footer={[]}
-                        width="70%"
-                        style={{ top: 20 }}
-                    >
-                        {previewFile && (
-                            <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <label htmlFor="nameEN" className="block text-base font-medium mr-4 mb-4">
+                            <span style={{ color: 'red' }}>*</span> ชื่องานวิจัย (อังกฤษ) :
+                        </label>
+                        <Input
+                            placeholder="ชื่องานวิจัย (อังกฤษ)"
+                            size="large"
+                            type="text"
+                            name="nameEN"
+                            id="nameEN"
+                            required
+                            value={nameEN}
+                            onChange={(e) => setNameEN(e.target.value)}
+                            style={{
+                                width: '80%',
+                                borderColor: '#DADEE9',
+                                fontSize: '16px',
+                                height: '40px'
+                            }}
+                            className="mr-4 mb-4 "
+                        />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <label htmlFor="researchFund" className="block text-base font-medium mr-4 mb-4"><span style={{ color: 'red' }} className=" ">*</span> ทุน :</label>
+                        <Select
+                            value={researchFund !== 'other' ? researchFund : ''}
+                            onChange={handleResearchFundChange}
+                            required
+                            style={{
+                                width: '50%',
+                                borderColor: '#DADEE9',
+                                fontSize: '16px',
+                                height: '40px'
+                            }}
+                            className="mr-4 mb-4 "
+                        >
+                            <Option value="">เลือกประเภท</Option>
+                            <Option value="ทุนภายใน">ทุนภายใน</Option>
+                            <Option value="ทุนภายนอก">ทุนภายนอก</Option>
+                            <Option value="other">อื่นๆ (โปรดระบุ)</Option>
+                        </Select>
+                        {researchFund === 'other' && (
+                            <input
+                                type="text"
+                                value={customFund}
+                                onChange={handleCustomFundChange}
+                                placeholder="ระบุทุน"
+                                required
+                            />
                         )}
-                    </Modal>
-
-                </div>
-                <div>
-                    <label htmlFor="year" className="block text-base font-medium text-gray-700 mb-4">
-                        ปี
-                    </label>
-                    <Input
-                        placeholder="เลือกปี"
-                        size="large"
-                        type="number"
-                        name="year"
-                        id="year"
-                        required
-                        value={year}
-                        onChange={(e) => setYear(e.target.value)}
-                        style={{ width: 200 }}
-                    />
-                </div>
-                <div>
-                    <Button className="inline-flex justify-center mr-4 "
-                        type="primary"
-                        size="middle"
-                        onClick={handleSubmit}
-                        style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
-                    >
-                        บันทึก
-                    </Button>
-                    <Button className="inline-flex justify-center mr-4"
-                        onClick={handleBack}
-                    >
-                        ยกเลิก
-                    </Button>
-                </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <label htmlFor="type" className="block text-base font-medium mr-4 mb-4"><span style={{ color: 'red' }} className=" ">*</span> ประเภท :
+                        </label>
+                        <Select
+                            value={type}
+                            onChange={(value) => setType(value)}
+                            required
+                            style={{
+                                width: '50%',
+                                borderColor: '#DADEE9',
+                                fontSize: '16px',
+                                height: '40px'
+                            }}
+                            className="mr-4 mb-4 "
+                        >
+                            <Option value="">เลือกประเภท</Option>
+                            <Option value="journalism">สื่อสารมวลชน</Option>
+                            <Option value="researchreports">รายงานการวิจัย</Option>
+                            <Option value="posterpresent">โปสเตอร์ปัจจุบัน</Option>
+                        </Select>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                        <label htmlFor="file" className="block text-base font-medium mr-4 ">
+                            <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ไฟล์ PDF : </span>
+                        </label>
+                        <Upload
+                            customRequest={customRequest}
+                            beforeUpload={beforeUpload}
+                            showUploadList={false}
+                        >
+                            <Button icon={<UploadOutlined className="mr-4 "/>}>เลือกไฟล์</Button>
+                        </Upload>
+                        <Button onClick={() => setModalVisible(true)}>ดูตัวอย่างไฟล์ PDF</Button>
+                        <Modal
+                            title="ตัวอย่างไฟล์ PDF"
+                            open={modalVisible}
+                            onCancel={() => setModalVisible(false)}
+                            footer={[]}
+                            width="70%"
+                            style={{ top: 20 }}
+                        >
+                            {previewFile && (
+                                <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
+                            )}
+                        </Modal>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                        <label htmlFor="year" className="block text-base font-medium mr-4 mb-4">
+                            <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ปี : </span>
+                        </label>
+                        <Input
+                            placeholder="เลือกปี"
+                            size="large"
+                            type="number"
+                            name="year"
+                            id="year"
+                            required
+                            value={year}
+                            onChange={(e) => setYear(e.target.value)}
+                            style={{
+                                width: '20%',
+                                borderColor: '#DADEE9',
+                                fontSize: '16px',
+                                height: '40px'
+                            }}
+                            className="mr-4 mb-4 "
+                        />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '15px' }}>
+                        <Button
+                            className="inline-flex justify-center mr-4"
+                            type="primary"
+                            size="middle"
+                            onClick={handleSubmit}
+                            style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
+                        >
+                            บันทึก
+                        </Button>
+                        <Button
+                            className="inline-flex justify-center"
+                            onClick={handleBack}
+                            size="middle"
+                        >
+                            ยกเลิก
+                        </Button>
+                    </div>
+                </Card>
             </form>
         </div>
     );
