@@ -19,6 +19,7 @@ const DayEnum = {
     sun: 'อาทิตย์',
 };
 
+
 const TeachingList = () => {
     const [teachings, setTeachings] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');

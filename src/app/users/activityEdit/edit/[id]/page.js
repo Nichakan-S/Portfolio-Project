@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { SuccessAlert, WarningAlert } from '../../../../components/sweetalert';
-import { Select, Button, Modal, Upload } from 'antd';
+import { SuccessAlert, WarningAlert } from '/src/app/components/sweetalert';
+import { Select, Button, Modal, Upload, Card, Row, Col } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
@@ -61,7 +61,7 @@ const EditActivity = ({ params }) => {
             if (!response.ok) throw new Error('Something went wrong');
 
             SuccessAlert('สำเร็จ!', 'ข้อมูลได้ถูกบันทึกแล้ว');
-            window.history.back();
+            setFile('');
         } catch (error) {
             console.error(error);
             WarningAlert('ผิดพลาด!', 'ไม่สามารถบันทึกข้อมูลได้');
@@ -116,85 +116,104 @@ const EditActivity = ({ params }) => {
 
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <h1 className="text-2xl font-semibold mb-6">แก้ไขผลงานกิจกรรม</h1>
+            <h1 className="text-3xl font-bold mb-6" style={{ color: "#2D427C" }}>แก้ไขผลงานกิจกรรม</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label htmlFor="activity" className="block text-base font-medium text-gray-700 mr-2 mb-4">
-                        เลือกกิจกรรม
-                    </label>
-                    <Select
-                        value={selectedActivity}
-                        style={{ width: '100%' }}
-                        size="large"
-                        onChange={handleChange}
-                        options={activityOptions}
-                    />
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
-                    <label htmlFor="activityRole" className="block text-base font-medium mr-4 mb-4">
-                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> หน้าที่ : </span>
-                    </label>
-                    <Select
-                        value={activityRole}
-                        size="large"
-                        onChange={(value) => setActivityRole(value)}
-                        required
-                        className="flex-grow mr-4 mb-4 custom-select"
-                        style={{
-                            width: '50%',
-                            borderColor: '#DADEE9',
-                            fontSize: '16px',
-                            height: '40px'
-                        }}
-                    >
-                        <Option value="joiner">ผู้เข้าร่วม</Option>
-                        <Option value="operator">ผู้ดำเนินงาน</Option>
-                    </Select>
-                </div>
-                <div>
-                    <label htmlFor="file" className="block text-base font-medium text-gray-700 mb-4">
-                        ไฟล์ PDF
-                    </label>
-                    <Upload
-                        customRequest={customRequest}
-                        beforeUpload={beforeUpload}
-                        showUploadList={false}
-                    >
-                        <Button
-                            icon={<UploadOutlined />}
-                            className="mr-4">เลือกไฟล์</Button>
-                    </Upload>
-                    <Button onClick={() => setModalVisible(true)}>ดูตัวอย่างไฟล์ PDF</Button>
-                    <Modal
-                        title="ตัวอย่างไฟล์ PDF"
-                        open={modalVisible}
-                        onCancel={() => setModalVisible(false)}
-                        footer={[]}
-                        width="70%"
-                        style={{ top: 20 }}
-                    >
-                        {previewFile && (
-                            <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
-                        )}
-                    </Modal>
-                </div>
-                <div>
-                    <Button className="inline-flex justify-center mr-4 "
-                        type="primary"
-                        size="middle"
-                        onClick={handleSubmit}
-                        style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
-                    >
-                        บันทึก
-                    </Button>
-                    <Button className="inline-flex justify-center mr-4"
-                        onClick={handleBack}
-                    >
-                        ยกเลิก
-                    </Button>
-                </div>
-            </form>
-        </div>
+                <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl" style={{ maxHeight: '65vh', overflowY: 'auto' }}>
+                        <Row gutter={16}>
+                            <Col span={12}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                    <label htmlFor="activity" className="block text-base font-medium mr-2 mb-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> เลือกกิจกรรม : </span>
+                                    </label>
+                                    <Select
+                                        value={selectedActivity}
+                                        size="large"
+                                        onChange={handleChange}
+                                        options={activityOptions}
+                                        className="flex-grow mr-4 mb-4 custom-select"
+                                        style={{
+                                            width: '50%',
+                                            borderColor: '#DADEE9',
+                                            fontSize: '16px',
+                                            height: '40px'
+                                        }}
+                                    />
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                    <label htmlFor="activityRole" className="block text-base font-medium mr-4 mb-4">
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> หน้าที่ : </span>
+                                    </label>
+                                    <Select
+                                        value={activityRole}
+                                        size="large"
+                                        onChange={(value) => setActivityRole(value)}
+                                        required
+                                        className="flex-grow mr-4 mb-4 custom-select"
+                                        style={{
+                                            width: '50%',
+                                            borderColor: '#DADEE9',
+                                            fontSize: '16px',
+                                            height: '40px'
+                                        }}
+                                    >
+                                        <Option value="joiner">ผู้เข้าร่วม</Option>
+                                        <Option value="operator">ผู้ดำเนินงาน</Option>
+                                    </Select>
+                                </div>
+                                </Col>
+                                <Col>
+                                    <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
+                                        <label htmlFor="file" className="block text-base font-medium text-gray-700 mr-4 mb-4">
+                                            <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ไฟล์ PDF : </span>
+                                        </label>
+                                        <Upload
+                                            customRequest={customRequest}
+                                            beforeUpload={beforeUpload}
+                                            showUploadList={false}
+                                            style={{
+                                                width: '50%',
+                                                borderColor: '#DADEE9',
+                                                fontSize: '16px',
+                                                height: '40px'
+                                            }}
+                                            className="flex-grow mr-4 mb-4"
+                                        >
+                                            <Button icon={<UploadOutlined />}>เลือกไฟล์</Button>
+                                        </Upload>
+                                        <Button onClick={() => setModalVisible(true)} className="flex-grow mr-4 mb-4" >ดูตัวอย่างไฟล์ PDF</Button>
+                                    </div>
+                                    <Modal
+                                        title="ตัวอย่างไฟล์ PDF"
+                                        open={modalVisible}
+                                        onCancel={() => setModalVisible(false)}
+                                        footer={[]}
+                                        width="70%"
+                                        style={{ top: 20 }}
+                                    >
+                                        {previewFile && (
+                                            <embed src={previewFile} type="application/pdf" style={{ width: '100%', height: '75vh' }} />
+                                        )}
+                                    </Modal>
+                                </Col>
+                        </Row>  
+                            <div className='text-right'>
+                                <Button className="inline-flex justify-center mr-4 "
+                                    type="primary"
+                                    size="middle"
+                                    onClick={handleSubmit}
+                                    style={{ backgroundColor: '#00B96B', borderColor: '#00B96B' }}
+                                >
+                                    บันทึก
+                                </Button>
+                                <Button className="inline-flex justify-center mr-4"
+                                    onClick={handleBack}
+                                >
+                                    ยกเลิก
+                                </Button>
+                            </div>
+                    </Card>
+                </form>
+            </div>
     );
 };
 

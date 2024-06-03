@@ -111,8 +111,7 @@ const EditTeaching = ({ params }) => {
 
     return (
         <div className="max-w-6xl mx-auto px-4">
-            <h1 className="text-2xl font-semibold mb-6">แก้ไขการสอน</h1>
-            <div style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+            <h1 className="text-3xl font-bold mb-6" style={{ color: '#2D427C' }} >แก้ไขการสอน</h1>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Card className="max-w-6xl mx-auto px-4 py-8 shadow-xl" style={{ maxHeight: '65vh', overflowY: 'auto' }}>
                         <Row gutter={16}>
@@ -169,11 +168,17 @@ const EditTeaching = ({ params }) => {
                                         value={group}
                                         onChange={(e) => setGroup(e.target.value)}
                                         className="flex-grow mr-4 mb-4"
+                                        style={{
+                                            width: '50%',
+                                            borderColor: '#DADEE9',
+                                            fontSize: '16px',
+                                            height: '40px'
+                                        }}
                                     />
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '16px' }}>
                                     <label htmlFor="year" className="block text-base font-medium mr-4">
-                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ปี : </span>
+                                        <span style={{ fontSize: '16px' }}><span style={{ color: 'red' }}>*</span> ปี พ.ศ. : </span>
                                     </label>
                                     <Input
                                         placeholder="เลือกปี"
@@ -185,6 +190,12 @@ const EditTeaching = ({ params }) => {
                                         value={year}
                                         onChange={(e) => setYear(e.target.value)}
                                         className="flex-grow mr-4 mb-4"
+                                        style={{
+                                            width: '50%',
+                                            borderColor: '#DADEE9',
+                                            fontSize: '16px',
+                                            height: '40px'
+                                        }}
                                     />
                                 </div>
 
@@ -271,7 +282,6 @@ const EditTeaching = ({ params }) => {
                     </Card>
                 </form>
             </div>
-        </div>
     );
 };
 
